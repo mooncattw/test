@@ -232,9 +232,6 @@ local function updateVisuals()
     if tpTogglePressed then
         tpToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 55, 140)
         tpToggleBtn.TextColor3 = Color3.fromRGB(220, 230, 255)
-    elseif tpBatToggled then
-        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 55, 140)
-        tpToggleBtn.TextColor3 = Color3.fromRGB(220, 230, 255)
     else
         tpToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 170)
         tpToggleBtn.TextColor3 = Color3.fromRGB(235, 240, 255)
