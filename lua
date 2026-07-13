@@ -142,7 +142,7 @@ local _arSwingDebounce=false
 local autoBatSetVisual=nil
 local resetAutoBatMotion=nil
 local setBatCounterVisual=nil
-local startBatCounter,stopBatCounter
+startBatCounter,stopBatCounter
 local antiLagEnabled,removeAccessoriesEnabled,antiLagDescConn=false,false,nil
 local stretchRezEnabled,stretchRezConn,setStretchRezVisual=false,nil,nil
 local unwalkSavedAnimate,_anyKeyListening=nil,false
@@ -225,7 +225,7 @@ local RembembiAnims = {
 }
 
 local AnimRefs = { heartbeat=nil, savedAnimate=nil, originalAnims=nil }
-local startAnimToggle, stopAnimToggle
+startAnimToggle, stopAnimToggle
 
 do
     local LP_anim = Players.LocalPlayer
@@ -320,12 +320,12 @@ local function saveBtnPositions()
 end
 task.spawn(function() while true do task.wait(3);pcall(saveBtnPositions) end end)
 
-local refreshSpeedModeLabel,saveConfig
-local startUnwalk,stopUnwalk,setupMedusa,stopMedusaCounter
-local startAntiRagdoll,stopAntiRagdoll,startAutoLeft,stopAutoLeft,startAutoRight,stopAutoRight
-local startAutoTP,stopAutoTP,enableAntiLag,disableAntiLag,enableStretchRez,disableStretchRez
-local startBatAimbot,stopBatAimbot,queueAutoBatStart,runDrop,runTPFloor,cursedInstaReset
-local startAutoSteal,stopAutoSteal,toggleCarryMode,toggleLaggerMode
+refreshSpeedModeLabel,saveConfig
+startUnwalk,stopUnwalk,setupMedusa,stopMedusaCounter
+startAntiRagdoll,stopAntiRagdoll,startAutoLeft,stopAutoLeft,startAutoRight,stopAutoRight
+startAutoTP,stopAutoTP,enableAntiLag,disableAntiLag,enableStretchRez,disableStretchRez
+startBatAimbot,stopBatAimbot,queueAutoBatStart,runDrop,runTPFloor,cursedInstaReset
+startAutoSteal,stopAutoSteal,toggleCarryMode,toggleLaggerMode
 
 local function addShimmerToLabel(lbl,color1,color2)
     local gr=Instance.new("UIGradient",lbl)
@@ -545,14 +545,25 @@ local function isNearPodiumWithPrompt()
     local char=LP.Character;local hrpL=char and char:FindFirstChild("HumanoidRootPart");if not hrpL then return false end
     local plots=workspace:FindFirstChild("Plots");if not plots then return false end
     for _,plot in ipairs(plots:GetChildren()) do
-        if isMyPlotByName(plot.Name) then continue end
-        local podiums=plot:FindFirstChild("AnimalPodiums");if not podiums then continue end
-        for _,podium in ipairs(podiums:GetChildren()) do
-            local base=podium:FindFirstChild("Base");if not base then continue end
-            local sp=base:FindFirstChild("Spawn");if not sp then continue end
-            local d=(hrpL.Position-sp.Position).Magnitude;if d>Steal.StealRadius then continue end
-            local att=sp:FindFirstChild("PromptAttachment");if not att then continue end
-            for _,obj in ipairs(att:GetChildren()) do if obj:IsA("ProximityPrompt") and obj.Enabled then return true,d end end
+        if not isMyPlotByName(plot.Name) then
+            local podiums=plot:FindFirstChild("AnimalPodiums")
+            if podiums then
+                for _,podium in ipairs(podiums:GetChildren()) do
+                    local base=podium:FindFirstChild("Base")
+                    if base then
+                        local sp=base:FindFirstChild("Spawn")
+                        if sp then
+                            local d=(hrpL.Position-sp.Position).Magnitude
+                            if d<=Steal.StealRadius then
+                                local att=sp:FindFirstChild("PromptAttachment")
+                                if att then
+                                    for _,obj in ipairs(att:GetChildren()) do if obj:IsA("ProximityPrompt") and obj.Enabled then return true,d end end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
         end
     end
     return false,math.huge
@@ -563,15 +574,18 @@ local function findNearestPrompt()
     local plots=workspace:FindFirstChild("Plots");if not plots then return nil end
     local nearest,dist=nil,math.huge
     for _,plot in ipairs(plots:GetChildren()) do
-        if isMyPlotByName(plot.Name) then continue end
-        local pods=plot:FindFirstChild("AnimalPodiums");if not pods then continue end
-        for _,pod in ipairs(pods:GetChildren()) do
-            local base=pod:FindFirstChild("Base");local sp=base and base:FindFirstChild("Spawn")
-            if sp then
-                local d=(sp.Position-root.Position).Magnitude
-                if d<=Steal.StealRadius and dist>d then
-                    local att=sp:FindFirstChild("PromptAttachment")
-                    if att then for _,prompt in ipairs(att:GetChildren()) do if prompt:IsA("ProximityPrompt") and prompt.ActionText:find("Steal") then nearest,dist=prompt,d end end end
+        if not isMyPlotByName(plot.Name) then
+            local pods=plot:FindFirstChild("AnimalPodiums")
+            if pods then
+                for _,pod in ipairs(pods:GetChildren()) do
+                    local base=pod:FindFirstChild("Base");local sp=base and base:FindFirstChild("Spawn")
+                    if sp then
+                        local d=(sp.Position-root.Position).Magnitude
+                        if d<=Steal.StealRadius and dist>d then
+                            local att=sp:FindFirstChild("PromptAttachment")
+                            if att then for _,prompt in ipairs(att:GetChildren()) do if prompt:IsA("ProximityPrompt") and prompt.ActionText:find("Steal") then nearest,dist=prompt,d end end end
+                        end
+                    end
                 end
             end
         end
@@ -957,7 +971,6 @@ local function resetAllSettings()
 end
 local setInstaGrab,setInfJumpVisual,setAntiRagVisual,setMedusaVisual,setUnwalkVisual,setAntiLagVisual,setAutoSwingVisual
 local setTranspVisual,setLockVisual,setMobVisual,setCircleBtnsVisual
-local normalBox,carryBox,laggerBox,radInput,autoTPHeightBox,durationBox
 local mainFrame=nil
 local _persistentConns={}
 local function trackConn(conn) table.insert(_persistentConns,conn);return conn end
@@ -1518,7 +1531,10 @@ local PlayerGui = LP:WaitForChild("PlayerGui")
 
 local function makeDraggable_cyber(dragTarget, moveTarget)
     moveTarget = moveTarget or dragTarget
-    local dragging, dragInput, dragStart, startPos = false
+    local dragging=false
+    local dragInput=nil
+    local dragStart=nil
+    local startPos=nil
     dragTarget.InputBegan:Connect(function(input)
         if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then
             dragging=true; dragStart=input.Position; startPos=moveTarget.Position
@@ -1529,7 +1545,7 @@ local function makeDraggable_cyber(dragTarget, moveTarget)
         if input.UserInputType==Enum.UserInputType.MouseMovement or input.UserInputType==Enum.UserInputType.Touch then dragInput=input end
     end)
     UIS.InputChanged:Connect(function(input)
-        if input==dragInput and dragging then
+        if input==dragInput and dragging and dragStart and startPos then
             local delta=input.Position-dragStart
             moveTarget.Position=UDim2.new(startPos.X.Scale,startPos.X.Offset+delta.X,startPos.Y.Scale,startPos.Y.Offset+delta.Y)
         end
@@ -1832,7 +1848,7 @@ local CategoryRefs={contents={},btnsSide={},active="Speed"}
     if spBtn then spBtn.TextColor3=C.white; spBtn.BackgroundTransparency=0.2; local i2=spBtn:FindFirstChild("indicator"); if i2 then i2.BackgroundTransparency=0.3 end end
 end)()
 
-local CombatQuickBtn=Instance.new("TextButton")
+CombatQuickBtn=Instance.new("TextButton")
 CombatQuickBtn.Name="CombatQuickBtn"
 CombatQuickBtn.Size=UDim2.new(0,128,0,36)
 CombatQuickBtn.Position=UDim2.new(0.5,-64,1,-86)
