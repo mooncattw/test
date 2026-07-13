@@ -9,116 +9,7 @@ local LocalPlayer = Players.LocalPlayer
 local CONFIG = {
     Draggable = true,
     TpBatKey = Enum.KeyCode.T,
-    ResetKey = Enum.KeyCode.R,
 }
-
-_G.VampireResetRemote = _G.VampireResetRemote or nil
-_G.VampireResetGuid = _G.VampireResetGuid or "f888ee6e-c86d-46e1-93d7-0639d6635d42"
-
-pcall(function()
-    if not _G.VampireResetHooked and hookfunction and newcclosure then
-        _G.VampireResetHooked = true
-
-        local oldFire
-        oldFire = hookfunction(Instance.new("RemoteEvent").FireServer, newcclosure(function(self, ...)
-            if not _G.VampireResetRemote
-                and typeof(self) == "Instance"
-                and self:IsA("RemoteEvent")
-                and self.Name:sub(1, 3) == "RE/" then
-                _G.VampireResetRemote = self
-            end
-
-            return oldFire(self, ...)
-        end))
-    end
-end)
-
-local function findVampireResetRemote()
-    if _G.VampireResetRemote then
-        return _G.VampireResetRemote
-    end
-
-    for _, desc in ipairs(ReplicatedStorage:GetDescendants()) do
-        if desc:IsA("RemoteEvent") and desc.Name:sub(1, 3) == "RE/" then
-            _G.VampireResetRemote = desc
-            break
-        end
-    end
-
-    return _G.VampireResetRemote
-end
-
-local function vampireInstaReset()
-    local remote = findVampireResetRemote()
-    if not remote then
-        return false
-    end
-
-    local character = LocalPlayer.Character
-    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-
-    if humanoid and humanoid.Health <= 0 then
-        pcall(function()
-            remote:FireServer(_G.VampireResetGuid, LocalPlayer, "balloon")
-        end)
-        return true
-    end
-
-    local resetDetected = false
-    local resetConns = {}
-
-    if humanoid then
-        table.insert(resetConns, humanoid.Died:Connect(function()
-            resetDetected = true
-        end))
-
-        table.insert(resetConns, humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-            if humanoid.Health <= 0 then
-                resetDetected = true
-            end
-        end))
-    end
-
-    if character then
-        table.insert(resetConns, character.AncestryChanged:Connect(function(_, parent)
-            if not parent then
-                resetDetected = true
-            end
-        end))
-    end
-
-    task.spawn(function()
-        for _ = 1, 10 do
-            if resetDetected then
-                break
-            end
-
-            pcall(function()
-                remote:FireServer(_G.VampireResetGuid, LocalPlayer, "balloon")
-            end)
-
-            task.wait(0.05)
-        end
-
-        for _, conn in ipairs(resetConns) do
-            pcall(function()
-                conn:Disconnect()
-            end)
-        end
-    end)
-
-    return true
-end
-
-local function performReset()
-    vampireInstaReset()
-    resetBtn.Text = "..."
-    resetBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
-    task.delay(0.3, function()
-        resetBtn.Text = "INSTA RESET"
-        resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    end)
-end
 
 local tpBatToggled = false
 local tpBatCooldown = false
@@ -344,109 +235,6 @@ tpToggleBtn.MouseButton1Click:Connect(function()
     updateVisuals()
 end)
 
-local resetLabel = Instance.new("TextLabel")
-resetLabel.Size = UDim2.new(0.28, 0, 0, 14)
-resetLabel.Position = UDim2.new(0.05, 0, 0, 88)
-resetLabel.BackgroundTransparency = 1
-resetLabel.Text = "INSTA RESET"
-resetLabel.TextColor3 = Color3.fromRGB(150, 185, 255)
-resetLabel.Font = Enum.Font.GothamBold
-resetLabel.TextSize = 10
-resetLabel.TextXAlignment = Enum.TextXAlignment.Left
-resetLabel.TextStrokeTransparency = 0.4
-resetLabel.TextStrokeColor3 = BLUE.Dark
-resetLabel.TextTransparency = 0.2
-resetLabel.Parent = main
-
-local resetKeyBtn = Instance.new("TextButton")
-resetKeyBtn.Size = UDim2.new(0.22, 0, 0, 24)
-resetKeyBtn.Position = UDim2.new(0.28, 0, 0, 88)
-resetKeyBtn.BackgroundColor3 = BLUE.Card
-resetKeyBtn.Text = "R"
-resetKeyBtn.TextColor3 = BLUE.Main
-resetKeyBtn.Font = Enum.Font.GothamBold
-resetKeyBtn.TextSize = 12
-resetKeyBtn.BorderSizePixel = 0
-resetKeyBtn.AutoButtonColor = false
-resetKeyBtn.Parent = main
-
-local resetKeyCorner = Instance.new("UICorner")
-resetKeyCorner.CornerRadius = UDim.new(0, 5)
-resetKeyCorner.Parent = resetKeyBtn
-
-resetKeyBtn.MouseButton1Click:Connect(function()
-    resetKeyBtn.Text = "..."
-    local connection
-    connection = UserInputService.InputBegan:Connect(function(input, gpe)
-        if gpe then return end
-        if input.KeyCode ~= Enum.KeyCode.Unknown then
-            CONFIG.ResetKey = input.KeyCode
-            resetKeyBtn.Text = input.KeyCode.Name
-            connection:Disconnect()
-        end
-    end)
-end)
-
-local resetBtn = Instance.new("TextButton")
-resetBtn.Size = UDim2.new(0.42, 0, 0, 24)
-resetBtn.Position = UDim2.new(0.55, 0, 0, 88)
-resetBtn.BackgroundColor3 = Color3.fromRGB(45, 110, 235)
-resetBtn.Text = "INSTA RESET"
-resetBtn.TextColor3 = BLUE.White
-resetBtn.Font = Enum.Font.GothamBold
-resetBtn.TextSize = 10
-resetBtn.BorderSizePixel = 0
-resetBtn.AutoButtonColor = false
-resetBtn.ZIndex = 1
-resetBtn.Parent = main
-
-local resetCorner = Instance.new("UICorner")
-resetCorner.CornerRadius = UDim.new(0, 5)
-resetCorner.Parent = resetBtn
-
-local resetStroke = Instance.new("UIStroke")
-resetStroke.Thickness = 1
-resetStroke.Color = BLUE.Red
-resetStroke.Transparency = 0.4
-resetStroke.Parent = resetBtn
-
-resetBtn.MouseButton1Click:Connect(function()
-    performReset()
-end)
-
-local statsFrame = Instance.new("Frame")
-statsFrame.Size = UDim2.new(0.9, 0, 0, 26)
-statsFrame.Position = UDim2.new(0.05, 0, 0, 142)
-statsFrame.BackgroundColor3 = Color3.fromRGB(15, 28, 50)
-statsFrame.BackgroundTransparency = 0.05
-statsFrame.BorderSizePixel = 0
-statsFrame.Parent = main
-
-local statsCorner = Instance.new("UICorner")
-statsCorner.CornerRadius = UDim.new(0, 10)
-statsCorner.Parent = statsFrame
-
-local pingText = Instance.new("TextLabel")
-pingText.Size = UDim2.new(0.5, 0, 1, 0)
-pingText.Position = UDim2.new(0, 0, 0, 0)
-pingText.BackgroundTransparency = 1
-pingText.Text = "PING: -- ms"
-pingText.TextColor3 = BLUE.Light
-pingText.Font = Enum.Font.GothamBold
-pingText.TextSize = 10
-pingText.TextXAlignment = Enum.TextXAlignment.Left
-pingText.Parent = statsFrame
-
-local fpsText = Instance.new("TextLabel")
-fpsText.Size = UDim2.new(0.5, 0, 1, 0)
-fpsText.Position = UDim2.new(0.5, 0, 0, 0)
-fpsText.BackgroundTransparency = 1
-fpsText.Text = "FPS: --"
-fpsText.TextColor3 = BLUE.Light
-fpsText.Font = Enum.Font.GothamBold
-fpsText.TextSize = 10
-fpsText.TextXAlignment = Enum.TextXAlignment.Right
-fpsText.Parent = statsFrame
 
 local function updateVisuals()
     if tpBatToggled then
@@ -463,11 +251,7 @@ local function updateVisuals()
         mainStroke.Transparency = 0.3
     end
     tpKeyBtn.Text = CONFIG.TpBatKey.Name
-    resetKeyBtn.Text = CONFIG.ResetKey.Name
 end
-
-local lastFrameTime = tick()
-local lastFPS = 0
 
 local function updateStatus()
     local ping = 0
@@ -497,10 +281,6 @@ UserInputService.InputBegan:Connect(function(input, gpe)
     if input.KeyCode == CONFIG.TpBatKey then
         tpBatToggled = not tpBatToggled
         updateVisuals()
-    end
-
-    if input.KeyCode == CONFIG.ResetKey then
-        performReset()
     end
 end)
 
