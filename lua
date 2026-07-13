@@ -84,8 +84,8 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 220, 0, 130)
-main.Position = UDim2.new(0.5, -110, 0.5, -65)
+main.Size = UDim2.new(0, 220, 0, 120)
+main.Position = UDim2.new(0.5, -110, 0.5, -60)
 main.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
 main.BackgroundTransparency = 0.05
 main.BorderSizePixel = 0
@@ -115,8 +115,8 @@ bgImage.ImageTransparency = 0.1
 bgImage.Parent = main
 
 local glow = Instance.new("Frame")
-glow.Size = UDim2.new(1, 15, 1, 15)
-glow.Position = UDim2.new(-7.5, 0, -7.5, 0)
+glow.Size = UDim2.new(1, 0, 1, 0)
+glow.Position = UDim2.new(0, 0, 0, 0)
 glow.BackgroundColor3 = BLUE.Glow
 glow.BackgroundTransparency = 0.92
 glow.BorderSizePixel = 0
@@ -138,31 +138,6 @@ title.TextStrokeTransparency = 0
 title.TextStrokeColor3 = BLUE.Dark
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = main
-
-local LockBtn = Instance.new("TextButton")
-LockBtn.Size = UDim2.new(0, 24, 0, 24)
-LockBtn.Position = UDim2.new(1, -32, 0, 5)
-LockBtn.BackgroundColor3 = BLUE.Card
-LockBtn.Text = "🔓"
-LockBtn.TextColor3 = BLUE.White
-LockBtn.Font = Enum.Font.GothamBold
-LockBtn.TextSize = 14
-LockBtn.AutoButtonColor = false
-LockBtn.Parent = main
-
-local LCorner = Instance.new("UICorner")
-LCorner.CornerRadius = UDim.new(0, 5)
-LCorner.Parent = LockBtn
-
-LockBtn.MouseButton1Click:Connect(function()
-    CONFIG.Draggable = not CONFIG.Draggable
-    main.Draggable = CONFIG.Draggable
-    if CONFIG.Draggable then
-        LockBtn.Text = "🔓"
-    else
-        LockBtn.Text = "🔒"
-    end
-end)
 
 local divider = Instance.new("Frame")
 divider.Size = UDim2.new(0.85, 0, 0, 1)
@@ -238,14 +213,12 @@ end)
 
 local function updateVisuals()
     if tpBatToggled then
-        tpToggleBtn.Text = "ON"
         tpToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 30, 55)
         tpToggleBtn.TextColor3 = BLUE.Main
         mainStroke.Color = BLUE.Glow
         mainStroke.Transparency = 0.1
     else
-        tpToggleBtn.Text = "TP BAT"
-        tpToggleBtn.BackgroundColor3 = BLUE.Card
+        tpToggleBtn.BackgroundColor3 = BLUE.Glow
         tpToggleBtn.TextColor3 = BLUE.White
         mainStroke.Color = BLUE.Border
         mainStroke.Transparency = 0.3
