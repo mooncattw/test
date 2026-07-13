@@ -1,6 +1,5 @@
 --MOON HUB
 --moonhub
---LEKAD BY FRNK33.
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -1573,6 +1572,16 @@ _GuiKeys = Keys
     ML.Text="moonhub"; ML.TextColor3=C.textDim; ML.TextSize=10; ML.Font=Enum.Font.GothamBold
     ML.TextXAlignment=Enum.TextXAlignment.Left; ML.Parent=HF; ML.ZIndex=3
 
+    local TopLine=Instance.new("Frame")
+    TopLine.Size=UDim2.new(1,-28,0,1); TopLine.Position=UDim2.new(0,14,0,48)
+    TopLine.BackgroundColor3=C.blue; TopLine.BackgroundTransparency=0.25; TopLine.BorderSizePixel=0
+    TopLine.Parent=HF; TopLine.ZIndex=3
+
+    local BottomLine=Instance.new("Frame")
+    BottomLine.Size=UDim2.new(1,-28,0,1); BottomLine.Position=UDim2.new(0,14,0,54)
+    BottomLine.BackgroundColor3=C.blue; BottomLine.BackgroundTransparency=0.4; BottomLine.BorderSizePixel=0
+    BottomLine.Parent=HF; BottomLine.ZIndex=3
+
     -- MINIMIZE BUTTON
     local CloseBtn=Instance.new("TextButton")
     CloseBtn.Size=UDim2.new(0,28,0,28); CloseBtn.Position=UDim2.new(1,-38,0,8)
@@ -1604,9 +1613,9 @@ _GuiKeys = Keys
     HSep.BackgroundTransparency=0.7; HSep.BorderSizePixel=0; HSep.Parent=Inner; HSep.ZIndex=2
 
     LeftPanel=Instance.new("Frame")
-    LeftPanel.Name="LeftPanel"; LeftPanel.Size=UDim2.new(0,85,1,-118); LeftPanel.Position=UDim2.new(1,-85,0,63)
-    LeftPanel.BackgroundColor3=C.bgDark; LeftPanel.BackgroundTransparency=0.5; LeftPanel.BorderSizePixel=0
-    LeftPanel.Parent=Inner; guiCorner(LeftPanel,12); LeftPanel.ZIndex=2
+    LeftPanel.Name="LeftPanel"; LeftPanel.Size=UDim2.new(0,0,1,-118); LeftPanel.Position=UDim2.new(1,0,0,63)
+    LeftPanel.BackgroundColor3=C.bgDark; LeftPanel.BackgroundTransparency=1; LeftPanel.BorderSizePixel=0
+    LeftPanel.Parent=Inner; guiCorner(LeftPanel,12); LeftPanel.ZIndex=2; LeftPanel.Visible=false
 
     local CatList=Instance.new("ScrollingFrame")
     CatList.Name="CategoryList"; CatList.Size=UDim2.new(1,0,1,0); CatList.BackgroundTransparency=1
@@ -1619,7 +1628,7 @@ _GuiKeys = Keys
     GuiRefs.categoryList=CatList
 
     local CF=Instance.new("ScrollingFrame")
-    CF.Name="ContentFrame"; CF.Size=UDim2.new(1,-95,1,-118); CF.Position=UDim2.new(0,0,0,63)
+    CF.Name="ContentFrame"; CF.Size=UDim2.new(1,-24,1,-118); CF.Position=UDim2.new(0,12,0,63)
     CF.BackgroundTransparency=1; CF.BorderSizePixel=0; CF.ScrollBarThickness=6; CF.ScrollBarImageColor3=C.blue
     CF.CanvasSize=UDim2.new(0,0,0,0); CF.AutomaticCanvasSize=Enum.AutomaticSize.Y
     CF.ScrollingDirection=Enum.ScrollingDirection.Y; CF.ScrollingEnabled=true; CF.Active=true
