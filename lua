@@ -193,8 +193,8 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 220, 0, 140)
-main.Position = UDim2.new(0.5, -110, 0.5, -70)
+main.Size = UDim2.new(0, 220, 0, 176)
+main.Position = UDim2.new(0.5, -110, 0.5, -88)
 main.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
 main.BackgroundTransparency = 0.05
 main.BorderSizePixel = 0
@@ -208,8 +208,8 @@ mainCorner.Parent = main
 
 local mainStroke = Instance.new("UIStroke")
 mainStroke.Thickness = 1.5
-mainStroke.Color = BLUE.Border
-mainStroke.Transparency = 0.3
+mainStroke.Color = Color3.fromRGB(80, 170, 255)
+mainStroke.Transparency = 0.2
 mainStroke.Parent = main
 
 local bgImage = Instance.new("ImageLabel")
@@ -227,7 +227,7 @@ local glow = Instance.new("Frame")
 glow.Size = UDim2.new(1, 15, 1, 15)
 glow.Position = UDim2.new(-7.5, 0, -7.5, 0)
 glow.BackgroundColor3 = BLUE.Glow
-glow.BackgroundTransparency = 0.95
+glow.BackgroundTransparency = 0.92
 glow.BorderSizePixel = 0
 glow.Parent = main
 
@@ -349,12 +349,13 @@ resetLabel.Size = UDim2.new(0.28, 0, 0, 14)
 resetLabel.Position = UDim2.new(0.05, 0, 0, 88)
 resetLabel.BackgroundTransparency = 1
 resetLabel.Text = "INSTA RESET"
-resetLabel.TextColor3 = BLUE.Light
+resetLabel.TextColor3 = Color3.fromRGB(150, 185, 255)
 resetLabel.Font = Enum.Font.GothamBold
 resetLabel.TextSize = 10
 resetLabel.TextXAlignment = Enum.TextXAlignment.Left
-resetLabel.TextStrokeTransparency = 0.3
+resetLabel.TextStrokeTransparency = 0.4
 resetLabel.TextStrokeColor3 = BLUE.Dark
+resetLabel.TextTransparency = 0.2
 resetLabel.Parent = main
 
 local resetKeyBtn = Instance.new("TextButton")
@@ -389,13 +390,14 @@ end)
 local resetBtn = Instance.new("TextButton")
 resetBtn.Size = UDim2.new(0.42, 0, 0, 24)
 resetBtn.Position = UDim2.new(0.55, 0, 0, 88)
-resetBtn.BackgroundColor3 = BLUE.Glow
+resetBtn.BackgroundColor3 = Color3.fromRGB(45, 110, 235)
 resetBtn.Text = "INSTA RESET"
 resetBtn.TextColor3 = BLUE.White
 resetBtn.Font = Enum.Font.GothamBold
 resetBtn.TextSize = 10
 resetBtn.BorderSizePixel = 0
 resetBtn.AutoButtonColor = false
+resetBtn.ZIndex = 1
 resetBtn.Parent = main
 
 local resetCorner = Instance.new("UICorner")
@@ -411,6 +413,40 @@ resetStroke.Parent = resetBtn
 resetBtn.MouseButton1Click:Connect(function()
     performReset()
 end)
+
+local statsFrame = Instance.new("Frame")
+statsFrame.Size = UDim2.new(0.9, 0, 0, 26)
+statsFrame.Position = UDim2.new(0.05, 0, 0, 142)
+statsFrame.BackgroundColor3 = Color3.fromRGB(15, 28, 50)
+statsFrame.BackgroundTransparency = 0.05
+statsFrame.BorderSizePixel = 0
+statsFrame.Parent = main
+
+local statsCorner = Instance.new("UICorner")
+statsCorner.CornerRadius = UDim.new(0, 10)
+statsCorner.Parent = statsFrame
+
+local pingText = Instance.new("TextLabel")
+pingText.Size = UDim2.new(0.5, 0, 1, 0)
+pingText.Position = UDim2.new(0, 0, 0, 0)
+pingText.BackgroundTransparency = 1
+pingText.Text = "PING: -- ms"
+pingText.TextColor3 = BLUE.Light
+pingText.Font = Enum.Font.GothamBold
+pingText.TextSize = 10
+pingText.TextXAlignment = Enum.TextXAlignment.Left
+pingText.Parent = statsFrame
+
+local fpsText = Instance.new("TextLabel")
+fpsText.Size = UDim2.new(0.5, 0, 1, 0)
+fpsText.Position = UDim2.new(0.5, 0, 0, 0)
+fpsText.BackgroundTransparency = 1
+fpsText.Text = "FPS: --"
+fpsText.TextColor3 = BLUE.Light
+fpsText.Font = Enum.Font.GothamBold
+fpsText.TextSize = 10
+fpsText.TextXAlignment = Enum.TextXAlignment.Right
+fpsText.Parent = statsFrame
 
 local function updateVisuals()
     if tpBatToggled then
@@ -429,6 +465,31 @@ local function updateVisuals()
     tpKeyBtn.Text = CONFIG.TpBatKey.Name
     resetKeyBtn.Text = CONFIG.ResetKey.Name
 end
+
+local lastFrameTime = tick()
+local lastFPS = 0
+
+local function updateStatus()
+    local ping = 0
+    if LocalPlayer and LocalPlayer.GetNetworkPing then
+        ping = math.floor((LocalPlayer:GetNetworkPing() or 0) * 1000)
+    end
+    local now = tick()
+    local dt = now - lastFrameTime
+    if dt > 0 then
+        lastFPS = math.floor(1 / dt)
+    end
+    lastFrameTime = now
+    pingText.Text = string.format("PING: %d ms", ping)
+    fpsText.Text = string.format("FPS: %d", lastFPS)
+end
+
+task.spawn(function()
+    while ScreenGui.Parent do
+        updateStatus()
+        task.wait(0.5)
+    end
+end)
 
 UserInputService.InputBegan:Connect(function(input, gpe)
     if gpe then return end
