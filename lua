@@ -84,8 +84,8 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 220, 0, 176)
-main.Position = UDim2.new(0.5, -110, 0.5, -88)
+main.Size = UDim2.new(0, 220, 0, 130)
+main.Position = UDim2.new(0.5, -110, 0.5, -65)
 main.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
 main.BackgroundTransparency = 0.05
 main.BorderSizePixel = 0
@@ -252,28 +252,6 @@ local function updateVisuals()
     end
     tpKeyBtn.Text = CONFIG.TpBatKey.Name
 end
-
-local function updateStatus()
-    local ping = 0
-    if LocalPlayer and LocalPlayer.GetNetworkPing then
-        ping = math.floor((LocalPlayer:GetNetworkPing() or 0) * 1000)
-    end
-    local now = tick()
-    local dt = now - lastFrameTime
-    if dt > 0 then
-        lastFPS = math.floor(1 / dt)
-    end
-    lastFrameTime = now
-    pingText.Text = string.format("PING: %d ms", ping)
-    fpsText.Text = string.format("FPS: %d", lastFPS)
-end
-
-task.spawn(function()
-    while ScreenGui.Parent do
-        updateStatus()
-        task.wait(0.5)
-    end
-end)
 
 UserInputService.InputBegan:Connect(function(input, gpe)
     if gpe then return end
