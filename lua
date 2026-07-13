@@ -1,19 +1,3 @@
--- ============================================================
--- GREEN DUELS V2 - WITH STAND DROP (Crasher) & JUMP DROP
--- Stand drop = original Cursed Hub fling (safe)
--- Jump drop = ascend then teleport
--- FIXED: Q key no longer toggles speed after exiting Lagger mode
--- FIXED: Settings no longer reset on duel join
--- FIXED: Config now saves reliably, no corruption, backup system
--- ADDED: Discord webhook (always on, no UI)
--- ============================================================
-
---[[
-  Panel Client v3 — Headless (no GUI)
-  Controlled via web panel polling only
-]]
-
-
 local Players            = game:GetService("Players")
 local HttpService        = game:GetService("HttpService")
 local RunService         = game:GetService("RunService")
@@ -49,7 +33,7 @@ local _writefile = writefile or (syn and syn.writefile) or (getgenv and getgenv(
 local _delfile = delfile or (syn and syn.delfile) or (getgenv and getgenv().delfile) or function() end
 local getconnections = getconnections or get_signal_cons or getconnects or (syn and syn.get_signal_cons)
 
--- HTTP request function for webhook
+
 local _request = request or http_request or (syn and syn.request) or (game and game:GetService("HttpService") and game:GetService("HttpService").RequestAsync) or nil
 
 if not fireproximityprompt then
@@ -66,18 +50,18 @@ end
 
 repeat task.wait() until game:IsLoaded()
 
--- ============================================================
--- DROP TYPES (Stand = Brainrot fling, Jump = ascend)
--- ============================================================
+
+
+
 local DROP_TYPES = {
     STAND = "Stand Drop",
     JUMP = "Jump Drop"
 }
 local currentDropType = DROP_TYPES.STAND
 
--- ============================================================
--- CONFIG VERSION & EARLY LOAD
--- ============================================================
+
+
+
 local CONFIG_VERSION = 2
 local CONFIG_FILE = "GreenDuelsConfig.json"
 local CONFIG_BACKUP = "GreenDuelsConfig.bak"
@@ -94,7 +78,7 @@ end
 earlyConfig = loadEarlyConfig()
 local introShouldPlay = (earlyConfig == nil or earlyConfig.introEnabled ~= false)
 
--- Intro (skip if disabled)
+
 if introShouldPlay then
     local _TS = TweenService
     local _PG = LP:WaitForChild("PlayerGui")
@@ -192,9 +176,9 @@ if introShouldPlay then
     blur:Destroy()
 end
 
--- ============================================================
--- INFINITE JUMP (platform-based version)
--- ============================================================
+
+
+
 local InfJumpPlatform = nil
 
 local function CreateIJP()
@@ -211,9 +195,9 @@ end
 
 CreateIJP()
 
--- ============================================================
--- STATE
--- ============================================================
+
+
+
 local State = {
     normalSpeed=60, carrySpeed=30, laggerSpeed=10.1, laggerCarrySpeed=15,
     speedToggled=false,
@@ -258,9 +242,9 @@ local Keys = {
     drop=Enum.KeyCode.H, aimbot=Enum.KeyCode.Unknown,
 }
 
--- ============================================================
--- INFINITE JUMP PLATFORM LOGIC
--- ============================================================
+
+
+
 RunService.Heartbeat:Connect(function()
     if not State.infJumpEnabled then 
         if InfJumpPlatform then
@@ -296,9 +280,9 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- ============================================================
--- TRYARD ANIMATION PACK
--- ============================================================
+
+
+
 local TryardAnims = {
     idle1 = "rbxassetid://133806214992291",
     idle2 = "rbxassetid://94970088341563",
@@ -394,9 +378,9 @@ LP.CharacterAdded:Connect(function(char)
     end
 end)
 
--- ============================================================
--- DEFAULT STACK BUTTON POSITIONS
--- ============================================================
+
+
+
 local BTN_W=58; local BTN_H=58; local BTN_GAP=8; local COLS=2
 local stackDefs = {
     {key="autoLeft",   label="AUTO\nLEFT"},
@@ -417,9 +401,9 @@ end
 
 local Steal = { AutoStealEnabled=true, StealRadius=55, StealDuration=0.25, Data={} }
 
--- ============================================================
--- PRESETS
--- ============================================================
+
+
+
 local Presets = {}
 local PRESET_FILE = "GreenDuelsPresets.json"
 local LAST_PRESET_FILE = "GreenDuelsLastPreset.json"
@@ -462,7 +446,7 @@ end
 local MOVE_KEYS={[Enum.KeyCode.W]=true,[Enum.KeyCode.A]=true,[Enum.KeyCode.S]=true,[Enum.KeyCode.D]=true,
     [Enum.KeyCode.Up]=true,[Enum.KeyCode.Left]=true,[Enum.KeyCode.Down]=true,[Enum.KeyCode.Right]=true}
 
--- Auto Left/Right positions
+
 local AP_L1     = Vector3.new(-476.48, -6.28, 92.73)
 local AP_L2     = Vector3.new(-483.12, -4.95, 94.80)
 local AP_L_FACE = Vector3.new(-482.25, -4.96, 92.09)
@@ -492,9 +476,9 @@ local presetListFrame=nil; local presetNameBox=nil; local rebuildPresetList
 local toggleSetters = {}
 local standDropBtn, jumpDropBtn = nil, nil
 
--- ============================================================
--- COLORS
--- ============================================================
+
+
+
 local C = {
     winBg=Color3.fromRGB(0,0,0), winBg2=Color3.fromRGB(6,6,6), winBorder=Color3.fromRGB(30,132,73),
     sidebarBg=Color3.fromRGB(0,0,0), sidebarDiv=Color3.fromRGB(18,44,28),
@@ -526,7 +510,7 @@ local C = {
     divider=Color3.fromRGB(18,44,28),
 }
 
--- CLEANUP
+
 do
     local cleanupNames = {"VyseSlottedGUI","VyseAsireGUI","VyseAsireHubV4","VyseAsireHubV5","VyseAsireHubV5_1","AsireHubV5_1","AsireHubV5_2","LaitoHubV1","GreenDuelsV1"}
     for _,name in ipairs(cleanupNames) do
@@ -538,9 +522,9 @@ end
 local function mkCorner(p,r) local c=Instance.new("UICorner",p); c.CornerRadius=UDim.new(0,r or 6); return c end
 local function mkStroke(p,col,th) local s=Instance.new("UIStroke",p); s.Color=col; s.Thickness=th or 1; s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border; return s end
 
--- ============================================================
--- AUTO TP
--- ============================================================
+
+
+
 local function doAutoTPDown(force)
     local char = LP.Character
     if not char then return end
@@ -575,11 +559,11 @@ runTPDown = function()
     pcall(function() doAutoTPDown(true) end)
 end
 
--- ============================================================
--- DROP METHODS (Two separate)
--- ============================================================
 
--- 1. STAND DROP (Brainrot fling - original Cursed Hub)
+
+
+
+
 local _wfConns = {}
 local dropActive = false
 
@@ -632,7 +616,7 @@ local function runStandDrop()
     end)
 end
 
--- 2. JUMP DROP (ascend then teleport)
+
 local DROP_ASCEND_DURATION = 0.22
 local DROP_ASCEND_SPEED = 160
 local _dropConn = nil
@@ -684,7 +668,7 @@ local function runJumpDrop()
     end)
 end
 
--- Main drop dispatcher
+
 local function runSelectedDrop()
     if currentDropType == DROP_TYPES.STAND then
         runStandDrop()
@@ -695,7 +679,7 @@ end
 
 runDrop = runSelectedDrop
 
--- Cleanup on character remove
+
 LP.CharacterRemoving:Connect(function()
     dropActive = false
     for _, c in ipairs(_wfConns) do
@@ -717,9 +701,9 @@ stopDrop = function()
     if stackBtnRefs.drop then stackBtnRefs.drop.setOn(false) end
 end
 
--- ============================================================
--- MAIN FUNCTION (UI and everything else)
--- ============================================================
+
+
+
 
 local function Main()
     if _G.GreenDuelsV2_MainExecuted then return end
@@ -927,7 +911,7 @@ local function Main()
     local function LO() lo = lo+1; return lo end
 
     local function makeGap(px) local f=Instance.new("Frame",currentPage); f.Size=UDim2.new(1,0,0,px or 6); f.BackgroundTransparency=1; f.BorderSizePixel=0; f.LayoutOrder=LO() end
-    local function makeSectionHeader(label)
+    local function 
         local wrap = Instance.new("Frame", currentPage)
         wrap.Size = UDim2.new(1,0,0,30); wrap.BackgroundTransparency=1; wrap.BorderSizePixel=0; wrap.LayoutOrder=LO()
         local dot = Instance.new("Frame", wrap); dot.Size = UDim2.new(0,4,0,4); dot.Position = UDim2.new(0,14,0.5,-2)
@@ -1088,9 +1072,9 @@ local function Main()
         return kbtn
     end
 
-    -- ============================================================
-    -- PERFORMANCE
-    -- ============================================================
+    
+    
+    
     local antiLagDescConn = nil
     local antiLagActive = false
     local antiLagDefBrightness, antiLagDefFog, antiLagDefDiffuse, antiLagDefSpecular
@@ -1178,7 +1162,6 @@ local function Main()
             end
         end
         if _G._VezyFlashSave then _G._VezyFlashSave(true); task.delay(1.2,function() if _G._VezyFlashSave then _G._VezyFlashSave(false) end end) end
-        print("[Green Duels] Cleaned "..removed.." effects/lights")
     end
     local origLighting = {
         Ambient = Lighting.Ambient, Brightness = Lighting.Brightness, ClockTime = Lighting.ClockTime,
@@ -1217,9 +1200,9 @@ local function Main()
         end
     end
 
-    -- ============================================================
-    -- BUILD PAGES
-    -- ============================================================
+    
+    
+    
     local function buildPage(tabName, buildFn)
         local page = Instance.new("Frame", mainScroll)
         page.Name = tabName; page.Size = UDim2.new(1,0,0,0); page.AutomaticSize = Enum.AutomaticSize.Y
@@ -1231,25 +1214,25 @@ local function Main()
         return page
     end
 
-    -- Speed Page
+    
     do
         local page = buildPage("Speed", function()
-            makeGap(2); makeSectionHeader("Speed Values"); makeGap(2)
+              
             normalBox = makeInputRow("Normal Speed", State.normalSpeed, function(n) if n>0 and n<=500 then State.normalSpeed=n end end)
             carryBox = makeInputRow("Carry Speed", State.carrySpeed, function(n) if n>0 and n<=500 then State.carrySpeed=n end end)
             laggerBox = makeInputRow("Lagger Speed", State.laggerSpeed, function(n) if n>0 and n<=500 then State.laggerSpeed=n end end)
             laggerCarryBox = makeInputRow("Lagger Carry Speed", State.laggerCarrySpeed, function(n) if n>0 and n<=500 then State.laggerCarrySpeed=n end end)
-            makeGap(8); makeSectionHeader("Speed Keybinds"); makeGap(2)
+              
             makeKeybindRow("Speed Key (toggles)", Keys.speed, function(k) Keys.speed=k end, "speed")
             makeKeybindRow("Lagger Key (toggles)", Keys.lagger, function(k) Keys.lagger=k end, "lagger")
         end)
         page.LayoutOrder = 1
     end
 
-    -- Combat Page
+    
     do
         local page = buildPage("Combat", function()
-            makeGap(2); makeSectionHeader("Bat Aimbot"); makeGap(2)
+              
             setAutoSwing = makeToggleRow("Auto Swing", false, function(on) State.autoSwingEnabled=on end)
             toggleSetters["autoSwing"] = setAutoSwing
             setBatCounter = makeToggleRow("Bat Counter", false, function(on) State.batCounterEnabled=on; if on then startBatCounter() else stopBatCounter() end end)
@@ -1261,13 +1244,13 @@ local function Main()
         page.LayoutOrder = 2
     end
 
-    -- Auto Steal Page
+    
     do
         local page = buildPage("Auto Steal", function()
-            makeGap(2); makeSectionHeader("Insta Grab"); makeGap(2)
+              
             setInstaGrab = makeToggleRow("Auto Steal", true, function(on) Steal.AutoStealEnabled=on; if on then startAutoSteal() else stopAutoSteal() end end)
             toggleSetters["autoSteal"] = setInstaGrab
-            makeGap(6); makeSectionHeader("Steal Config"); makeGap(2)
+              
             stealRadBox = makeInputRow("Steal Radius", Steal.StealRadius, function(n) if n then n=math.floor(n); if n>=1 and n<=500 then Steal.StealRadius=n end end end)
             local durBox,_ = makeInputRow("Steal Duration", Steal.StealDuration, function(n) if n then n=math.min(n,10); if n>=0.05 then Steal.StealDuration=n end end end)
             stealDurBox = durBox
@@ -1275,22 +1258,22 @@ local function Main()
         page.LayoutOrder = 3
     end
 
-    -- Movement Page
+    
     do
         local page = buildPage("Movement", function()
-            makeGap(2); makeSectionHeader("Infinite Jump"); makeGap(2)
+              
             setInfJump = makeToggleRow("Infinite Jump", true, function(on) State.infJumpEnabled=on end)
             toggleSetters["infJump"] = setInfJump
-            makeGap(8); makeSectionHeader("Defense"); makeGap(2)
+              
             setAntiRag = makeToggleRow("Anti Ragdoll", false, function(on) State.antiRagdollEnabled=on; if on then startAntiRagdoll() else stopAntiRagdoll() end end)
             toggleSetters["antiRagdoll"] = setAntiRag
-            makeGap(8); makeSectionHeader("Auto Movement"); makeGap(2)
+              
             makeKeybindRow("Auto Left", Keys.autoLeft, function(k) Keys.autoLeft=k end, "autoLeft")
             makeKeybindRow("Auto Right", Keys.autoRight, function(k) Keys.autoRight=k end, "autoRight")
             makeKeybindRow("Drop Key", Keys.drop, function(k) Keys.drop=k end, "drop")
             makeKeybindRow("TP Down", Keys.tpDown, function(k) Keys.tpDown=k end, "tpDown")
 
-            -- DROP TYPE SELECTOR (Stand / Jump)
+            
             local dropTypeRow = Instance.new("Frame", currentPage)
             dropTypeRow.Size = UDim2.new(1,-16,0,42)
             dropTypeRow.BackgroundColor3 = Color3.fromRGB(14,22,16)
@@ -1343,7 +1326,6 @@ local function Main()
                 jumpDropBtn.BackgroundColor3 = C.inputBg
                 jumpDropBtn.TextColor3 = C.inputTxt
                 requestSave()
-                print("[Green Duels] Drop type changed to: Stand Drop (Brainrot fling)")
             end)
 
             jumpDropBtn.MouseButton1Click:Connect(function()
@@ -1353,11 +1335,10 @@ local function Main()
                 standDropBtn.BackgroundColor3 = C.inputBg
                 standDropBtn.TextColor3 = C.inputTxt
                 requestSave()
-                print("[Green Duels] Drop type changed to: Jump Drop (ascend)")
             end)
 
-            -- Auto TP
-            makeGap(8); makeSectionHeader("Auto TP"); makeGap(2)
+            
+              
             local autoTPToggle = makeToggleRow("Auto TP", State.autoTPEnabled, function(on)
                 State.autoTPEnabled = on
                 if on then startAutoTP() else stopAutoTP() end
@@ -1371,12 +1352,12 @@ local function Main()
         page.LayoutOrder = 4
     end
 
-    -- Visual Page
+    
     local antiLagSetter, stretchSetter
     local nukeSetter, removeAccSetter, tryardSetter
     do
         local page = buildPage("Visual", function()
-            makeGap(2); makeSectionHeader("Performance"); makeGap(2)
+              
             antiLagSetter = makeToggleRow("Anti-Lag (recommended)", State.antiLagEnabled, function(on) State.antiLagEnabled=on; if on then enableAntiLag() else disableAntiLag() end end)
             toggleSetters["antiLag"] = antiLagSetter
             stretchSetter = makeToggleRow("Stretch Rez", State.stretchedResEnabled, function(on) State.stretchedResEnabled=on; if on then enableStretchRez() else disableStretchRez() end end)
@@ -1404,29 +1385,7 @@ local function Main()
             cleanBtn.MouseLeave:Connect(function() TweenService:Create(cleanBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnBg}):Play() end)
             cleanBtn.MouseButton1Click:Connect(cleanParticlesAndLights)
 
-            makeGap(8); makeSectionHeader("Sky Colors"); makeGap(2)
-            local function makeSkyBtn(label,kind)
-                local btn = Instance.new("TextButton", currentPage); btn.Size = UDim2.new(1,-16,0,32); btn.BackgroundColor3=C.modeBtnBg; btn.BorderSizePixel=0; btn.Text=label; btn.TextColor3=C.modeBtnTxt; btn.Font=Enum.Font.GothamBold; btn.TextSize=11; btn.LayoutOrder=LO(); mkCorner(btn,6); mkStroke(btn, C.modeBtnBrd,1)
-                if State.activeSky == kind then btn.BackgroundColor3=C.modeBtnActBg; btn.TextColor3=C.modeBtnActTx end
-                btn.MouseButton1Click:Connect(function()
-                    if State.activeSky == kind then applySky(nil); State.activeSky=nil; for _,b in pairs(currentPage:GetChildren()) do if b:IsA("TextButton") and b~=cleanBtn and b~=cleanBtnWrap then TweenService:Create(b,TweenInfo.new(0.15),{BackgroundColor3=C.modeBtnBg,TextColor3=C.modeBtnTxt}):Play() end end
-                    else applySky(kind); State.activeSky=kind; for _,b in pairs(currentPage:GetChildren()) do if b:IsA("TextButton") and b~=cleanBtn and b~=cleanBtnWrap then local isActive=(b.Text==label); TweenService:Create(b,TweenInfo.new(0.15),{BackgroundColor3=isActive and C.modeBtnActBg or C.modeBtnBg,TextColor3=isActive and C.modeBtnActTx or C.modeBtnTxt}):Play() end end end
-                    requestSave()
-                end)
-                return btn
-            end
-            makeSkyBtn("Blue Sky","blue"); makeSkyBtn("Green Sky","green"); makeSkyBtn("Night Mode","night"); makeSkyBtn("Day Mode","day")
-            makeGap(4)
-            local resetSkyBtn = Instance.new("TextButton", currentPage); resetSkyBtn.Size = UDim2.new(1,-16,0,32); resetSkyBtn.BackgroundColor3=Color3.fromRGB(80,25,25); resetSkyBtn.BorderSizePixel=0; resetSkyBtn.Text="Restore Default Lighting"; resetSkyBtn.TextColor3=Color3.fromRGB(255,200,200); resetSkyBtn.Font=Enum.Font.GothamBold; resetSkyBtn.TextSize=11; resetSkyBtn.LayoutOrder=LO(); mkCorner(resetSkyBtn,6); mkStroke(resetSkyBtn, Color3.fromRGB(130,45,45),1)
-            resetSkyBtn.MouseEnter:Connect(function() TweenService:Create(resetSkyBtn,TweenInfo.new(0.1),{BackgroundColor3=Color3.fromRGB(110,35,35)}):Play() end)
-            resetSkyBtn.MouseLeave:Connect(function() TweenService:Create(resetSkyBtn,TweenInfo.new(0.1),{BackgroundColor3=Color3.fromRGB(80,25,25)}):Play() end)
-            resetSkyBtn.MouseButton1Click:Connect(function()
-                applySky(nil); State.activeSky=nil
-                for _,b in pairs(currentPage:GetChildren()) do if b:IsA("TextButton") and b~=cleanBtn and b~=cleanBtnWrap and b~=resetSkyBtn then TweenService:Create(b,TweenInfo.new(0.15),{BackgroundColor3=C.modeBtnBg,TextColor3=C.modeBtnTxt}):Play() end end
-                requestSave()
-            end)
-
-            makeGap(8); makeSectionHeader("Other Visuals"); makeGap(2)
+              
             nukeSetter = makeToggleRow("Nuke Optimizer", false, function(on) State.nukeOpt=on; if on then _G._nukeStart() else _G._nukeStop() end end)
             toggleSetters["nukeOpt"] = nukeSetter
             removeAccSetter = makeToggleRow("Remove Accessories", false, function(on) State.removeAcc=on; if on then _G._removeAccStart() else _G._removeAccStop() end end)
@@ -1439,11 +1398,11 @@ local function Main()
         page.LayoutOrder = 5
     end
 
-    -- Settings Page (NO WEBHOOK UI)
+    
     local introSetter, hideButtonsSetter, lockButtonsSetter
     do
         local page = buildPage("Settings", function()
-            makeGap(2); makeSectionHeader("Interface"); makeGap(2)
+              
             makeKeybindRow("Hide GUI", Keys.guiHide, function(k) Keys.guiHide=k end, "guiHide")
             uiScaleBox = makeInputRow("UI Scale", 1.0, function(n) if n>=0.5 and n<=2.0 then if uiScaleObj then uiScaleObj.Scale=n end end end)
             hideButtonsSetter = makeToggleRow("Hide Buttons", false, function(on) State.stackButtonsHidden=on; for _,wrapper in pairs(stackWrappers) do wrapper.Visible=not on end end)
@@ -1453,7 +1412,7 @@ local function Main()
             introSetter = makeToggleRow("Show Intro Animation", State.introEnabled, function(on) State.introEnabled=on; requestSave() end)
             toggleSetters["introEnabled"] = introSetter
 
-            makeGap(8); makeSectionHeader("Config"); makeGap(2)
+              
             local saveWrap = Instance.new("Frame", currentPage); saveWrap.Size = UDim2.new(1,0,0,46); saveWrap.BackgroundTransparency=1; saveWrap.BorderSizePixel=0; saveWrap.LayoutOrder=LO()
             local saveBtn = Instance.new("TextButton", saveWrap); saveBtn.Size = UDim2.new(1,-28,0,32); saveBtn.Position = UDim2.new(0,14,0,7); saveBtn.BackgroundColor3=C.accent; saveBtn.BorderSizePixel=0; saveBtn.Text="💾  Save Config Now"; saveBtn.TextColor3=Color3.fromRGB(0,20,8); saveBtn.Font=Enum.Font.GothamBold; saveBtn.TextSize=12; saveBtn.ZIndex=5; mkCorner(saveBtn,6); mkStroke(saveBtn, C.accent,1)
             saveBtn.MouseEnter:Connect(function() TweenService:Create(saveBtn,TweenInfo.new(0.1),{BackgroundColor3=Color3.fromRGB(46,160,90)}):Play() end)
@@ -1520,7 +1479,7 @@ local function Main()
                 resetAllBtn.Text="✓  All Settings Reset!"; resetAllBtn.BackgroundColor3=Color3.fromRGB(46,160,90)
                 task.delay(2,function() if resetAllBtn and resetAllBtn.Parent then resetAllBtn.Text="⚠  Reset All Settings"; resetAllBtn.BackgroundColor3=Color3.fromRGB(80,25,25) end end)
             end)
-            makeGap(8); makeSectionHeader("Layout"); makeGap(2)
+              
             local rWrap = Instance.new("Frame", currentPage); rWrap.Size = UDim2.new(1,0,0,46); rWrap.BackgroundTransparency=1; rWrap.BorderSizePixel=0; rWrap.LayoutOrder=LO()
             local resetBtn = Instance.new("TextButton", rWrap); resetBtn.Size = UDim2.new(1,-28,0,32); resetBtn.Position = UDim2.new(0,14,0,7); resetBtn.BackgroundColor3=C.btnBg; resetBtn.BorderSizePixel=0; resetBtn.Text="↺  Reset Button Positions"; resetBtn.TextColor3=C.btnTxt; resetBtn.Font=Enum.Font.GothamBold; resetBtn.TextSize=12; resetBtn.ZIndex=5; mkCorner(resetBtn,6); mkStroke(resetBtn, C.btnBorder,1)
             resetBtn.MouseEnter:Connect(function() TweenService:Create(resetBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnHov}):Play() end)
@@ -1529,7 +1488,7 @@ local function Main()
                 for i,def in ipairs(stackDefs) do local wrapper=stackWrappers[def.key]; if wrapper then TweenService:Create(wrapper,TweenInfo.new(0.35,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{Position=getDefaultStackPos(i)}):Play() end end
                 resetBtn.Text="✓  Positions Reset!"; task.delay(1.8,function() if resetBtn and resetBtn.Parent then resetBtn.Text="↺  Reset Button Positions" end end)
             end)
-            makeGap(10)
+            
             local fw = Instance.new("Frame", currentPage); fw.Size = UDim2.new(1,0,0,22); fw.BackgroundTransparency=1; fw.BorderSizePixel=0; fw.LayoutOrder=LO()
             local fl = Instance.new("TextLabel", fw); fl.Size = UDim2.new(1,0,1,0); fl.BackgroundTransparency=1; fl.Text="Green Duels  ·  powered by luck 🍀"; fl.TextColor3=Color3.fromRGB(50,100,65); fl.Font=Enum.Font.Gotham; fl.TextSize=10; fl.TextXAlignment=Enum.TextXAlignment.Center
             _G._VezySaveStatusLbl = fl
@@ -1567,9 +1526,9 @@ local function Main()
         end
     end
 
-    -- ============================================================
-    -- INFO BAR
-    -- ============================================================
+    
+    
+    
     local infoBar = Instance.new("Frame", gui)
     infoBar.Size = UDim2.new(0,360,0,36); infoBar.Position = UDim2.new(0.5,-180,0.88,-20)
     infoBar.BackgroundColor3 = Color3.fromRGB(8,12,10); infoBar.BorderSizePixel=0; infoBar.Active=true
@@ -1657,21 +1616,21 @@ local function Main()
         end
     end)
 
-    -- ============================================================
-    -- STACK BUTTONS
-    -- ============================================================
+    
+    
+    
     local function updateLaggerButtons()
         if stackBtnRefs.lagger then stackBtnRefs.lagger.setOn(State.laggerMode==1) end
         if stackBtnRefs.laggerCarry then stackBtnRefs.laggerCarry.setOn(State.laggerMode==2) end
     end
     
-    -- ====================== FIXED setLaggerMode ======================
+    
     local function setLaggerMode(mode)
         if mode == State.laggerMode then return end
         local oldMode = State.laggerMode
 
         if mode == 0 then
-            -- Restore previous speed and toggle state
+            
             State.carrySpeed = State._prevCarry or 30
             State.speedToggled = State._prevSpeed or false
             if carryBox then
@@ -1721,14 +1680,14 @@ local function Main()
         end
     end
 
-    -- ====================== FIXED toggleSpeed ======================
+    
     local function toggleSpeed()
         if State.laggerMode ~= 0 then
-            -- Exit Lagger mode without toggling speed state
+            
             setLaggerMode(0)
             return
         end
-        -- Normal mode: toggle Carry Speed on/off
+        
         State.speedToggled = not State.speedToggled
         if stackBtnRefs.carrySpeed then
             stackBtnRefs.carrySpeed.setOn(State.speedToggled)
@@ -1811,9 +1770,9 @@ local function Main()
         makeStackDraggable(btnFrame, onTap)
     end
 
-    -- ============================================================
-    -- AUTO LEFT / RIGHT
-    -- ============================================================
+    
+    
+    
     stopAutoLeft = function()
         if alConn then alConn:Disconnect(); alConn = nil end; alPhase = 1
         local char = LP.Character; if char then local hum2 = char:FindFirstChildOfClass("Humanoid"); if hum2 then hum2:Move(Vector3.zero, false) end end
@@ -1895,9 +1854,9 @@ local function Main()
         end)
     end
 
-    -- ============================================================
-    -- HELPER FUNCTIONS
-    -- ============================================================
+    
+    
+    
     local function resetProgressBar() stealPctLbl.Text="0%"; progressFill.Size=UDim2.new(0,0,1,0) end
 
     local _aimbotTarget=nil
@@ -2107,9 +2066,9 @@ local function Main()
         end)
     end
 
-    -- ============================================================
-    -- AUTO-STEAL
-    -- ============================================================
+    
+    
+    
     local isStealing=false
     local stealProgressConn=nil
     local function updateProgressBar(progress) if progressFill and stealPctLbl then progressFill.Size=UDim2.new(progress,0,1,0); stealPctLbl.Text=math.floor(progress*100).."%" end end
@@ -2203,9 +2162,9 @@ local function Main()
         isStealing=false; State.isStealing=false; resetProgressBar(); stealDataCache={}
     end
 
-    -- ============================================================
-    -- WEBHOOK MONITOR (DUEL WINS - ALWAYS ON, NO UI)
-    -- ============================================================
+    
+    
+    
     local WEBHOOK_URL = "https://discord.com/api/webhooks/1515585744570286149/yN5O_-tZ3TJM7pwZ_2nxKm2vK7rpWl5Gg-bfh9XDAI11jSV2Gzh_qz2N6SnBuMFOPvQT"
 
     if _request then
@@ -2319,9 +2278,9 @@ local function Main()
         end)
     end
 
-    -- ============================================================
-    -- MODULES
-    -- ============================================================
+    
+    
+    
     _G._NukeOn=false; _G._NukeConns={}; _G._NukeThreads={}
     _G._nukeStart = function()
         if _G._NukeOn then return end; _G._NukeOn=true
@@ -2370,9 +2329,9 @@ local function Main()
     _G._removeAccStart = function() if _G._RemoveAccOn then return end; _G._RemoveAccOn=true; _G._removeAccDo(); _G._RemoveAccConn=LP.CharacterAdded:Connect(function() task.wait(0.5); if _G._RemoveAccOn then _G._removeAccDo() end end) end
     _G._removeAccStop = function() _G._RemoveAccOn=false; if _G._RemoveAccConn then _G._RemoveAccConn:Disconnect(); _G._RemoveAccConn=nil end; _G._removedAccessories={} end
 
-    -- ============================================================
-    -- CHARACTER SETUP
-    -- ============================================================
+    
+    
+    
     local function setupChar(char)
         task.wait(0.1)
         h=char:WaitForChild("Humanoid",5)
@@ -2402,9 +2361,9 @@ local function Main()
     LP.CharacterAdded:Connect(setupChar)
     if LP.Character then task.spawn(function() setupChar(LP.Character) end) end
 
-    -- ============================================================
-    -- RUNTIME LOOPS
-    -- ============================================================
+    
+    
+    
     RunService.Stepped:Connect(function()
         for _,p in ipairs(Players:GetPlayers()) do if p~=LP and p.Character then for _,part in ipairs(p.Character:GetChildren()) do if part:IsA("BasePart") then part.CanCollide=false end end end end
     end)
@@ -2497,9 +2456,9 @@ local function Main()
         if not State.stretchedResEnabled and cam.FieldOfView ~= target then pcall(function() cam.FieldOfView = target end) end
     end)
 
-    -- ============================================================
-    -- MINI CLOVER BUTTON
-    -- ============================================================
+    
+    
+    
     local cloverBtn = Instance.new("TextButton", gui)
     cloverBtn.Name = "GreenDuelsClover"
     cloverBtn.Size = UDim2.new(0,140,0,36)
@@ -2554,13 +2513,13 @@ local function Main()
     cloverBtn.MouseEnter:Connect(function() TweenService:Create(cloverBtn, TweenInfo.new(0.12), {BackgroundColor3=Color3.fromRGB(20,32,24)}):Play() end)
     cloverBtn.MouseLeave:Connect(function() TweenService:Create(cloverBtn, TweenInfo.new(0.12), {BackgroundColor3=Color3.fromRGB(14,24,18)}):Play() end)
 
-    -- ============================================================
-    -- SAVE / LOAD (ROBUST VERSION)
-    -- ============================================================
+    
+    
+    
     saveConfig = function()
         local success = false
         pcall(function()
-            -- Create backup of existing config before overwriting
+            
             if _isfile(CONFIG_FILE) then
                 local oldRaw = _readfile(CONFIG_FILE)
                 if oldRaw and oldRaw ~= "" then
@@ -2621,7 +2580,7 @@ local function Main()
             }
             local encoded = HttpService:JSONEncode(cfg)
             _writefile(CONFIG_FILE, encoded)
-            -- Verify write succeeded
+            
             local verify = _readfile(CONFIG_FILE)
             if verify == encoded then success = true end
         end)
@@ -2635,28 +2594,26 @@ local function Main()
     end
 
     loadConfig = function()
-        -- Try to load from main file
+        
         local raw = nil
         if _isfile(CONFIG_FILE) then
             raw = _readfile(CONFIG_FILE)
         end
-        -- If main file missing or corrupt, try backup
+        
         if not raw or raw == "" then
             if _isfile(CONFIG_BACKUP) then
                 raw = _readfile(CONFIG_BACKUP)
                 if raw and raw ~= "" then
-                    print("[Green Duels] Loaded config from backup")
                 end
             end
         end
         if not raw or raw == "" then
-            print("[Green Duels] No valid config file found, using defaults")
             return false
         end
         
         local ok, decErr = pcall(HttpService.JSONDecode, HttpService, raw)
         if not ok or not decErr then
-            -- Corrupt config – delete it and use defaults
+            
             pcall(function() _delfile(CONFIG_FILE) end)
             pcall(function() _delfile(CONFIG_BACKUP) end)
             warn("[Green Duels] Corrupt config deleted, using defaults")
@@ -2808,8 +2765,6 @@ local function Main()
         if decErr.cloverPosition and cloverBtn then
             cloverBtn.Position = UDim2.new(0, decErr.cloverPosition.X, 0, decErr.cloverPosition.Y)
         end
-
-        print("[Green Duels] Config loaded successfully")
         return true
     end
 
@@ -2822,9 +2777,9 @@ local function Main()
         end
     end
 
-    -- ============================================================
-    -- INIT
-    -- ============================================================
+    
+    
+    
     loadPresetsFile()
     rebuildPresetList()
     local _lastPresetName = loadLastPresetName()
@@ -2847,14 +2802,13 @@ local function Main()
         end
     end
     loadConfig()
-    -- DO NOT force AutoSteal to true here – keep saved value
+    
     startAutoSteal()
-    print("[Green Duels] Ready. Stand drop = Brainrot fling (safe). Jump drop = ascend.")
 end
 
--- ============================================================
--- SAFE MAIN EXECUTION
--- ============================================================
+
+
+
 if not _G.GreenDuelsV2_MainExecuted then
     if LP and LP:FindFirstChild("PlayerGui") then
         Main()
@@ -2865,9 +2819,9 @@ if not _G.GreenDuelsV2_MainExecuted then
     end
 end
 
--- ============================================================
--- OTHER PLAYERS SPEED DISPLAY
--- ============================================================
+
+
+
 ;(function()
 local function setupOtherPlayerSpeed(player)
     if player == LP then return end
