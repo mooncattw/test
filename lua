@@ -919,8 +919,6 @@ local function Main()
     mainPad.PaddingLeft = UDim.new(0,8); mainPad.PaddingRight = UDim.new(0,8)
     mainPad.PaddingTop = UDim.new(0,6); mainPad.PaddingBottom = UDim.new(0,12)
 
-    local TABS = {"Speed", "Combat", "Auto Steal", "Movement", "Visual", "Settings"}
-    local tabPages = {}
     local currentPage = nil
     local lo = 0
     local function LO() lo = lo+1; return lo end
@@ -1193,70 +1191,50 @@ local function Main()
     -- ============================================================
     -- BUILD PAGES
     -- ============================================================
-    local function buildPage(tabName, buildFn)
-        local page = Instance.new("Frame", mainScroll)
-        page.Name = tabName; page.Size = UDim2.new(1,0,0,0); page.AutomaticSize = Enum.AutomaticSize.Y
-        page.BackgroundTransparency = 1; page.BorderSizePixel = 0; page.LayoutOrder = 0
-        local ll = Instance.new("UIListLayout", page); ll.SortOrder = Enum.SortOrder.LayoutOrder
-        ll.Padding = UDim.new(0,0); ll.HorizontalAlignment = Enum.HorizontalAlignment.Center
-        tabPages[tabName] = page
-        currentPage = page; lo = 0; buildFn(); currentPage = nil
-        return page
+    local function buildSection(buildFn)
+        currentPage = mainScroll
+        lo = 0; buildFn(); currentPage = nil
     end
 
-    -- Speed Page
-    do
-        local page = buildPage("Speed", function()
-            normalBox = makeInputRow("Normal Speed", State.normalSpeed, function(n) if n>0 and n<=500 then State.normalSpeed=n end end)
-            carryBox = makeInputRow("Carry Speed", State.carrySpeed, function(n) if n>0 and n<=500 then State.carrySpeed=n end end)
-            laggerBox = makeInputRow("Lagger Speed", State.laggerSpeed, function(n) if n>0 and n<=500 then State.laggerSpeed=n end end)
-            laggerCarryBox = makeInputRow("Lagger Carry Speed", State.laggerCarrySpeed, function(n) if n>0 and n<=500 then State.laggerCarrySpeed=n end end)
-            makeKeybindRow("Speed Key (toggles)", Keys.speed, function(k) Keys.speed=k end, "speed")
-            makeKeybindRow("Lagger Key (toggles)", Keys.lagger, function(k) Keys.lagger=k end, "lagger")
-        end)
-        page.LayoutOrder = 1
-    end
+    buildSection(function()
+        normalBox = makeInputRow("Normal Speed", State.normalSpeed, function(n) if n>0 and n<=500 then State.normalSpeed=n end end)
+        carryBox = makeInputRow("Carry Speed", State.carrySpeed, function(n) if n>0 and n<=500 then State.carrySpeed=n end end)
+        laggerBox = makeInputRow("Lagger Speed", State.laggerSpeed, function(n) if n>0 and n<=500 then State.laggerSpeed=n end end)
+        laggerCarryBox = makeInputRow("Lagger Carry Speed", State.laggerCarrySpeed, function(n) if n>0 and n<=500 then State.laggerCarrySpeed=n end end)
+        makeKeybindRow("Speed Key (toggles)", Keys.speed, function(k) Keys.speed=k end, "speed")
+        makeKeybindRow("Lagger Key (toggles)", Keys.lagger, function(k) Keys.lagger=k end, "lagger")
+    end)
 
-    -- Combat Page
-    do
-        local page = buildPage("Combat", function()
-            setAutoSwing = makeToggleRow("Auto Swing", false, function(on) State.autoSwingEnabled=on end)
-            toggleSetters["autoSwing"] = setAutoSwing
-            setBatCounter = makeToggleRow("Bat Counter", false, function(on) State.batCounterEnabled=on; if on then startBatCounter() else stopBatCounter() end end)
-            toggleSetters["batCounter"] = setBatCounter
-            setMedusaCounter = makeToggleRow("Medusa Counter", false, function(on) State.medusaCounterEnabled=on; if on then setupMedusaCounter(LP.Character) else stopMedusaCounter() end end)
-            toggleSetters["medusaCounter"] = setMedusaCounter
-            makeKeybindRow("Aimbot Key", Keys.aimbot, function(k) Keys.aimbot=k end, "aimbot")
-        end)
-        page.LayoutOrder = 2
-    end
+    buildSection(function()
+        setAutoSwing = makeToggleRow("Auto Swing", false, function(on) State.autoSwingEnabled=on end)
+        toggleSetters["autoSwing"] = setAutoSwing
+        setBatCounter = makeToggleRow("Bat Counter", false, function(on) State.batCounterEnabled=on; if on then startBatCounter() else stopBatCounter() end end)
+        toggleSetters["batCounter"] = setBatCounter
+        setMedusaCounter = makeToggleRow("Medusa Counter", false, function(on) State.medusaCounterEnabled=on; if on then setupMedusaCounter(LP.Character) else stopMedusaCounter() end end)
+        toggleSetters["medusaCounter"] = setMedusaCounter
+        makeKeybindRow("Aimbot Key", Keys.aimbot, function(k) Keys.aimbot=k end, "aimbot")
+    end)
 
-    -- Auto Steal Page
-    do
-        local page = buildPage("Auto Steal", function()
-            setInstaGrab = makeToggleRow("Auto Steal", true, function(on) Steal.AutoStealEnabled=on; if on then startAutoSteal() else stopAutoSteal() end end)
-            toggleSetters["autoSteal"] = setInstaGrab
-            stealRadBox = makeInputRow("Steal Radius", Steal.StealRadius, function(n) if n then n=math.floor(n); if n>=1 and n<=500 then Steal.StealRadius=n end end end)
-            local durBox,_ = makeInputRow("Steal Duration", Steal.StealDuration, function(n) if n then n=math.min(n,10); if n>=0.05 then Steal.StealDuration=n end end end)
-            stealDurBox = durBox
-        end)
-        page.LayoutOrder = 3
-    end
+    buildSection(function()
+        setInstaGrab = makeToggleRow("Auto Steal", true, function(on) Steal.AutoStealEnabled=on; if on then startAutoSteal() else stopAutoSteal() end end)
+        toggleSetters["autoSteal"] = setInstaGrab
+        stealRadBox = makeInputRow("Steal Radius", Steal.StealRadius, function(n) if n then n=math.floor(n); if n>=1 and n<=500 then Steal.StealRadius=n end end end)
+        local durBox,_ = makeInputRow("Steal Duration", Steal.StealDuration, function(n) if n then n=math.min(n,10); if n>=0.05 then Steal.StealDuration=n end end end)
+        stealDurBox = durBox
+    end)
 
-    -- Movement Page
-    do
-        local page = buildPage("Movement", function()
-            setInfJump = makeToggleRow("Infinite Jump", true, function(on) State.infJumpEnabled=on end)
-            toggleSetters["infJump"] = setInfJump
-            setAntiRag = makeToggleRow("Anti Ragdoll", false, function(on) State.antiRagdollEnabled=on; if on then startAntiRagdoll() else stopAntiRagdoll() end end)
-            toggleSetters["antiRagdoll"] = setAntiRag
-            makeKeybindRow("Auto Left", Keys.autoLeft, function(k) Keys.autoLeft=k end, "autoLeft")
-            makeKeybindRow("Auto Right", Keys.autoRight, function(k) Keys.autoRight=k end, "autoRight")
-            makeKeybindRow("Drop Key", Keys.drop, function(k) Keys.drop=k end, "drop")
-            makeKeybindRow("TP Down", Keys.tpDown, function(k) Keys.tpDown=k end, "tpDown")
+    buildSection(function()
+        setInfJump = makeToggleRow("Infinite Jump", true, function(on) State.infJumpEnabled=on end)
+        toggleSetters["infJump"] = setInfJump
+        setAntiRag = makeToggleRow("Anti Ragdoll", false, function(on) State.antiRagdollEnabled=on; if on then startAntiRagdoll() else stopAntiRagdoll() end end)
+        toggleSetters["antiRagdoll"] = setAntiRag
+        makeKeybindRow("Auto Left", Keys.autoLeft, function(k) Keys.autoLeft=k end, "autoLeft")
+        makeKeybindRow("Auto Right", Keys.autoRight, function(k) Keys.autoRight=k end, "autoRight")
+        makeKeybindRow("Drop Key", Keys.drop, function(k) Keys.drop=k end, "drop")
+        makeKeybindRow("TP Down", Keys.tpDown, function(k) Keys.tpDown=k end, "tpDown")
 
-            -- DROP TYPE SELECTOR (Stand / Jump)
-            local dropTypeRow = Instance.new("Frame", currentPage)
+        -- DROP TYPE SELECTOR (Stand / Jump)
+        local dropTypeRow = Instance.new("Frame", currentPage)
             dropTypeRow.Size = UDim2.new(1,-16,0,42)
             dropTypeRow.BackgroundColor3 = Color3.fromRGB(14,22,16)
             dropTypeRow.BorderSizePixel = 0
@@ -1332,153 +1310,143 @@ local function Main()
                 if n and n >= 2 and n <= 500 then State.autoTPHeight = n end
             end)
         end)
-        page.LayoutOrder = 4
-    end
 
-    -- Visual Page
     local antiLagSetter, stretchSetter
     local nukeSetter, removeAccSetter, tryardSetter
-    do
-        local page = buildPage("Visual", function()
-            antiLagSetter = makeToggleRow("Anti-Lag (recommended)", State.antiLagEnabled, function(on) State.antiLagEnabled=on; if on then enableAntiLag() else disableAntiLag() end end)
-            toggleSetters["antiLag"] = antiLagSetter
-            stretchSetter = makeToggleRow("Stretch Rez", State.stretchedResEnabled, function(on) State.stretchedResEnabled=on; if on then enableStretchRez() else disableStretchRez() end end)
-            toggleSetters["stretchedRes"] = stretchSetter
-            do
-                local fovRow = Instance.new("Frame", currentPage); fovRow.Size = UDim2.new(1,-16,0,42); fovRow.BackgroundColor3=Color3.fromRGB(14,22,16); fovRow.BorderSizePixel=0; fovRow.LayoutOrder=LO(); mkCorner(fovRow,12)
-                local fovStroke = mkStroke(fovRow, Color3.fromRGB(34,76,46),1); fovStroke.Transparency=0.5
-                local fovLabel = Instance.new("TextLabel", fovRow); fovLabel.Size = UDim2.new(0.4,0,1,0); fovLabel.Position = UDim2.new(0,14,0,0); fovLabel.BackgroundTransparency=1; fovLabel.Text="Stretch FOV"; fovLabel.TextColor3=C.rowLabel; fovLabel.Font=Enum.Font.GothamBold; fovLabel.TextSize=13; fovLabel.TextXAlignment=Enum.TextXAlignment.Left
-                local btnFrame = Instance.new("Frame", fovRow); btnFrame.Size = UDim2.new(0,150,0,28); btnFrame.Position = UDim2.new(1,-162,0.5,-14); btnFrame.BackgroundTransparency=1
-                local function makeFOVBtn(val,x)
-                    local btn = Instance.new("TextButton", btnFrame); btn.Size = UDim2.new(0,44,0,28); btn.Position = UDim2.new(0,x,0,0); btn.BackgroundColor3=C.modeBtnBg; btn.BorderSizePixel=0; btn.Text=tostring(val); btn.TextColor3=C.modeBtnTxt; btn.Font=Enum.Font.GothamBold; btn.TextSize=12; mkCorner(btn,6); mkStroke(btn, C.modeBtnBrd,1)
-                    if val == State.stretchFOV then btn.BackgroundColor3=C.modeBtnActBg; btn.TextColor3=C.modeBtnActTx end
-                    btn.MouseButton1Click:Connect(function()
-                        State.stretchFOV=val; if State.stretchedResEnabled then applyStretchFOV(val) end
-                        for _,b in pairs(btnFrame:GetChildren()) do if b:IsA("TextButton") then local v=tonumber(b.Text); if v==val then TweenService:Create(b,TweenInfo.new(0.15),{BackgroundColor3=C.modeBtnActBg,TextColor3=C.modeBtnActTx}):Play() else TweenService:Create(b,TweenInfo.new(0.15),{BackgroundColor3=C.modeBtnBg,TextColor3=C.modeBtnTxt}):Play() end end end
-                        requestSave()
-                    end)
-                    return btn
-                end
-                makeFOVBtn(90,0); makeFOVBtn(120,53); makeFOVBtn(180,106)
+    buildSection(function()
+        antiLagSetter = makeToggleRow("Anti-Lag (recommended)", State.antiLagEnabled, function(on) State.antiLagEnabled=on; if on then enableAntiLag() else disableAntiLag() end end)
+        toggleSetters["antiLag"] = antiLagSetter
+        stretchSetter = makeToggleRow("Stretch Rez", State.stretchedResEnabled, function(on) State.stretchedResEnabled=on; if on then enableStretchRez() else disableStretchRez() end end)
+        toggleSetters["stretchedRes"] = stretchSetter
+        do
+            local fovRow = Instance.new("Frame", currentPage); fovRow.Size = UDim2.new(1,-16,0,42); fovRow.BackgroundColor3=Color3.fromRGB(14,22,16); fovRow.BorderSizePixel=0; fovRow.LayoutOrder=LO(); mkCorner(fovRow,12)
+            local fovStroke = mkStroke(fovRow, Color3.fromRGB(34,76,46),1); fovStroke.Transparency=0.5
+            local fovLabel = Instance.new("TextLabel", fovRow); fovLabel.Size = UDim2.new(0.4,0,1,0); fovLabel.Position = UDim2.new(0,14,0,0); fovLabel.BackgroundTransparency=1; fovLabel.Text="Stretch FOV"; fovLabel.TextColor3=C.rowLabel; fovLabel.Font=Enum.Font.GothamBold; fovLabel.TextSize=13; fovLabel.TextXAlignment=Enum.TextXAlignment.Left
+            local btnFrame = Instance.new("Frame", fovRow); btnFrame.Size = UDim2.new(0,150,0,28); btnFrame.Position = UDim2.new(1,-162,0.5,-14); btnFrame.BackgroundTransparency=1
+            local function makeFOVBtn(val,x)
+                local btn = Instance.new("TextButton", btnFrame); btn.Size = UDim2.new(0,44,0,28); btn.Position = UDim2.new(0,x,0,0); btn.BackgroundColor3=C.modeBtnBg; btn.BorderSizePixel=0; btn.Text=tostring(val); btn.TextColor3=C.modeBtnTxt; btn.Font=Enum.Font.GothamBold; btn.TextSize=12; mkCorner(btn,6); mkStroke(btn, C.modeBtnBrd,1)
+                if val == State.stretchFOV then btn.BackgroundColor3=C.modeBtnActBg; btn.TextColor3=C.modeBtnActTx end
+                btn.MouseButton1Click:Connect(function()
+                    State.stretchFOV=val; if State.stretchedResEnabled then applyStretchFOV(val) end
+                    for _,b in pairs(btnFrame:GetChildren()) do if b:IsA("TextButton") then local v=tonumber(b.Text); if v==val then TweenService:Create(b,TweenInfo.new(0.15),{BackgroundColor3=C.modeBtnActBg,TextColor3=C.modeBtnActTx}):Play() else TweenService:Create(b,TweenInfo.new(0.15),{BackgroundColor3=C.modeBtnBg,TextColor3=C.modeBtnTxt}):Play() end end end
+                    requestSave()
+                end)
+                return btn
             end
-            local cleanBtnWrap = Instance.new("Frame", currentPage); cleanBtnWrap.Size = UDim2.new(1,-16,0,46); cleanBtnWrap.BackgroundTransparency=1; cleanBtnWrap.LayoutOrder=LO()
-            local cleanBtn = Instance.new("TextButton", cleanBtnWrap); cleanBtn.Size = UDim2.new(1,0,0,32); cleanBtn.Position = UDim2.new(0,0,0,7); cleanBtn.BackgroundColor3=C.btnBg; cleanBtn.BorderSizePixel=0; cleanBtn.Text="🧹 Clean Particles & Lights"; cleanBtn.TextColor3=C.btnTxt; cleanBtn.Font=Enum.Font.GothamBold; cleanBtn.TextSize=12; mkCorner(cleanBtn,6); mkStroke(cleanBtn, C.btnBorder,1)
-            cleanBtn.MouseEnter:Connect(function() TweenService:Create(cleanBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnHov}):Play() end)
-            cleanBtn.MouseLeave:Connect(function() TweenService:Create(cleanBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnBg}):Play() end)
-            cleanBtn.MouseButton1Click:Connect(cleanParticlesAndLights)
+            makeFOVBtn(90,0); makeFOVBtn(120,53); makeFOVBtn(180,106)
+        end
+        local cleanBtnWrap = Instance.new("Frame", currentPage); cleanBtnWrap.Size = UDim2.new(1,-16,0,46); cleanBtnWrap.BackgroundTransparency=1; cleanBtnWrap.LayoutOrder=LO()
+        local cleanBtn = Instance.new("TextButton", cleanBtnWrap); cleanBtn.Size = UDim2.new(1,0,0,32); cleanBtn.Position = UDim2.new(0,0,0,7); cleanBtn.BackgroundColor3=C.btnBg; cleanBtn.BorderSizePixel=0; cleanBtn.Text="🧹 Clean Particles & Lights"; cleanBtn.TextColor3=C.btnTxt; cleanBtn.Font=Enum.Font.GothamBold; cleanBtn.TextSize=12; mkCorner(cleanBtn,6); mkStroke(cleanBtn, C.btnBorder,1)
+        cleanBtn.MouseEnter:Connect(function() TweenService:Create(cleanBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnHov}):Play() end)
+        cleanBtn.MouseLeave:Connect(function() TweenService:Create(cleanBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnBg}):Play() end)
+        cleanBtn.MouseButton1Click:Connect(cleanParticlesAndLights)
 
-            nukeSetter = makeToggleRow("Nuke Optimizer", false, function(on) State.nukeOpt=on; if on then _G._nukeStart() else _G._nukeStop() end end)
-            toggleSetters["nukeOpt"] = nukeSetter
-            removeAccSetter = makeToggleRow("Remove Accessories", false, function(on) State.removeAcc=on; if on then _G._removeAccStart() else _G._removeAccStop() end end)
-            toggleSetters["removeAcc"] = removeAccSetter
-            tryardSetter = makeToggleRow("Tryard Animation Pack", State.tryardAnimEnabled, function(on) State.tryardAnimEnabled=on; if on then startTryardAnim() else stopTryardAnim() end end)
-            toggleSetters["tryardAnim"] = tryardSetter
-            _G._VezyFOV = _G._VezyFOV or 70
-            makeInputRow("FOV (normal)", _G._VezyFOV, function(n) if n>=70 and n<=180 then _G._VezyFOV=n; local cam=workspace.CurrentCamera; if cam and not State.stretchedResEnabled then pcall(function() cam.FieldOfView=n end) end end end)
-        end)
-        page.LayoutOrder = 5
-    end
+        nukeSetter = makeToggleRow("Nuke Optimizer", false, function(on) State.nukeOpt=on; if on then _G._nukeStart() else _G._nukeStop() end end)
+        toggleSetters["nukeOpt"] = nukeSetter
+        removeAccSetter = makeToggleRow("Remove Accessories", false, function(on) State.removeAcc=on; if on then _G._removeAccStart() else _G._removeAccStop() end end)
+        toggleSetters["removeAcc"] = removeAccSetter
+        tryardSetter = makeToggleRow("Tryard Animation Pack", State.tryardAnimEnabled, function(on) State.tryardAnimEnabled=on; if on then startTryardAnim() else stopTryardAnim() end end)
+        toggleSetters["tryardAnim"] = tryardSetter
+        _G._VezyFOV = _G._VezyFOV or 70
+        makeInputRow("FOV (normal)", _G._VezyFOV, function(n) if n>=70 and n<=180 then _G._VezyFOV=n; local cam=workspace.CurrentCamera; if cam and not State.stretchedResEnabled then pcall(function() cam.FieldOfView=n end) end end end)
+    end)
 
-    -- Settings Page (NO WEBHOOK UI)
     local introSetter, hideButtonsSetter, lockButtonsSetter
-    do
-        local page = buildPage("Settings", function()
-            makeKeybindRow("Hide GUI", Keys.guiHide, function(k) Keys.guiHide=k end, "guiHide")
-            uiScaleBox = makeInputRow("UI Scale", 1.0, function(n) if n>=0.5 and n<=2.0 then if uiScaleObj then uiScaleObj.Scale=n end end end)
-            hideButtonsSetter = makeToggleRow("Hide Buttons", false, function(on) State.stackButtonsHidden=on; for _,wrapper in pairs(stackWrappers) do wrapper.Visible=not on end end)
-            toggleSetters["hideButtons"] = hideButtonsSetter
-            lockButtonsSetter = makeToggleRow("Lock Buttons", false, function(on) State.stackButtonsLocked=on end)
-            toggleSetters["lockButtons"] = lockButtonsSetter
-            introSetter = makeToggleRow("Show Intro Animation", State.introEnabled, function(on) State.introEnabled=on; requestSave() end)
-            toggleSetters["introEnabled"] = introSetter
+    buildSection(function()
+        makeKeybindRow("Hide GUI", Keys.guiHide, function(k) Keys.guiHide=k end, "guiHide")
+        uiScaleBox = makeInputRow("UI Scale", 1.0, function(n) if n>=0.5 and n<=2.0 then if uiScaleObj then uiScaleObj.Scale=n end end end)
+        hideButtonsSetter = makeToggleRow("Hide Buttons", false, function(on) State.stackButtonsHidden=on; for _,wrapper in pairs(stackWrappers) do wrapper.Visible=not on end end)
+        toggleSetters["hideButtons"] = hideButtonsSetter
+        lockButtonsSetter = makeToggleRow("Lock Buttons", false, function(on) State.stackButtonsLocked=on end)
+        toggleSetters["lockButtons"] = lockButtonsSetter
+        introSetter = makeToggleRow("Show Intro Animation", State.introEnabled, function(on) State.introEnabled=on; requestSave() end)
+        toggleSetters["introEnabled"] = introSetter
 
-            local saveWrap = Instance.new("Frame", currentPage); saveWrap.Size = UDim2.new(1,0,0,46); saveWrap.BackgroundTransparency=1; saveWrap.BorderSizePixel=0; saveWrap.LayoutOrder=LO()
-            local saveBtn = Instance.new("TextButton", saveWrap); saveBtn.Size = UDim2.new(1,-28,0,32); saveBtn.Position = UDim2.new(0,14,0,7); saveBtn.BackgroundColor3=C.accent; saveBtn.BorderSizePixel=0; saveBtn.Text="💾  Save Config Now"; saveBtn.TextColor3=Color3.fromRGB(0,20,8); saveBtn.Font=Enum.Font.GothamBold; saveBtn.TextSize=12; saveBtn.ZIndex=5; mkCorner(saveBtn,6); mkStroke(saveBtn, C.accent,1)
-            saveBtn.MouseEnter:Connect(function() TweenService:Create(saveBtn,TweenInfo.new(0.1),{BackgroundColor3=Color3.fromRGB(46,160,90)}):Play() end)
-            saveBtn.MouseLeave:Connect(function() TweenService:Create(saveBtn,TweenInfo.new(0.1),{BackgroundColor3=C.accent}):Play() end)
-            saveBtn.MouseButton1Click:Connect(function()
-                local success = pcall(saveConfig)
-                if success then saveBtn.Text="✓  Saved!"; saveBtn.BackgroundColor3=Color3.fromRGB(46,180,100) else saveBtn.Text="✗  Save Failed"; saveBtn.BackgroundColor3=Color3.fromRGB(180,60,60) end
-                task.delay(2.5,function() if saveBtn and saveBtn.Parent then saveBtn.Text="💾  Save Config Now"; saveBtn.BackgroundColor3=C.accent end end)
-            end)
-            local resetWrap = Instance.new("Frame", currentPage); resetWrap.Size = UDim2.new(1,0,0,46); resetWrap.BackgroundTransparency=1; resetWrap.BorderSizePixel=0; resetWrap.LayoutOrder=LO()
-            local resetAllBtn = Instance.new("TextButton", resetWrap); resetAllBtn.Size = UDim2.new(1,-28,0,32); resetAllBtn.Position = UDim2.new(0,14,0,7); resetAllBtn.BackgroundColor3=Color3.fromRGB(80,25,25); resetAllBtn.BorderSizePixel=0; resetAllBtn.Text="⚠  Reset All Settings"; resetAllBtn.TextColor3=Color3.fromRGB(255,200,200); resetAllBtn.Font=Enum.Font.GothamBold; resetAllBtn.TextSize=12; resetAllBtn.ZIndex=5; mkCorner(resetAllBtn,6); mkStroke(resetAllBtn, Color3.fromRGB(130,45,45),1)
-            resetAllBtn.MouseEnter:Connect(function() TweenService:Create(resetAllBtn,TweenInfo.new(0.1),{BackgroundColor3=Color3.fromRGB(110,35,35)}):Play() end)
-            resetAllBtn.MouseLeave:Connect(function() TweenService:Create(resetAllBtn,TweenInfo.new(0.1),{BackgroundColor3=Color3.fromRGB(80,25,25)}):Play() end)
-            local _resetConfirmStage=0; local _resetConfirmTimer=nil
-            resetAllBtn.MouseButton1Click:Connect(function()
-                if _resetConfirmStage==0 then
-                    _resetConfirmStage=1; resetAllBtn.Text="⚠  Click again to confirm!"; resetAllBtn.BackgroundColor3=Color3.fromRGB(160,50,50)
-                    if _resetConfirmTimer then task.cancel(_resetConfirmTimer) end
-                    _resetConfirmTimer = task.delay(3,function() if resetAllBtn and resetAllBtn.Parent then _resetConfirmStage=0; resetAllBtn.Text="⚠  Reset All Settings"; resetAllBtn.BackgroundColor3=Color3.fromRGB(80,25,25) end end)
-                    return
-                end
-                _resetConfirmStage=0; if _resetConfirmTimer then task.cancel(_resetConfirmTimer); _resetConfirmTimer=nil end
-                pcall(function() if State.batAimbotToggled then stopBatAimbot() end end)
-                pcall(function() if State.batCounterEnabled then stopBatCounter() end end)
-                pcall(function() if State.medusaCounterEnabled then stopMedusaCounter() end end)
-                pcall(function() if State.antiRagdollEnabled then stopAntiRagdoll() end end)
-                pcall(function() if Steal.AutoStealEnabled then stopAutoSteal() end end)
-                pcall(function() if State.autoLeftEnabled then stopAutoLeft() end end)
-                pcall(function() if State.autoRightEnabled then stopAutoRight() end end)
-                pcall(function() if State.antiLagEnabled then disableAntiLag() end end)
-                pcall(function() if State.stretchedResEnabled then disableStretchRez() end end)
-                pcall(function() if State.autoTPEnabled then stopAutoTP() end end)
-                pcall(function() if _G._NukeOn and _G._nukeStop then _G._nukeStop() end end)
-                pcall(function() if _G._RemoveAccOn and _G._removeAccStop then _G._removeAccStop() end end)
-                restoreLighting()
-                State.normalSpeed=60; State.carrySpeed=30; State.laggerSpeed=10.1; State.laggerCarrySpeed=15
-                State.speedToggled=false; State.laggerMode=0; State.infJumpEnabled=true; State.antiRagdollEnabled=false
-                State.antiLagEnabled=false; State.stretchedResEnabled=false
-                State.stretchFOV=120; State.medusaCounterEnabled=false; State.batCounterEnabled=false
-                State.batAimbotToggled=false; State.autoSwingEnabled=false; State.autoLeftEnabled=false; State.autoRightEnabled=false
-                State.stackButtonsHidden=false; State.stackButtonsLocked=false; State.introEnabled=true
-                State.autoTPEnabled=false; State.autoTPHeight=20
-                Steal.StealRadius=55; Steal.StealDuration=0.25; Steal.AutoStealEnabled=true
-                Keys.speed=Enum.KeyCode.Q; Keys.guiHide=Enum.KeyCode.LeftControl; Keys.autoLeft=Enum.KeyCode.L; Keys.autoRight=Enum.KeyCode.R
-                Keys.lagger=Enum.KeyCode.Unknown; Keys.tpDown=Enum.KeyCode.Unknown; Keys.drop=Enum.KeyCode.H; Keys.aimbot=Enum.KeyCode.Unknown
-                currentDropType = DROP_TYPES.STAND
-                if standDropBtn then
-                    standDropBtn.BackgroundColor3 = C.accent
-                    standDropBtn.TextColor3 = Color3.fromRGB(0,20,8)
-                    jumpDropBtn.BackgroundColor3 = C.inputBg
-                    jumpDropBtn.TextColor3 = C.inputTxt
-                end
-                if normalBox then normalBox.Text=tostring(State.normalSpeed) end; if carryBox then carryBox.Text=tostring(State.carrySpeed) end
-                if laggerBox then laggerBox.Text=tostring(State.laggerSpeed) end; if laggerCarryBox then laggerCarryBox.Text=tostring(State.laggerCarrySpeed) end
-                if stealRadBox then stealRadBox.Text=tostring(Steal.StealRadius) end; if stealDurBox then stealDurBox.Text=tostring(Steal.StealDuration) end
-                if uiScaleObj then uiScaleObj.Scale=1.0 end; if uiScaleBox then uiScaleBox.Text="1" end
-                if setInstaGrab then pcall(setInstaGrab,true) end; if setInfJump then pcall(setInfJump,true) end; if setAntiRag then pcall(setAntiRag,false) end
-                if setMedusaCounter then pcall(setMedusaCounter,false) end; if setBatCounter then pcall(setBatCounter,false) end; if setAutoSwing then pcall(setAutoSwing,false) end
-                if hideButtonsSetter then pcall(hideButtonsSetter,false) end; if lockButtonsSetter then pcall(lockButtonsSetter,false) end
-                if introSetter then pcall(introSetter,true) end
-                if stackBtnRefs then for key,ref in pairs(stackBtnRefs) do if ref and ref.setOn then pcall(ref.setOn,false) end end end
-                if keybindBtnRefs then refreshAllKeybindButtons() end
-                for i,def in ipairs(stackDefs) do local wrapper=stackWrappers[def.key]; if wrapper then TweenService:Create(wrapper,TweenInfo.new(0.35,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{Position=getDefaultStackPos(i)}):Play() end end
-                resetAllBtn.Text="✓  All Settings Reset!"; resetAllBtn.BackgroundColor3=Color3.fromRGB(46,160,90)
-                task.delay(2,function() if resetAllBtn and resetAllBtn.Parent then resetAllBtn.Text="⚠  Reset All Settings"; resetAllBtn.BackgroundColor3=Color3.fromRGB(80,25,25) end end)
-            end)
-            local rWrap = Instance.new("Frame", currentPage); rWrap.Size = UDim2.new(1,0,0,46); rWrap.BackgroundTransparency=1; rWrap.BorderSizePixel=0; rWrap.LayoutOrder=LO()
-            local resetBtn = Instance.new("TextButton", rWrap); resetBtn.Size = UDim2.new(1,-28,0,32); resetBtn.Position = UDim2.new(0,14,0,7); resetBtn.BackgroundColor3=C.btnBg; resetBtn.BorderSizePixel=0; resetBtn.Text="↺  Reset Button Positions"; resetBtn.TextColor3=C.btnTxt; resetBtn.Font=Enum.Font.GothamBold; resetBtn.TextSize=12; resetBtn.ZIndex=5; mkCorner(resetBtn,6); mkStroke(resetBtn, C.btnBorder,1)
-            resetBtn.MouseEnter:Connect(function() TweenService:Create(resetBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnHov}):Play() end)
-            resetBtn.MouseLeave:Connect(function() TweenService:Create(resetBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnBg}):Play() end)
-            resetBtn.MouseButton1Click:Connect(function()
-                for i,def in ipairs(stackDefs) do local wrapper=stackWrappers[def.key]; if wrapper then TweenService:Create(wrapper,TweenInfo.new(0.35,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{Position=getDefaultStackPos(i)}):Play() end end
-                resetBtn.Text="✓  Positions Reset!"; task.delay(1.8,function() if resetBtn and resetBtn.Parent then resetBtn.Text="↺  Reset Button Positions" end end)
-            end)
-            local fw = Instance.new("Frame", currentPage); fw.Size = UDim2.new(1,0,0,22); fw.BackgroundTransparency=1; fw.BorderSizePixel=0; fw.LayoutOrder=LO()
-            local fl = Instance.new("TextLabel", fw); fl.Size = UDim2.new(1,0,1,0); fl.BackgroundTransparency=1; fl.Text="Green Duels  ·  powered by luck 🍀"; fl.TextColor3=Color3.fromRGB(50,100,65); fl.Font=Enum.Font.Gotham; fl.TextSize=10; fl.TextXAlignment=Enum.TextXAlignment.Center
-            _G._VezySaveStatusLbl = fl
-            _G._VezyFlashSave = function(success)
-                if not _G._VezySaveStatusLbl or not _G._VezySaveStatusLbl.Parent then return end
-                local lbl = _G._VezySaveStatusLbl
-                if success then lbl.Text="✓  Auto-saved"; lbl.TextColor3=Color3.fromRGB(46,200,120)
-                else lbl.Text="✗  Save failed"; lbl.TextColor3=Color3.fromRGB(220,80,80) end
-                task.delay(1.5,function() if lbl and lbl.Parent then lbl.Text="Green Duels  ·  powered by luck 🍀"; lbl.TextColor3=Color3.fromRGB(50,100,65) end end)
-            end
+        local saveWrap = Instance.new("Frame", currentPage); saveWrap.Size = UDim2.new(1,0,0,46); saveWrap.BackgroundTransparency=1; saveWrap.BorderSizePixel=0; saveWrap.LayoutOrder=LO()
+        local saveBtn = Instance.new("TextButton", saveWrap); saveBtn.Size = UDim2.new(1,-28,0,32); saveBtn.Position = UDim2.new(0,14,0,7); saveBtn.BackgroundColor3=C.accent; saveBtn.BorderSizePixel=0; saveBtn.Text="💾  Save Config Now"; saveBtn.TextColor3=Color3.fromRGB(0,20,8); saveBtn.Font=Enum.Font.GothamBold; saveBtn.TextSize=12; saveBtn.ZIndex=5; mkCorner(saveBtn,6); mkStroke(saveBtn, C.accent,1)
+        saveBtn.MouseEnter:Connect(function() TweenService:Create(saveBtn,TweenInfo.new(0.1),{BackgroundColor3=Color3.fromRGB(46,160,90)}):Play() end)
+        saveBtn.MouseLeave:Connect(function() TweenService:Create(saveBtn,TweenInfo.new(0.1),{BackgroundColor3=C.accent}):Play() end)
+        saveBtn.MouseButton1Click:Connect(function()
+            local success = pcall(saveConfig)
+            if success then saveBtn.Text="✓  Saved!"; saveBtn.BackgroundColor3=Color3.fromRGB(46,180,100) else saveBtn.Text="✗  Save Failed"; saveBtn.BackgroundColor3=Color3.fromRGB(180,60,60) end
+            task.delay(2.5,function() if saveBtn and saveBtn.Parent then saveBtn.Text="💾  Save Config Now"; saveBtn.BackgroundColor3=C.accent end end)
         end)
-        page.LayoutOrder = 6
-    end
+        local resetWrap = Instance.new("Frame", currentPage); resetWrap.Size = UDim2.new(1,0,0,46); resetWrap.BackgroundTransparency=1; resetWrap.BorderSizePixel=0; resetWrap.LayoutOrder=LO()
+        local resetAllBtn = Instance.new("TextButton", resetWrap); resetAllBtn.Size = UDim2.new(1,-28,0,32); resetAllBtn.Position = UDim2.new(0,14,0,7); resetAllBtn.BackgroundColor3=Color3.fromRGB(80,25,25); resetAllBtn.BorderSizePixel=0; resetAllBtn.Text="⚠  Reset All Settings"; resetAllBtn.TextColor3=Color3.fromRGB(255,200,200); resetAllBtn.Font=Enum.Font.GothamBold; resetAllBtn.TextSize=12; resetAllBtn.ZIndex=5; mkCorner(resetAllBtn,6); mkStroke(resetAllBtn, Color3.fromRGB(130,45,45),1)
+        resetAllBtn.MouseEnter:Connect(function() TweenService:Create(resetAllBtn,TweenInfo.new(0.1),{BackgroundColor3=Color3.fromRGB(110,35,35)}):Play() end)
+        resetAllBtn.MouseLeave:Connect(function() TweenService:Create(resetAllBtn,TweenInfo.new(0.1),{BackgroundColor3=Color3.fromRGB(80,25,25)}):Play() end)
+        local _resetConfirmStage=0; local _resetConfirmTimer=nil
+        resetAllBtn.MouseButton1Click:Connect(function()
+            if _resetConfirmStage==0 then
+                _resetConfirmStage=1; resetAllBtn.Text="⚠  Click again to confirm!"; resetAllBtn.BackgroundColor3=Color3.fromRGB(160,50,50)
+                if _resetConfirmTimer then task.cancel(_resetConfirmTimer) end
+                _resetConfirmTimer = task.delay(3,function() if resetAllBtn and resetAllBtn.Parent then _resetConfirmStage=0; resetAllBtn.Text="⚠  Reset All Settings"; resetAllBtn.BackgroundColor3=Color3.fromRGB(80,25,25) end end)
+                return
+            end
+            _resetConfirmStage=0; if _resetConfirmTimer then task.cancel(_resetConfirmTimer); _resetConfirmTimer=nil end
+            pcall(function() if State.batAimbotToggled then stopBatAimbot() end end)
+            pcall(function() if State.batCounterEnabled then stopBatCounter() end end)
+            pcall(function() if State.medusaCounterEnabled then stopMedusaCounter() end end)
+            pcall(function() if State.antiRagdollEnabled then stopAntiRagdoll() end end)
+            pcall(function() if Steal.AutoStealEnabled then stopAutoSteal() end end)
+            pcall(function() if State.autoLeftEnabled then stopAutoLeft() end end)
+            pcall(function() if State.autoRightEnabled then stopAutoRight() end end)
+            pcall(function() if State.antiLagEnabled then disableAntiLag() end end)
+            pcall(function() if State.stretchedResEnabled then disableStretchRez() end end)
+            pcall(function() if State.autoTPEnabled then stopAutoTP() end end)
+            pcall(function() if _G._NukeOn and _G._nukeStop then _G._nukeStop() end end)
+            pcall(function() if _G._RemoveAccOn and _G._removeAccStop then _G._removeAccStop() end end)
+            restoreLighting()
+            State.normalSpeed=60; State.carrySpeed=30; State.laggerSpeed=10.1; State.laggerCarrySpeed=15
+            State.speedToggled=false; State.laggerMode=0; State.infJumpEnabled=true; State.antiRagdollEnabled=false
+            State.antiLagEnabled=false; State.stretchedResEnabled=false
+            State.stretchFOV=120; State.medusaCounterEnabled=false; State.batCounterEnabled=false
+            State.batAimbotToggled=false; State.autoSwingEnabled=false; State.autoLeftEnabled=false; State.autoRightEnabled=false
+            State.stackButtonsHidden=false; State.stackButtonsLocked=false; State.introEnabled=true
+            State.autoTPEnabled=false; State.autoTPHeight=20
+            Steal.StealRadius=55; Steal.StealDuration=0.25; Steal.AutoStealEnabled=true
+            Keys.speed=Enum.KeyCode.Q; Keys.guiHide=Enum.KeyCode.LeftControl; Keys.autoLeft=Enum.KeyCode.L; Keys.autoRight=Enum.KeyCode.R
+            Keys.lagger=Enum.KeyCode.Unknown; Keys.tpDown=Enum.KeyCode.Unknown; Keys.drop=Enum.KeyCode.H; Keys.aimbot=Enum.KeyCode.Unknown
+            currentDropType = DROP_TYPES.STAND
+            if standDropBtn then
+                standDropBtn.BackgroundColor3 = C.accent
+                standDropBtn.TextColor3 = Color3.fromRGB(0,20,8)
+                jumpDropBtn.BackgroundColor3 = C.inputBg
+                jumpDropBtn.TextColor3 = C.inputTxt
+            end
+            if normalBox then normalBox.Text=tostring(State.normalSpeed) end; if carryBox then carryBox.Text=tostring(State.carrySpeed) end
+            if laggerBox then laggerBox.Text=tostring(State.laggerSpeed) end; if laggerCarryBox then laggerCarryBox.Text=tostring(State.laggerCarrySpeed) end
+            if stealRadBox then stealRadBox.Text=tostring(Steal.StealRadius) end; if stealDurBox then stealDurBox.Text=tostring(Steal.StealDuration) end
+            if uiScaleObj then uiScaleObj.Scale=1.0 end; if uiScaleBox then uiScaleBox.Text="1" end
+            if setInstaGrab then pcall(setInstaGrab,true) end; if setInfJump then pcall(setInfJump,true) end; if setAntiRag then pcall(setAntiRag,false) end
+            if setMedusaCounter then pcall(setMedusaCounter,false) end; if setBatCounter then pcall(setBatCounter,false) end; if setAutoSwing then pcall(setAutoSwing,false) end
+            if hideButtonsSetter then pcall(hideButtonsSetter,false) end; if lockButtonsSetter then pcall(lockButtonsSetter,false) end
+            if introSetter then pcall(introSetter,true) end
+            if stackBtnRefs then for key,ref in pairs(stackBtnRefs) do if ref and ref.setOn then pcall(ref.setOn,false) end end end
+            if keybindBtnRefs then refreshAllKeybindButtons() end
+            for i,def in ipairs(stackDefs) do local wrapper=stackWrappers[def.key]; if wrapper then TweenService:Create(wrapper,TweenInfo.new(0.35,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{Position=getDefaultStackPos(i)}):Play() end end
+            resetAllBtn.Text="✓  All Settings Reset!"; resetAllBtn.BackgroundColor3=Color3.fromRGB(46,160,90)
+            task.delay(2,function() if resetAllBtn and resetAllBtn.Parent then resetAllBtn.Text="⚠  Reset All Settings"; resetAllBtn.BackgroundColor3=Color3.fromRGB(80,25,25) end end)
+        end)
+        local rWrap = Instance.new("Frame", currentPage); rWrap.Size = UDim2.new(1,0,0,46); rWrap.BackgroundTransparency=1; rWrap.BorderSizePixel=0; rWrap.LayoutOrder=LO()
+        local resetBtn = Instance.new("TextButton", rWrap); resetBtn.Size = UDim2.new(1,-28,0,32); resetBtn.Position = UDim2.new(0,14,0,7); resetBtn.BackgroundColor3=C.btnBg; resetBtn.BorderSizePixel=0; resetBtn.Text="↺  Reset Button Positions"; resetBtn.TextColor3=C.btnTxt; resetBtn.Font=Enum.Font.GothamBold; resetBtn.TextSize=12; resetBtn.ZIndex=5; mkCorner(resetBtn,6); mkStroke(resetBtn, C.btnBorder,1)
+        resetBtn.MouseEnter:Connect(function() TweenService:Create(resetBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnHov}):Play() end)
+        resetBtn.MouseLeave:Connect(function() TweenService:Create(resetBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnBg}):Play() end)
+        resetBtn.MouseButton1Click:Connect(function()
+            for i,def in ipairs(stackDefs) do local wrapper=stackWrappers[def.key]; if wrapper then TweenService:Create(wrapper,TweenInfo.new(0.35,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{Position=getDefaultStackPos(i)}):Play() end end
+            resetBtn.Text="✓  Positions Reset!"; task.delay(1.8,function() if resetBtn and resetBtn.Parent then resetBtn.Text="↺  Reset Button Positions" end end)
+        end)
+        local fw = Instance.new("Frame", currentPage); fw.Size = UDim2.new(1,0,0,22); fw.BackgroundTransparency=1; fw.BorderSizePixel=0; fw.LayoutOrder=LO()
+        local fl = Instance.new("TextLabel", fw); fl.Size = UDim2.new(1,0,1,0); fl.BackgroundTransparency=1; fl.Text="Green Duels  ·  powered by luck 🍀"; fl.TextColor3=Color3.fromRGB(50,100,65); fl.Font=Enum.Font.Gotham; fl.TextSize=10; fl.TextXAlignment=Enum.TextXAlignment.Center
+        _G._VezySaveStatusLbl = fl
+        _G._VezyFlashSave = function(success)
+            if not _G._VezySaveStatusLbl or not _G._VezySaveStatusLbl.Parent then return end
+            local lbl = _G._VezySaveStatusLbl
+            if success then lbl.Text="✓  Auto-saved"; lbl.TextColor3=Color3.fromRGB(46,200,120)
+            else lbl.Text="✗  Save failed"; lbl.TextColor3=Color3.fromRGB(220,80,80) end
+            task.delay(1.5,function() if lbl and lbl.Parent then lbl.Text="Green Duels  ·  powered by luck 🍀"; lbl.TextColor3=Color3.fromRGB(50,100,65) end end)
+        end
+    end)
 
     rebuildPresetList = function()
         if not presetListFrame then return end
