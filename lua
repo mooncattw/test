@@ -193,8 +193,8 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 180, 0, 200)
-main.Position = UDim2.new(0.5, -90, 0.5, -100)
+main.Size = UDim2.new(0, 180, 0, 150)
+main.Position = UDim2.new(0.5, -90, 0.5, -75)
 main.BackgroundColor3 = BLUE.BG
 main.BackgroundTransparency = 0.1
 main.BorderSizePixel = 0
@@ -412,39 +412,6 @@ resetBtn.MouseButton1Click:Connect(function()
     performReset()
 end)
 
-local statusText = Instance.new("TextLabel")
-statusText.Size = UDim2.new(0.85, 0, 0, 14)
-statusText.Position = UDim2.new(0.075, 0, 0, 145)
-statusText.BackgroundTransparency = 1
-statusText.Text = "IDLE"
-statusText.TextColor3 = BLUE.Light
-statusText.Font = Enum.Font.GothamBold
-statusText.TextSize = 9
-statusText.TextXAlignment = Enum.TextXAlignment.Center
-statusText.TextStrokeTransparency = 0.3
-statusText.TextStrokeColor3 = BLUE.Dark
-statusText.Parent = main
-
-local footerLine = Instance.new("Frame")
-footerLine.Size = UDim2.new(0.6, 0, 0, 1)
-footerLine.Position = UDim2.new(0.2, 0, 0, 165)
-footerLine.BackgroundColor3 = BLUE.Border
-footerLine.BackgroundTransparency = 0.5
-footerLine.BorderSizePixel = 0
-footerLine.Parent = main
-
-local footerText = Instance.new("TextLabel")
-footerText.Size = UDim2.new(1, 0, 0, 14)
-footerText.Position = UDim2.new(0, 0, 0, 167)
-footerText.BackgroundTransparency = 1
-footerText.Text = "Moon Hub"
-footerText.TextColor3 = BLUE.Dark
-footerText.Font = Enum.Font.GothamBold
-footerText.TextSize = 8
-footerText.TextXAlignment = Enum.TextXAlignment.Center
-footerText.TextTransparency = 0.5
-footerText.Parent = main
-
 local function updateVisuals()
     if tpBatToggled then
         tpToggleBtn.Text = "ON"
@@ -452,16 +419,12 @@ local function updateVisuals()
         tpToggleBtn.TextColor3 = BLUE.Main
         mainStroke.Color = BLUE.Glow
         mainStroke.Transparency = 0.1
-        statusText.Text = "TP BAT ACTIVE"
-        statusText.TextColor3 = BLUE.Glow
     else
         tpToggleBtn.Text = "TP BAT"
         tpToggleBtn.BackgroundColor3 = BLUE.Card
         tpToggleBtn.TextColor3 = BLUE.White
         mainStroke.Color = BLUE.Border
         mainStroke.Transparency = 0.3
-        statusText.Text = "IDLE"
-        statusText.TextColor3 = BLUE.Light
     end
     tpKeyBtn.Text = CONFIG.TpBatKey.Name
     resetKeyBtn.Text = CONFIG.ResetKey.Name
