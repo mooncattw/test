@@ -193,10 +193,10 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 180, 0, 150)
-main.Position = UDim2.new(0.5, -90, 0.5, -75)
-main.BackgroundColor3 = BLUE.BG
-main.BackgroundTransparency = 0.1
+main.Size = UDim2.new(0, 220, 0, 140)
+main.Position = UDim2.new(0.5, -110, 0.5, -70)
+main.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
+main.BackgroundTransparency = 0.05
 main.BorderSizePixel = 0
 main.Active = true
 main.Draggable = true
@@ -239,8 +239,8 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -60, 0, 35)
 title.Position = UDim2.new(0, 10, 0, 4)
 title.BackgroundTransparency = 1
-title.Text = "Moon Hub"
-title.TextColor3 = BLUE.Main
+title.Text = "MOON HUB"
+title.TextColor3 = BLUE.Glow
 title.Font = Enum.Font.GothamBlack
 title.TextSize = 20
 title.TextStrokeTransparency = 0
@@ -282,21 +282,21 @@ divider.BorderSizePixel = 0
 divider.Parent = main
 
 local tpLabel = Instance.new("TextLabel")
-tpLabel.Size = UDim2.new(0.35, 0, 0, 14)
-tpLabel.Position = UDim2.new(0.075, 0, 0, 50)
+tpLabel.Size = UDim2.new(0.2, 0, 0, 14)
+tpLabel.Position = UDim2.new(0.05, 0, 0, 50)
 tpLabel.BackgroundTransparency = 1
 tpLabel.Text = "TP BAT"
 tpLabel.TextColor3 = BLUE.Light
 tpLabel.Font = Enum.Font.GothamBold
-tpLabel.TextSize = 9
+tpLabel.TextSize = 10
 tpLabel.TextXAlignment = Enum.TextXAlignment.Left
 tpLabel.TextStrokeTransparency = 0.3
 tpLabel.TextStrokeColor3 = BLUE.Dark
 tpLabel.Parent = main
 
 local tpKeyBtn = Instance.new("TextButton")
-tpKeyBtn.Size = UDim2.new(0.25, 0, 0, 24)
-tpKeyBtn.Position = UDim2.new(0.075, 0, 0, 64)
+tpKeyBtn.Size = UDim2.new(0.22, 0, 0, 24)
+tpKeyBtn.Position = UDim2.new(0.28, 0, 0, 50)
 tpKeyBtn.BackgroundColor3 = BLUE.Card
 tpKeyBtn.Text = "T"
 tpKeyBtn.TextColor3 = BLUE.Main
@@ -324,9 +324,9 @@ tpKeyBtn.MouseButton1Click:Connect(function()
 end)
 
 local tpToggleBtn = Instance.new("TextButton")
-tpToggleBtn.Size = UDim2.new(0.45, 0, 0, 24)
-tpToggleBtn.Position = UDim2.new(0.45, 0, 0, 64)
-tpToggleBtn.BackgroundColor3 = BLUE.Card
+tpToggleBtn.Size = UDim2.new(0.42, 0, 0, 24)
+tpToggleBtn.Position = UDim2.new(0.55, 0, 0, 50)
+tpToggleBtn.BackgroundColor3 = BLUE.Glow
 tpToggleBtn.Text = "TP BAT"
 tpToggleBtn.TextColor3 = BLUE.White
 tpToggleBtn.Font = Enum.Font.GothamBold
@@ -345,24 +345,24 @@ tpToggleBtn.MouseButton1Click:Connect(function()
 end)
 
 local resetLabel = Instance.new("TextLabel")
-resetLabel.Size = UDim2.new(0.35, 0, 0, 14)
-resetLabel.Position = UDim2.new(0.075, 0, 0, 98)
+resetLabel.Size = UDim2.new(0.28, 0, 0, 14)
+resetLabel.Position = UDim2.new(0.05, 0, 0, 88)
 resetLabel.BackgroundTransparency = 1
 resetLabel.Text = "INSTA RESET"
 resetLabel.TextColor3 = BLUE.Light
 resetLabel.Font = Enum.Font.GothamBold
-resetLabel.TextSize = 9
+resetLabel.TextSize = 10
 resetLabel.TextXAlignment = Enum.TextXAlignment.Left
 resetLabel.TextStrokeTransparency = 0.3
 resetLabel.TextStrokeColor3 = BLUE.Dark
 resetLabel.Parent = main
 
 local resetKeyBtn = Instance.new("TextButton")
-resetKeyBtn.Size = UDim2.new(0.25, 0, 0, 24)
-resetKeyBtn.Position = UDim2.new(0.075, 0, 0, 112)
+resetKeyBtn.Size = UDim2.new(0.22, 0, 0, 24)
+resetKeyBtn.Position = UDim2.new(0.28, 0, 0, 88)
 resetKeyBtn.BackgroundColor3 = BLUE.Card
 resetKeyBtn.Text = "R"
-resetKeyBtn.TextColor3 = BLUE.Red
+resetKeyBtn.TextColor3 = BLUE.Main
 resetKeyBtn.Font = Enum.Font.GothamBold
 resetKeyBtn.TextSize = 12
 resetKeyBtn.BorderSizePixel = 0
@@ -387,13 +387,13 @@ resetKeyBtn.MouseButton1Click:Connect(function()
 end)
 
 local resetBtn = Instance.new("TextButton")
-resetBtn.Size = UDim2.new(0.45, 0, 0, 24)
-resetBtn.Position = UDim2.new(0.45, 0, 0, 112)
-resetBtn.BackgroundColor3 = Color3.fromRGB(20, 25, 40)
+resetBtn.Size = UDim2.new(0.42, 0, 0, 24)
+resetBtn.Position = UDim2.new(0.55, 0, 0, 88)
+resetBtn.BackgroundColor3 = BLUE.Glow
 resetBtn.Text = "INSTA RESET"
 resetBtn.TextColor3 = BLUE.White
 resetBtn.Font = Enum.Font.GothamBold
-resetBtn.TextSize = 9
+resetBtn.TextSize = 10
 resetBtn.BorderSizePixel = 0
 resetBtn.AutoButtonColor = false
 resetBtn.Parent = main
