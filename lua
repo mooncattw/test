@@ -913,7 +913,7 @@ local function Main()
     mainScroll.ZIndex = 3
 
     local mainLL = Instance.new("UIListLayout", mainScroll)
-    mainLL.SortOrder = Enum.SortOrder.LayoutOrder; mainLL.Padding = UDim.new(0,4)
+    mainLL.SortOrder = Enum.SortOrder.LayoutOrder; mainLL.Padding = UDim.new(0,0)
     mainLL.HorizontalAlignment = Enum.HorizontalAlignment.Center
     local mainPad = Instance.new("UIPadding", mainScroll)
     mainPad.PaddingLeft = UDim.new(0,8); mainPad.PaddingRight = UDim.new(0,8)
@@ -925,16 +925,11 @@ local function Main()
     local lo = 0
     local function LO() lo = lo+1; return lo end
 
-    local function makeGap(px) local f=Instance.new("Frame",currentPage); f.Size=UDim2.new(1,0,0,px or 6); f.BackgroundTransparency=1; f.BorderSizePixel=0; f.LayoutOrder=LO() end
+    local function makeGap(px)
+        return nil
+    end
     local function makeSectionHeader(label)
-        local wrap = Instance.new("Frame", currentPage)
-        wrap.Size = UDim2.new(1,0,0,30); wrap.BackgroundTransparency=1; wrap.BorderSizePixel=0; wrap.LayoutOrder=LO()
-        local dot = Instance.new("Frame", wrap); dot.Size = UDim2.new(0,4,0,4); dot.Position = UDim2.new(0,14,0.5,-2)
-        dot.BackgroundColor3 = C.accent; dot.BorderSizePixel=0; mkCorner(dot,2)
-        local lbl = Instance.new("TextLabel", wrap); lbl.Size = UDim2.new(1,-34,1,0); lbl.Position = UDim2.new(0,24,0,0)
-        lbl.BackgroundTransparency=1; lbl.Text = label and label:upper() or ""
-        lbl.TextColor3 = C.sectionTxt; lbl.Font = Enum.Font.GothamBold; lbl.TextSize=10
-        lbl.TextXAlignment = Enum.TextXAlignment.Left
+        return nil
     end
 
     local function makeInputRow(label, default, onChange)
@@ -1203,7 +1198,7 @@ local function Main()
         page.Name = tabName; page.Size = UDim2.new(1,0,0,0); page.AutomaticSize = Enum.AutomaticSize.Y
         page.BackgroundTransparency = 1; page.BorderSizePixel = 0; page.LayoutOrder = 0
         local ll = Instance.new("UIListLayout", page); ll.SortOrder = Enum.SortOrder.LayoutOrder
-        ll.Padding = UDim.new(0,4); ll.HorizontalAlignment = Enum.HorizontalAlignment.Center
+        ll.Padding = UDim.new(0,0); ll.HorizontalAlignment = Enum.HorizontalAlignment.Center
         tabPages[tabName] = page
         currentPage = page; lo = 0; buildFn(); currentPage = nil
         return page
@@ -1212,12 +1207,10 @@ local function Main()
     -- Speed Page
     do
         local page = buildPage("Speed", function()
-            makeGap(2); makeSectionHeader("Speed Values"); makeGap(2)
             normalBox = makeInputRow("Normal Speed", State.normalSpeed, function(n) if n>0 and n<=500 then State.normalSpeed=n end end)
             carryBox = makeInputRow("Carry Speed", State.carrySpeed, function(n) if n>0 and n<=500 then State.carrySpeed=n end end)
             laggerBox = makeInputRow("Lagger Speed", State.laggerSpeed, function(n) if n>0 and n<=500 then State.laggerSpeed=n end end)
             laggerCarryBox = makeInputRow("Lagger Carry Speed", State.laggerCarrySpeed, function(n) if n>0 and n<=500 then State.laggerCarrySpeed=n end end)
-            makeGap(8); makeSectionHeader("Speed Keybinds"); makeGap(2)
             makeKeybindRow("Speed Key (toggles)", Keys.speed, function(k) Keys.speed=k end, "speed")
             makeKeybindRow("Lagger Key (toggles)", Keys.lagger, function(k) Keys.lagger=k end, "lagger")
         end)
@@ -1227,7 +1220,6 @@ local function Main()
     -- Combat Page
     do
         local page = buildPage("Combat", function()
-            makeGap(2); makeSectionHeader("Bat Aimbot"); makeGap(2)
             setAutoSwing = makeToggleRow("Auto Swing", false, function(on) State.autoSwingEnabled=on end)
             toggleSetters["autoSwing"] = setAutoSwing
             setBatCounter = makeToggleRow("Bat Counter", false, function(on) State.batCounterEnabled=on; if on then startBatCounter() else stopBatCounter() end end)
@@ -1242,10 +1234,8 @@ local function Main()
     -- Auto Steal Page
     do
         local page = buildPage("Auto Steal", function()
-            makeGap(2); makeSectionHeader("Insta Grab"); makeGap(2)
             setInstaGrab = makeToggleRow("Auto Steal", true, function(on) Steal.AutoStealEnabled=on; if on then startAutoSteal() else stopAutoSteal() end end)
             toggleSetters["autoSteal"] = setInstaGrab
-            makeGap(6); makeSectionHeader("Steal Config"); makeGap(2)
             stealRadBox = makeInputRow("Steal Radius", Steal.StealRadius, function(n) if n then n=math.floor(n); if n>=1 and n<=500 then Steal.StealRadius=n end end end)
             local durBox,_ = makeInputRow("Steal Duration", Steal.StealDuration, function(n) if n then n=math.min(n,10); if n>=0.05 then Steal.StealDuration=n end end end)
             stealDurBox = durBox
@@ -1256,13 +1246,10 @@ local function Main()
     -- Movement Page
     do
         local page = buildPage("Movement", function()
-            makeGap(2); makeSectionHeader("Infinite Jump"); makeGap(2)
             setInfJump = makeToggleRow("Infinite Jump", true, function(on) State.infJumpEnabled=on end)
             toggleSetters["infJump"] = setInfJump
-            makeGap(8); makeSectionHeader("Defense"); makeGap(2)
             setAntiRag = makeToggleRow("Anti Ragdoll", false, function(on) State.antiRagdollEnabled=on; if on then startAntiRagdoll() else stopAntiRagdoll() end end)
             toggleSetters["antiRagdoll"] = setAntiRag
-            makeGap(8); makeSectionHeader("Auto Movement"); makeGap(2)
             makeKeybindRow("Auto Left", Keys.autoLeft, function(k) Keys.autoLeft=k end, "autoLeft")
             makeKeybindRow("Auto Right", Keys.autoRight, function(k) Keys.autoRight=k end, "autoRight")
             makeKeybindRow("Drop Key", Keys.drop, function(k) Keys.drop=k end, "drop")
@@ -1335,7 +1322,6 @@ local function Main()
             end)
 
             -- Auto TP
-            makeGap(8); makeSectionHeader("Auto TP"); makeGap(2)
             local autoTPToggle = makeToggleRow("Auto TP", State.autoTPEnabled, function(on)
                 State.autoTPEnabled = on
                 if on then startAutoTP() else stopAutoTP() end
@@ -1354,7 +1340,6 @@ local function Main()
     local nukeSetter, removeAccSetter, tryardSetter
     do
         local page = buildPage("Visual", function()
-            makeGap(2); makeSectionHeader("Performance"); makeGap(2)
             antiLagSetter = makeToggleRow("Anti-Lag (recommended)", State.antiLagEnabled, function(on) State.antiLagEnabled=on; if on then enableAntiLag() else disableAntiLag() end end)
             toggleSetters["antiLag"] = antiLagSetter
             stretchSetter = makeToggleRow("Stretch Rez", State.stretchedResEnabled, function(on) State.stretchedResEnabled=on; if on then enableStretchRez() else disableStretchRez() end end)
@@ -1382,7 +1367,6 @@ local function Main()
             cleanBtn.MouseLeave:Connect(function() TweenService:Create(cleanBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnBg}):Play() end)
             cleanBtn.MouseButton1Click:Connect(cleanParticlesAndLights)
 
-            makeGap(8); makeSectionHeader("Other Visuals"); makeGap(2)
             nukeSetter = makeToggleRow("Nuke Optimizer", false, function(on) State.nukeOpt=on; if on then _G._nukeStart() else _G._nukeStop() end end)
             toggleSetters["nukeOpt"] = nukeSetter
             removeAccSetter = makeToggleRow("Remove Accessories", false, function(on) State.removeAcc=on; if on then _G._removeAccStart() else _G._removeAccStop() end end)
@@ -1399,7 +1383,6 @@ local function Main()
     local introSetter, hideButtonsSetter, lockButtonsSetter
     do
         local page = buildPage("Settings", function()
-            makeGap(2); makeSectionHeader("Interface"); makeGap(2)
             makeKeybindRow("Hide GUI", Keys.guiHide, function(k) Keys.guiHide=k end, "guiHide")
             uiScaleBox = makeInputRow("UI Scale", 1.0, function(n) if n>=0.5 and n<=2.0 then if uiScaleObj then uiScaleObj.Scale=n end end end)
             hideButtonsSetter = makeToggleRow("Hide Buttons", false, function(on) State.stackButtonsHidden=on; for _,wrapper in pairs(stackWrappers) do wrapper.Visible=not on end end)
@@ -1409,7 +1392,6 @@ local function Main()
             introSetter = makeToggleRow("Show Intro Animation", State.introEnabled, function(on) State.introEnabled=on; requestSave() end)
             toggleSetters["introEnabled"] = introSetter
 
-            makeGap(8); makeSectionHeader("Config"); makeGap(2)
             local saveWrap = Instance.new("Frame", currentPage); saveWrap.Size = UDim2.new(1,0,0,46); saveWrap.BackgroundTransparency=1; saveWrap.BorderSizePixel=0; saveWrap.LayoutOrder=LO()
             local saveBtn = Instance.new("TextButton", saveWrap); saveBtn.Size = UDim2.new(1,-28,0,32); saveBtn.Position = UDim2.new(0,14,0,7); saveBtn.BackgroundColor3=C.accent; saveBtn.BorderSizePixel=0; saveBtn.Text="💾  Save Config Now"; saveBtn.TextColor3=Color3.fromRGB(0,20,8); saveBtn.Font=Enum.Font.GothamBold; saveBtn.TextSize=12; saveBtn.ZIndex=5; mkCorner(saveBtn,6); mkStroke(saveBtn, C.accent,1)
             saveBtn.MouseEnter:Connect(function() TweenService:Create(saveBtn,TweenInfo.new(0.1),{BackgroundColor3=Color3.fromRGB(46,160,90)}):Play() end)
@@ -1476,7 +1458,6 @@ local function Main()
                 resetAllBtn.Text="✓  All Settings Reset!"; resetAllBtn.BackgroundColor3=Color3.fromRGB(46,160,90)
                 task.delay(2,function() if resetAllBtn and resetAllBtn.Parent then resetAllBtn.Text="⚠  Reset All Settings"; resetAllBtn.BackgroundColor3=Color3.fromRGB(80,25,25) end end)
             end)
-            makeGap(8); makeSectionHeader("Layout"); makeGap(2)
             local rWrap = Instance.new("Frame", currentPage); rWrap.Size = UDim2.new(1,0,0,46); rWrap.BackgroundTransparency=1; rWrap.BorderSizePixel=0; rWrap.LayoutOrder=LO()
             local resetBtn = Instance.new("TextButton", rWrap); resetBtn.Size = UDim2.new(1,-28,0,32); resetBtn.Position = UDim2.new(0,14,0,7); resetBtn.BackgroundColor3=C.btnBg; resetBtn.BorderSizePixel=0; resetBtn.Text="↺  Reset Button Positions"; resetBtn.TextColor3=C.btnTxt; resetBtn.Font=Enum.Font.GothamBold; resetBtn.TextSize=12; resetBtn.ZIndex=5; mkCorner(resetBtn,6); mkStroke(resetBtn, C.btnBorder,1)
             resetBtn.MouseEnter:Connect(function() TweenService:Create(resetBtn,TweenInfo.new(0.1),{BackgroundColor3=C.btnHov}):Play() end)
@@ -1485,7 +1466,6 @@ local function Main()
                 for i,def in ipairs(stackDefs) do local wrapper=stackWrappers[def.key]; if wrapper then TweenService:Create(wrapper,TweenInfo.new(0.35,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{Position=getDefaultStackPos(i)}):Play() end end
                 resetBtn.Text="✓  Positions Reset!"; task.delay(1.8,function() if resetBtn and resetBtn.Parent then resetBtn.Text="↺  Reset Button Positions" end end)
             end)
-            makeGap(10)
             local fw = Instance.new("Frame", currentPage); fw.Size = UDim2.new(1,0,0,22); fw.BackgroundTransparency=1; fw.BorderSizePixel=0; fw.LayoutOrder=LO()
             local fl = Instance.new("TextLabel", fw); fl.Size = UDim2.new(1,0,1,0); fl.BackgroundTransparency=1; fl.Text="Green Duels  ·  powered by luck 🍀"; fl.TextColor3=Color3.fromRGB(50,100,65); fl.Font=Enum.Font.Gotham; fl.TextSize=10; fl.TextXAlignment=Enum.TextXAlignment.Center
             _G._VezySaveStatusLbl = fl
