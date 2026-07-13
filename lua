@@ -1,5 +1,6 @@
---MOON HUB
---moonhub
+--SPECTRUM MOBILE
+--discord.gg/kastorhub
+--LEKAD BY FRNK33.
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -24,6 +25,8 @@ if isfile and isfile("Spectrum_PC.json") then
     local ok2, d2 = pcall(function() return HS:JSONDecode(readfile("Spectrum_PC.json")) end)
     if ok2 and type(d2)=="table" then
         if type(d2.animEnabled)=="boolean" then animEnabled=d2.animEnabled end
+        if type(d2.backgroundEnabled)=="boolean" then backgroundEnabled=d2.backgroundEnabled end
+        if type(d2.backgroundIndex)=="number" then backgroundIndex=d2.backgroundIndex end
     end
 end
 
@@ -173,9 +176,40 @@ local DROP_ASCEND_SPEED=150
 local _GuiKeys = nil -- referinta catre Keys din GUI closure, pentru saveConfig
 
 -- ============================================================
--- CYBER EXTRAS: ZOMBIE ANIMATIONS (din Cyber)
+-- CYBER EXTRAS: BACKGROUND + ZOMBIE ANIMATIONS (din Cyber)
 -- ============================================================
 local animEnabled = false
+local backgroundEnabled = false
+local backgroundIndex = 0
+local bgImageRef = nil
+
+local BG_IMAGES = {
+    [1] = "82570501613757",
+    [2] = "89455917077259",
+    [3] = "140011519343966",
+    [4] = "122541342511357",
+    [5] = "91186886252449",
+    [6] = "121087678749100",
+    [7] = "113351045442552",
+    [8] = "123175449101989",
+    [9] = "113133243302321"
+}
+
+local function applyBackgroundImage(index)
+    backgroundIndex = index or 0
+    if not bgImageRef then return end
+    if backgroundIndex == 0 then
+        bgImageRef.Visible = false
+        backgroundEnabled = false
+    else
+        local imgId = BG_IMAGES[backgroundIndex]
+        if imgId then
+            bgImageRef.Image = "rbxassetid://" .. imgId
+            bgImageRef.Visible = true
+            backgroundEnabled = true
+        end
+    end
+end
 
 -- ANIMATII REMBEMBI (Zombie Mode) din Cyber
 local RembembiAnims = {
@@ -308,8 +342,8 @@ applyFOV()
 
 local function createRagdollBillboard(duration,labelText,color)
     if not ragdollGuiEnabled then return nil end
-    local WHITE = Color3.fromRGB(69,142,255)
-    local BG    = Color3.fromRGB(6,16,34)
+    local WHITE = Color3.fromRGB(255,255,255)
+    local BG    = Color3.fromRGB(12,5,10)
     local W,H   = 210,80
     local guiName="MoveeRagdollTimer_"..labelText
     pcall(function()
@@ -400,11 +434,11 @@ local function setupSpeedIndicator(char)
     if head:FindFirstChild("MoveeSpeedBB") then head.MoveeSpeedBB:Destroy() end
     local bb=Instance.new("BillboardGui",head);bb.Name="MoveeSpeedBB";bb.Size=UDim2.new(0,140,0,52);bb.StudsOffset=Vector3.new(0,3,0);bb.AlwaysOnTop=true
     local discordLabel=Instance.new("TextLabel",bb);discordLabel.Size=UDim2.new(1,0,0.4,0);discordLabel.BackgroundTransparency=1;discordLabel.Text=".gg/spectrumcc"
-    discordLabel.TextColor3=Color3.fromRGB(164,185,235);discordLabel.Font=Enum.Font.GothamBold;discordLabel.TextScaled=true;discordLabel.TextStrokeTransparency=0
+    discordLabel.TextColor3=Color3.fromRGB(200,200,200);discordLabel.Font=Enum.Font.GothamBold;discordLabel.TextScaled=true;discordLabel.TextStrokeTransparency=0
     speedLabel=Instance.new("TextLabel",bb);speedLabel.Size=UDim2.new(1,0,0.5,0);speedLabel.Position=UDim2.new(0,0,0.4,0);speedLabel.BackgroundTransparency=1;speedLabel.Text="0"
-    speedLabel.TextColor3=Color3.fromRGB(245,247,255);speedLabel.Font=Enum.Font.GothamBold;speedLabel.TextScaled=true;speedLabel.TextStrokeTransparency=0
-    local gr1=addShimmerToLabel(speedLabel,Color3.fromRGB(80,160,255),Color3.fromRGB(255,255,255))
-    local gr2=addShimmerToLabel(discordLabel,Color3.fromRGB(90,150,255),Color3.fromRGB(200,230,255))
+    speedLabel.TextColor3=Color3.fromRGB(255,255,255);speedLabel.Font=Enum.Font.GothamBold;speedLabel.TextScaled=true;speedLabel.TextStrokeTransparency=0
+    local gr1=addShimmerToLabel(speedLabel,Color3.fromRGB(200,200,200),Color3.fromRGB(255,255,255))
+    local gr2=addShimmerToLabel(discordLabel,Color3.fromRGB(200,200,200),Color3.fromRGB(255,255,255))
     task.spawn(function() local t=0;while bb and bb.Parent do t=t+0.03;gr1.Offset=Vector2.new(math.sin(t)*0.4,0);gr2.Offset=Vector2.new(math.sin(t)*0.4,0);task.wait(0.04) end end)
 end
 local function getActiveMoveSpeed()
@@ -895,7 +929,7 @@ saveConfig=function()
         elseif e.gp then return {gp=e.gp.Name}
         else return {kb=nil,gp=nil} end
     end
-    local cfg={normalSpeed=NS,carrySpeed=CS,dropBrainrotKey=ks(KB.DropBrainrot),autoLeftKey=ks(KB.AutoLeft),autoRightKey=ks(KB.AutoRight),autoBatKey=ks(KB.AutoBat),laggerToggleKey=ks(KB.LaggerToggle),tpFloorKey=ks(KB.TPFloor),instaResetKey=ks(KB.InstaReset),guiHideKey=ks(KB.GuiHide),speedToggleKey=ks(KB.SpeedToggle),grabRadius=Steal.StealRadius,stealDuration=Steal.StealDuration,antiRagdoll=antiRagdollEnabled,autoStealEnabled=Steal.AutoStealEnabled,infiniteJump=infJumpEnabled,infJumpMode=infJumpMode,medusaCounter=medusaCounterEnabled,batCounter=batCounterEnabled,carrySpeedActive=carrySpeedActive,laggerModeEnabled=laggerModeEnabled,laggerSpeed=LAGGER_SPEED,laggerCarrySpeed=LAGGER_CARRY_SPEED,autoBat=autoBatEnabled,autoSwing=autoSwingEnabled,unwalkEnabled=unwalkEnabled,antiLag=antiLagEnabled,stretchRez=stretchRezEnabled,autoTPEnabled=autoTPEnabled,autoTPHeight=autoTPHeight,guiTransparencyEnabled=guiTransparencyEnabled,mobileButtonsEnabled=mobileButtonsEnabled,mobileButtonsLocked=mobileButtonsLocked,mobileButtonsSize=mobileButtonsSize,circleButtonsEnabled=circleButtonsEnabled,autoSwitchSpeed=autoSwitchSpeedEnabled,fovValue=fovValue,perButtonDrag=perButtonDragEnabled,skyTheme=currentSkyTheme,medusaReset=medusaResetEnabled,autoMoveSwing=autoMoveSwingEnabled,autoMoveSwingInterval=autoMoveSwingInterval,ragdollGui=ragdollGuiEnabled,introSoundEnabled=introSoundEnabled,animEnabled=animEnabled,keys=(function() if not _GuiKeys then return {} end;local t={};for k,v in pairs(_GuiKeys) do t[k]=v.Name end;return t end)()}
+    local cfg={normalSpeed=NS,carrySpeed=CS,dropBrainrotKey=ks(KB.DropBrainrot),autoLeftKey=ks(KB.AutoLeft),autoRightKey=ks(KB.AutoRight),autoBatKey=ks(KB.AutoBat),laggerToggleKey=ks(KB.LaggerToggle),tpFloorKey=ks(KB.TPFloor),instaResetKey=ks(KB.InstaReset),guiHideKey=ks(KB.GuiHide),speedToggleKey=ks(KB.SpeedToggle),grabRadius=Steal.StealRadius,stealDuration=Steal.StealDuration,antiRagdoll=antiRagdollEnabled,autoStealEnabled=Steal.AutoStealEnabled,infiniteJump=infJumpEnabled,infJumpMode=infJumpMode,medusaCounter=medusaCounterEnabled,batCounter=batCounterEnabled,carrySpeedActive=carrySpeedActive,laggerModeEnabled=laggerModeEnabled,laggerSpeed=LAGGER_SPEED,laggerCarrySpeed=LAGGER_CARRY_SPEED,autoBat=autoBatEnabled,autoSwing=autoSwingEnabled,unwalkEnabled=unwalkEnabled,antiLag=antiLagEnabled,stretchRez=stretchRezEnabled,autoTPEnabled=autoTPEnabled,autoTPHeight=autoTPHeight,guiTransparencyEnabled=guiTransparencyEnabled,mobileButtonsEnabled=mobileButtonsEnabled,mobileButtonsLocked=mobileButtonsLocked,mobileButtonsSize=mobileButtonsSize,circleButtonsEnabled=circleButtonsEnabled,autoSwitchSpeed=autoSwitchSpeedEnabled,fovValue=fovValue,perButtonDrag=perButtonDragEnabled,skyTheme=currentSkyTheme,medusaReset=medusaResetEnabled,autoMoveSwing=autoMoveSwingEnabled,autoMoveSwingInterval=autoMoveSwingInterval,ragdollGui=ragdollGuiEnabled,introSoundEnabled=introSoundEnabled,animEnabled=animEnabled,backgroundEnabled=backgroundEnabled,backgroundIndex=backgroundIndex,keys=(function() if not _GuiKeys then return {} end;local t={};for k,v in pairs(_GuiKeys) do t[k]=v.Name end;return t end)()}
     if writefile then pcall(function() writefile("Spectrum_PC.json",HS:JSONEncode(cfg)) end) end
 end
 task.spawn(function() while task.wait(5) do saveConfig() end end)
@@ -1024,8 +1058,8 @@ local function createStealBar()
         local old=game:GetService("CoreGui"):FindFirstChild(n);if old then old:Destroy() end
         local pgui=LP:FindFirstChild("PlayerGui");if pgui then local o=pgui:FindFirstChild(n);if o then o:Destroy() end end
     end
-    local WHITE=Color3.fromRGB(69,142,255)
-    local BARBG=Color3.fromRGB(6,16,34)
+    local WHITE=Color3.fromRGB(255,255,255)
+    local BARBG=Color3.fromRGB(18,10,15)
     local SB_W,SB_H=330,32
     local stealGui=Instance.new("ScreenGui");stealGui.Name="MoveeStealBar";stealGui.ResetOnSpawn=false;stealGui.IgnoreGuiInset=true;stealGui.DisplayOrder=8
     pcall(function() if syn and syn.protect_gui then syn.protect_gui(stealGui) end end)
@@ -1165,12 +1199,12 @@ local function buildMobileButtons()
     local QS = 60          -- button size px
     local QG = 10          -- gap px
     local QR = 14          -- corner radius
-    local Q_OFF        = Color3.fromRGB(8, 18, 36)
-    local Q_ON         = Color3.fromRGB(69, 142, 255)
-    local Q_BORDER     = Color3.fromRGB(34, 66, 128)
-    local Q_BORDER_ON  = Color3.fromRGB(95, 176, 255)
-    local Q_TEXT       = Color3.fromRGB(245, 247, 255)
-    local Q_TEXT_ON    = Color3.fromRGB(255, 255, 255)
+    local Q_OFF        = Color3.fromRGB(10, 10, 10)
+    local Q_ON         = Color3.fromRGB(255, 255, 255)
+    local Q_BORDER     = Color3.fromRGB(40, 40, 45)
+    local Q_BORDER_ON  = Color3.fromRGB(80, 80, 85)
+    local Q_TEXT       = Color3.fromRGB(255, 255, 255)
+    local Q_TEXT_ON    = Color3.fromRGB(0, 0, 0)
 
     -- Grid container (2 cols x 4 rows)
     local QW = QS * 2 + QG
@@ -1393,6 +1427,8 @@ pcall(function()
     if type(d.circleButtonsEnabled)=="boolean" then circleButtonsEnabled=d.circleButtonsEnabled end
     if type(d.introSoundEnabled)=="boolean" then introSoundEnabled=d.introSoundEnabled end
     if type(d.animEnabled)=="boolean" then animEnabled=d.animEnabled end
+    if type(d.backgroundEnabled)=="boolean" then backgroundEnabled=d.backgroundEnabled end
+    if type(d.backgroundIndex)=="number" then backgroundIndex=d.backgroundIndex end
     if type(d.autoSwitchSpeed)=="boolean" then autoSwitchSpeedEnabled=d.autoSwitchSpeed end
 end)
 
@@ -1501,11 +1537,11 @@ local function makeDraggable_cyber(dragTarget, moveTarget)
 end
 
 local C={
-    bg=Color3.fromRGB(7,16,35), bgDark=Color3.fromRGB(5,11,25), row=Color3.fromRGB(12,24,48),
-    input=Color3.fromRGB(16,28,54), blue=Color3.fromRGB(69,142,255), blueDim=Color3.fromRGB(43,90,180),
-    blueDark=Color3.fromRGB(9,18,36), text=Color3.fromRGB(245,247,255), textDim=Color3.fromRGB(164,185,235),
-    textMuted=Color3.fromRGB(105,132,195), white=Color3.fromRGB(255,255,255), divider=Color3.fromRGB(34,66,128),
-    green=Color3.fromRGB(73,203,255),
+    bg=Color3.fromRGB(5,15,32), bgDark=Color3.fromRGB(3,9,22), row=Color3.fromRGB(10,24,46),
+    input=Color3.fromRGB(12,24,46), blue=Color3.fromRGB(72,180,255), blueDim=Color3.fromRGB(52,108,190),
+    blueDark=Color3.fromRGB(8,20,40), text=Color3.fromRGB(235,246,255), textDim=Color3.fromRGB(158,200,240),
+    textMuted=Color3.fromRGB(115,155,205), white=Color3.fromRGB(255,255,255), divider=Color3.fromRGB(44,96,170),
+    green=Color3.fromRGB(80,220,120),
 }
 local function guiCorner(p,r) local c=Instance.new("UICorner");c.CornerRadius=UDim.new(0,r or 10);c.Parent=p;return c end
 local function guiStroke(p,col,t) local s=Instance.new("UIStroke");s.Color=col or Color3.fromRGB(60,60,70);s.Thickness=t or 1;s.Parent=p;return s end
@@ -1557,6 +1593,23 @@ _GuiKeys = Keys
     Inner.BackgroundColor3=C.bg; Inner.BackgroundTransparency=0; Inner.BorderSizePixel=0; Inner.Parent=Outer
     guiCorner(Inner,24); guiStroke(Inner,Color3.fromRGB(45,45,45),1.5); GuiRefs.inner=Inner
 
+    local BgCont=Instance.new("Frame")
+    BgCont.Name="BackgroundContainer"; BgCont.Size=UDim2.new(1,0,1,0)
+    BgCont.BackgroundTransparency=1; BgCont.ZIndex=0; BgCont.Parent=Inner
+
+    local BgGrad=Instance.new("Frame")
+    BgGrad.Name="BgGrad"; BgGrad.Size=UDim2.new(1,0,1,0); BgGrad.BackgroundColor3=C.bgDark
+    BgGrad.BorderSizePixel=0; BgGrad.ZIndex=0; BgGrad.Parent=BgCont; guiCorner(BgGrad,24)
+    local grad=Instance.new("UIGradient")
+    grad.Color=ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(4,4,4)),ColorSequenceKeypoint.new(0.5,Color3.fromRGB(7,7,7)),ColorSequenceKeypoint.new(1,Color3.fromRGB(4,4,4))})
+    grad.Rotation=135; grad.Parent=BgGrad; GuiRefs.bgGrad=BgGrad
+
+    local BgImg=Instance.new("ImageLabel")
+    BgImg.Name="BackgroundImage"; BgImg.Size=UDim2.new(1,0,1,0); BgImg.BackgroundTransparency=1
+    BgImg.Image=""; BgImg.ScaleType=Enum.ScaleType.Crop; BgImg.ZIndex=0; BgImg.Visible=false
+    BgImg.Parent=BgCont; guiCorner(BgImg,24); GuiRefs.backgroundImage=BgImg; bgImageRef=BgImg
+    if backgroundIndex>0 then applyBackgroundImage(backgroundIndex) end
+
     local HF=Instance.new("Frame")
     HF.Name="HeaderFrame"; HF.Size=UDim2.new(1,0,0,62); HF.BackgroundTransparency=1
     HF.BorderSizePixel=0; HF.Parent=Inner; HF.ZIndex=2
@@ -1564,54 +1617,13 @@ _GuiKeys = Keys
 
     local TL=Instance.new("TextLabel")
     TL.Position=UDim2.new(0,14,0,8); TL.Size=UDim2.new(1,-90,0,22); TL.BackgroundTransparency=1
-    TL.Text="MOON HUB"; TL.TextColor3=C.text; TL.TextSize=17; TL.Font=Enum.Font.GothamBlack
+    TL.Text="SPECTRUM"; TL.TextColor3=C.text; TL.TextSize=17; TL.Font=Enum.Font.GothamBlack
     TL.TextXAlignment=Enum.TextXAlignment.Left; TL.Parent=HF; TL.ZIndex=3
 
     local ML=Instance.new("TextLabel")
     ML.Position=UDim2.new(0,14,0,32); ML.Size=UDim2.new(0,200,0,14); ML.BackgroundTransparency=1
-    ML.Text="moonhub"; ML.TextColor3=C.textDim; ML.TextSize=10; ML.Font=Enum.Font.GothamBold
+    ML.Text="discord.gg/spectrumcc"; ML.TextColor3=C.textDim; ML.TextSize=10; ML.Font=Enum.Font.GothamBold
     ML.TextXAlignment=Enum.TextXAlignment.Left; ML.Parent=HF; ML.ZIndex=3
-
-    local TopLine=Instance.new("Frame")
-    TopLine.Size=UDim2.new(1,-28,0,1); TopLine.Position=UDim2.new(0,14,0,48)
-    TopLine.BackgroundColor3=C.blue; TopLine.BackgroundTransparency=0.25; TopLine.BorderSizePixel=0
-    TopLine.Parent=HF; TopLine.ZIndex=3
-
-    local BottomLine=Instance.new("Frame")
-    BottomLine.Size=UDim2.new(1,-28,0,1); BottomLine.Position=UDim2.new(0,14,0,54)
-    BottomLine.BackgroundColor3=C.blue; BottomLine.BackgroundTransparency=0.4; BottomLine.BorderSizePixel=0
-    BottomLine.Parent=HF; BottomLine.ZIndex=3
-
-    local NavBar=Instance.new("Frame")
-    NavBar.Name="NavBar"; NavBar.Size=UDim2.new(1,-28,0,30); NavBar.Position=UDim2.new(0,14,0,58)
-    NavBar.BackgroundTransparency=1; NavBar.BorderSizePixel=0; NavBar.Parent=Inner; NavBar.ZIndex=3
-
-    local NavLayout=Instance.new("UIListLayout")
-    NavLayout.FillDirection=Enum.FillDirection.Horizontal; NavLayout.HorizontalAlignment=Enum.HorizontalAlignment.Left
-    NavLayout.VerticalAlignment=Enum.VerticalAlignment.Center; NavLayout.Padding=UDim.new(0,8); NavLayout.Parent=NavBar
-
-    local function switchCategory(name)
-        for _,f in pairs(CategoryRefs.contents) do f.Visible=false end
-        local selectedPage = CategoryRefs.contents[name]
-        if not selectedPage then return end
-        selectedPage.Visible=true; CategoryRefs.active=name
-        for n,b in pairs(CategoryRefs.btnsSide) do
-            local ac=(n==name); b.TextColor3=ac and C.white or C.textMuted; b.BackgroundTransparency=ac and 0.2 or 0.3
-            local i2=b:FindFirstChild("indicator"); if i2 then i2.BackgroundTransparency=ac and 0.3 or 1 end
-        end
-        local lay = selectedPage:FindFirstChildOfClass("UIListLayout")
-        if lay then GuiRefs.contentFrame.CanvasSize = UDim2.new(0, 0, 0, lay.AbsoluteContentSize.Y + 25) end
-    end
-
-    for i,name in ipairs(Categories) do
-        local btn=Instance.new("TextButton")
-        btn.Name=name; btn.Size=UDim2.new(0,72,0,22); btn.BackgroundColor3=C.blueDark
-        btn.BackgroundTransparency=0.25; btn.BorderSizePixel=0; btn.Text=name:upper(); btn.TextColor3=(name=="Combat") and C.white or C.textMuted
-        btn.TextSize=10; btn.Font=Enum.Font.GothamBold; btn.Parent=NavBar; btn.ZIndex=4
-        btn.Visible=(name=="Combat")
-        guiCorner(btn,6); guiStroke(btn,C.divider,1)
-        btn.MouseButton1Click:Connect(function() switchCategory(name) end)
-    end
 
     -- MINIMIZE BUTTON
     local CloseBtn=Instance.new("TextButton")
@@ -1627,7 +1639,7 @@ _GuiKeys = Keys
     local MiniBtn=Instance.new("TextButton")
     MiniBtn.Size=UDim2.new(0,110,0,28); MiniBtn.Position=Outer.Position
     MiniBtn.BackgroundColor3=C.bgDark; MiniBtn.BorderSizePixel=0
-    MiniBtn.Text="MOON HUB"; MiniBtn.TextColor3=C.text; MiniBtn.Font=Enum.Font.GothamBlack; MiniBtn.TextSize=11
+    MiniBtn.Text="SPECTRUM"; MiniBtn.TextColor3=C.text; MiniBtn.Font=Enum.Font.GothamBlack; MiniBtn.TextSize=11
     MiniBtn.ZIndex=20; MiniBtn.Visible=false; MiniBtn.Parent=GuiRefs.hub
     guiCorner(MiniBtn,8); guiStroke(MiniBtn,Color3.fromRGB(45,45,45),1.2)
     makeDraggable_cyber(MiniBtn, MiniBtn)
@@ -1644,9 +1656,9 @@ _GuiKeys = Keys
     HSep.BackgroundTransparency=0.7; HSep.BorderSizePixel=0; HSep.Parent=Inner; HSep.ZIndex=2
 
     LeftPanel=Instance.new("Frame")
-    LeftPanel.Name="LeftPanel"; LeftPanel.Size=UDim2.new(0,0,1,-118); LeftPanel.Position=UDim2.new(1,0,0,63)
-    LeftPanel.BackgroundColor3=C.bgDark; LeftPanel.BackgroundTransparency=1; LeftPanel.BorderSizePixel=0
-    LeftPanel.Parent=Inner; guiCorner(LeftPanel,12); LeftPanel.ZIndex=2; LeftPanel.Visible=false
+    LeftPanel.Name="LeftPanel"; LeftPanel.Size=UDim2.new(0,85,1,-118); LeftPanel.Position=UDim2.new(1,-85,0,63)
+    LeftPanel.BackgroundColor3=C.bgDark; LeftPanel.BackgroundTransparency=0.5; LeftPanel.BorderSizePixel=0
+    LeftPanel.Parent=Inner; guiCorner(LeftPanel,12); LeftPanel.ZIndex=2
 
     local CatList=Instance.new("ScrollingFrame")
     CatList.Name="CategoryList"; CatList.Size=UDim2.new(1,0,1,0); CatList.BackgroundTransparency=1
@@ -1659,7 +1671,7 @@ _GuiKeys = Keys
     GuiRefs.categoryList=CatList
 
     local CF=Instance.new("ScrollingFrame")
-    CF.Name="ContentFrame"; CF.Size=UDim2.new(1,-24,1,-130); CF.Position=UDim2.new(0,12,0,95)
+    CF.Name="ContentFrame"; CF.Size=UDim2.new(1,-95,1,-118); CF.Position=UDim2.new(0,0,0,63)
     CF.BackgroundTransparency=1; CF.BorderSizePixel=0; CF.ScrollBarThickness=6; CF.ScrollBarImageColor3=C.blue
     CF.CanvasSize=UDim2.new(0,0,0,0); CF.AutomaticCanvasSize=Enum.AutomaticSize.Y
     CF.ScrollingDirection=Enum.ScrollingDirection.Y; CF.ScrollingEnabled=true; CF.Active=true
@@ -1796,9 +1808,9 @@ local CategoryRefs={contents={},btnsSide={},active="Speed"}
         local lay=Instance.new("UIListLayout"); lay.SortOrder=Enum.SortOrder.LayoutOrder; lay.Padding=UDim.new(0,6); lay.Parent=page
     end
     for i,name in ipairs(Categories) do
-        local btn=Instance.new("TextButton"); btn.Size=UDim2.new(1,0,0,32); btn.BackgroundColor3=C.blueDark
+        local btn=Instance.new("TextButton"); btn.Size=UDim2.new(1,0,0,38); btn.BackgroundColor3=C.blueDark
         btn.BackgroundTransparency=0.3; btn.Text=name; btn.TextColor3=(name=="Speed") and C.white or C.textMuted
-        btn.TextSize=10; btn.Font=Enum.Font.GothamBold; btn.BorderSizePixel=0; btn.LayoutOrder=i; btn.Parent=GuiRefs.categoryList; guiCorner(btn,6)
+        btn.TextSize=11; btn.Font=Enum.Font.GothamBold; btn.BorderSizePixel=0; btn.LayoutOrder=i; btn.Parent=GuiRefs.categoryList; guiCorner(btn,8)
         local ind=Instance.new("Frame"); ind.Name="indicator"; ind.Size=UDim2.new(0,2,0,16); ind.Position=UDim2.new(1,-2,0.5,-8)
         ind.BackgroundColor3=C.blue; ind.BackgroundTransparency=(name=="Speed") and 0.3 or 1; ind.BorderSizePixel=0; ind.Parent=btn
         CategoryRefs.btnsSide[name]=btn
@@ -1819,6 +1831,38 @@ local CategoryRefs={contents={},btnsSide={},active="Speed"}
     local spBtn=CategoryRefs.btnsSide["Speed"]
     if spBtn then spBtn.TextColor3=C.white; spBtn.BackgroundTransparency=0.2; local i2=spBtn:FindFirstChild("indicator"); if i2 then i2.BackgroundTransparency=0.3 end end
 end)()
+
+local CombatQuickBtn=Instance.new("TextButton")
+CombatQuickBtn.Name="CombatQuickBtn"
+CombatQuickBtn.Size=UDim2.new(0,128,0,36)
+CombatQuickBtn.Position=UDim2.new(0.5,-64,1,-86)
+CombatQuickBtn.BackgroundColor3=Color3.fromRGB(24,92,185)
+CombatQuickBtn.BorderSizePixel=0
+CombatQuickBtn.Text="COMBAT"
+CombatQuickBtn.TextColor3=C.white
+CombatQuickBtn.TextSize=11
+CombatQuickBtn.Font=Enum.Font.GothamBlack
+CombatQuickBtn.ZIndex=5
+CombatQuickBtn.Parent=GuiRefs.inner
+guiCorner(CombatQuickBtn,10)
+guiStroke(CombatQuickBtn,Color3.fromRGB(80,160,255),1.2)
+CombatQuickBtn.MouseEnter:Connect(function() tw(CombatQuickBtn,{BackgroundColor3=Color3.fromRGB(34,112,220)}) end)
+CombatQuickBtn.MouseLeave:Connect(function() tw(CombatQuickBtn,{BackgroundColor3=Color3.fromRGB(24,92,185)}) end)
+CombatQuickBtn.MouseButton1Click:Connect(function()
+    for _,f in pairs(CategoryRefs.contents) do f.Visible=false end
+    local selectedPage=CategoryRefs.contents["Combat"]
+    if selectedPage then
+        selectedPage.Visible=true
+        CategoryRefs.active="Combat"
+        for n,b in pairs(CategoryRefs.btnsSide) do
+            local ac=(n=="Combat")
+            b.TextColor3=ac and C.white or C.textMuted
+            b.BackgroundTransparency=ac and 0.2 or 0.3
+            local i2=b:FindFirstChild("indicator")
+            if i2 then i2.BackgroundTransparency=ac and 0.3 or 1 end
+        end
+    end
+end)
 
 -- SPEED PAGE
 ;(function()
@@ -1935,16 +1979,45 @@ end)()
     addToggleRow(vi,"Stretch Rez",stretchRezEnabled,4,nil,function(on) if on then enableStretchRez() else disableStretchRez() end;saveConfig() end)
     addToggleRow(vi,"Ragdoll GUI",ragdollGuiEnabled,5,nil,function(on) ragdollGuiEnabled=on;saveConfig() end)
 
-    addSectLbl(vi,"THEME",6)
-    local themeRow=Instance.new("Frame"); themeRow.Size=UDim2.new(1,0,0,38); themeRow.BackgroundColor3=C.row
-    themeRow.BackgroundTransparency=0.5; themeRow.BorderSizePixel=0; themeRow.LayoutOrder=7; themeRow.Parent=vi
-    guiCorner(themeRow,10); guiStroke(themeRow,C.divider,1)
-    local themeLbl=Instance.new("TextLabel",themeRow); themeLbl.Size=UDim2.new(0.8,0,0,16); themeLbl.Position=UDim2.new(0,12,0,6)
-    themeLbl.BackgroundTransparency=1; themeLbl.Text="Moon Hub Blue Theme"; themeLbl.TextColor3=C.text; themeLbl.TextSize=11; themeLbl.Font=Enum.Font.GothamBold; themeLbl.TextXAlignment=Enum.TextXAlignment.Left
-    local themeBadge=Instance.new("Frame",themeRow); themeBadge.Size=UDim2.new(0,18,0,18); themeBadge.Position=UDim2.new(1,-34,0.5,-9)
-    themeBadge.BackgroundColor3=C.blue; themeBadge.BorderSizePixel=0; guiCorner(themeBadge,9)
-    local hovBg=Instance.new("TextButton",themeRow); hovBg.Size=UDim2.new(1,0,1,0); hovBg.BackgroundTransparency=1; hovBg.Text=""; hovBg.ZIndex=0
-    hovBg.MouseEnter:Connect(function() tw(themeRow,{BackgroundTransparency=0.3}) end); hovBg.MouseLeave:Connect(function() tw(themeRow,{BackgroundTransparency=0.5}) end)
+    addSectLbl(vi,"BACKGROUND IMAGE",6)
+    local BgRow=Instance.new("Frame"); BgRow.Size=UDim2.new(1,0,0,195); BgRow.BackgroundColor3=C.row
+    BgRow.BackgroundTransparency=0.5; BgRow.BorderSizePixel=0; BgRow.LayoutOrder=7; BgRow.ZIndex=2; BgRow.Parent=vi
+    guiCorner(BgRow,10); guiStroke(BgRow,C.divider,1)
+
+    local ImgContainer=Instance.new("ScrollingFrame", BgRow)
+    ImgContainer.Size=UDim2.new(1,-32,1,-24); ImgContainer.Position=UDim2.new(0,16,0,12)
+    ImgContainer.BackgroundTransparency=1; ImgContainer.BorderSizePixel=0
+    ImgContainer.ScrollBarThickness=4; ImgContainer.ScrollBarImageColor3=C.blue
+    ImgContainer.CanvasSize=UDim2.new(0,0,0,0); ImgContainer.AutomaticCanvasSize=Enum.AutomaticSize.Y
+    ImgContainer.ScrollingDirection=Enum.ScrollingDirection.Y
+    ImgContainer.ElasticBehavior=Enum.ElasticBehavior.Never; ImgContainer.Active=true
+    guiCorner(ImgContainer,6)
+
+    local UGL=Instance.new("UIGridLayout", ImgContainer)
+    UGL.CellSize=UDim2.new(0,84,0,48); UGL.CellPadding=UDim2.new(0,8,0,8); UGL.SortOrder=Enum.SortOrder.LayoutOrder
+    UGL:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        ImgContainer.CanvasSize=UDim2.new(0,0,0,UGL.AbsoluteContentSize.Y+8)
+    end)
+
+    local Ss={}
+    for i=1,#BG_IMAGES do
+        local Prev=Instance.new("Frame",ImgContainer); Prev.LayoutOrder=i
+        Prev.BackgroundColor3=Color3.fromRGB(25,25,30); Prev.BorderSizePixel=0; guiCorner(Prev,7)
+        Ss[i]=guiStroke(Prev,backgroundIndex==i and C.blue or C.divider,1.5)
+        local Img=Instance.new("ImageLabel",Prev); Img.Size=UDim2.new(1,0,1,0); Img.BackgroundTransparency=1
+        Img.Image="rbxassetid://"..BG_IMAGES[i]; Img.ScaleType=Enum.ScaleType.Crop; guiCorner(Img,7)
+        local B=Instance.new("TextButton",Prev); B.Size=UDim2.new(1,0,1,0); B.BackgroundTransparency=1; B.Text=""
+        B.MouseButton1Click:Connect(function()
+            backgroundIndex=i; backgroundEnabled=true
+            if GuiRefs.backgroundImage then GuiRefs.backgroundImage.Image="rbxassetid://"..BG_IMAGES[i]; GuiRefs.backgroundImage.Visible=true end
+            if GuiRefs.bgGrad then GuiRefs.bgGrad.Visible=false end; updBg(i); saveConfig()
+        end)
+    end
+    local function updBg(idx)
+        for i=1,#BG_IMAGES do Ss[i].Color=idx==i and C.blue or C.divider end
+    end
+    BgRow.MouseEnter:Connect(function() tw(BgRow,{BackgroundTransparency=0.3}) end)
+    BgRow.MouseLeave:Connect(function() tw(BgRow,{BackgroundTransparency=0.5}) end)
 
     addSectLbl(vi,"SKY THEME",8)
     local skyIdx=1; for i,t in ipairs(SkyOrder) do if t==currentSkyTheme then skyIdx=i;break end end
@@ -2044,11 +2117,12 @@ if infJumpEnabled then startHoldInfJump() end
 if antiRagdollEnabled then startAntiRagdoll() end
 if medusaCounterEnabled then setupMedusa(LP.Character) end
 if animEnabled then startAnimToggle() end
+if backgroundIndex>0 then applyBackgroundImage(backgroundIndex) end
 CandyApplyCustomSky(currentSkyTheme)
 buildMobileButtons()
 
 end)() -- end GUI function
 
-print("MOON HUB")
+print("SPECTRUM MOBILE")
 print("LEKAD BY FRNK33.") 
-print("moonhub")
+print("discord.gg/kastorhub")
