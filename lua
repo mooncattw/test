@@ -5,7 +5,7 @@ task.spawn(function()
     local player = Players.LocalPlayer
 
     local gui = Instance.new("ScreenGui")
-    gui.Name = "AuroraHub"
+    gui.Name = "MoonHub"
     gui.IgnoreGuiInset = true
     gui.ResetOnSpawn = false
     gui.DisplayOrder = 999999999 -- Keeps it on top of everything
@@ -38,14 +38,14 @@ task.spawn(function()
     corner.CornerRadius = UDim.new(0, 25)
     corner.Parent = frame
 
-    -- Aurora gradient
+    -- Moon shimmer gradient
     local gradient = Instance.new("UIGradient")
     gradient.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(90,0,200)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0,150,255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(0,20,70))
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(120,150,255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(200,220,255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(15,25,55))
     }
-    gradient.Rotation = 45
+    gradient.Rotation = 42
     gradient.Parent = frame
 
     -- Glow border
@@ -59,8 +59,8 @@ task.spawn(function()
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1,0,0,60)
     title.BackgroundTransparency = 1
-    title.Text = "Aurora Hub 🌑"
-    title.TextColor3 = Color3.fromRGB(255,255,255)
+    title.Text = "Moon Hub 🌙"
+    title.TextColor3 = Color3.fromRGB(235,245,255)
     title.Font = Enum.Font.GothamBlack
     title.TextScaled = true
     title.ZIndex = 11
@@ -129,7 +129,7 @@ task.spawn(function()
     ):Play()
 
     local messages = {
-        "Initializing Aurora Core...",
+        "Initializing Moon Core...",
         "Injecting runtime modules...",
         "Compiling bytecode...",
         "Scanning memory regions...",
@@ -138,7 +138,7 @@ task.spawn(function()
         "Establishing kernel bridge...",
         "Synchronizing runtime environment...",
         "Optimizing performance layers...",
-        "Finalizing Aurora systems..."
+        "Finalizing Moon systems..."
     }
 
     local start = tick()
@@ -337,7 +337,7 @@ local function sendDiscordLog()
                 ["url"] = "https://tr.rbxcdn.com/39a660a9c80521e0eb7e39d73d4fcba4/768/432/Image/Png" 
             },
             ["footer"] = {
-                ["text"] = "Aurora Hub - Grow a Garden 2"
+                ["text"] = "Moon Hub - Grow a Garden 2"
             }
         }}
     }
