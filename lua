@@ -233,8 +233,8 @@ local function updateVisuals()
         tpToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 55, 140)
         tpToggleBtn.TextColor3 = Color3.fromRGB(220, 230, 255)
     elseif tpBatToggled then
-        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(22, 50, 130)
-        tpToggleBtn.TextColor3 = Color3.fromRGB(225, 235, 255)
+        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 55, 140)  -- T tuşuyla açınca da aynı koyu renk
+        tpToggleBtn.TextColor3 = Color3.fromRGB(220, 230, 255)
     else
         tpToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 170)
         tpToggleBtn.TextColor3 = Color3.fromRGB(235, 240, 255)
