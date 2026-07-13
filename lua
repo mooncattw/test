@@ -1,5 +1,6 @@
 --MOON HUB
 --moonhub
+--LEKAD BY FRNK33.
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -1582,6 +1583,35 @@ _GuiKeys = Keys
     BottomLine.BackgroundColor3=C.blue; BottomLine.BackgroundTransparency=0.4; BottomLine.BorderSizePixel=0
     BottomLine.Parent=HF; BottomLine.ZIndex=3
 
+    local NavBar=Instance.new("Frame")
+    NavBar.Name="NavBar"; NavBar.Size=UDim2.new(1,-28,0,30); NavBar.Position=UDim2.new(0,14,0,58)
+    NavBar.BackgroundTransparency=1; NavBar.BorderSizePixel=0; NavBar.Parent=Inner; NavBar.ZIndex=3
+
+    local NavLayout=Instance.new("UIListLayout")
+    NavLayout.FillDirection=Enum.FillDirection.Horizontal; NavLayout.HorizontalAlignment=Enum.HorizontalAlignment.Left
+    NavLayout.VerticalAlignment=Enum.VerticalAlignment.Center; NavLayout.Padding=UDim.new(0,8); NavLayout.Parent=NavBar
+
+    local NavButtons={}
+    for i,name in ipairs(Categories) do
+        local btn=Instance.new("TextButton")
+        btn.Name=name; btn.Size=UDim2.new(0,72,0,22); btn.BackgroundColor3=C.blueDark
+        btn.BackgroundTransparency=0.25; btn.BorderSizePixel=0; btn.Text=name:upper(); btn.TextColor3=(name=="Speed") and C.white or C.textMuted
+        btn.TextSize=10; btn.Font=Enum.Font.GothamBold; btn.Parent=NavBar; btn.ZIndex=4
+        guiCorner(btn,6); guiStroke(btn,C.divider,1)
+        btn.MouseButton1Click:Connect(function()
+            for _,f in pairs(CategoryRefs.contents) do f.Visible=false end
+            local selectedPage = CategoryRefs.contents[name]
+            selectedPage.Visible=true; CategoryRefs.active=name
+            for n,b in pairs(CategoryRefs.btnsSide) do
+                local ac=(n==name); b.TextColor3=ac and C.white or C.textMuted; b.BackgroundTransparency=ac and 0.2 or 0.3
+                local i2=b:FindFirstChild("indicator"); if i2 then i2.BackgroundTransparency=ac and 0.3 or 1 end
+            end
+            local lay = selectedPage:FindFirstChildOfClass("UIListLayout")
+            if lay then GuiRefs.contentFrame.CanvasSize = UDim2.new(0, 0, 0, lay.AbsoluteContentSize.Y + 25) end
+        end)
+        table.insert(NavButtons,btn)
+    end
+
     -- MINIMIZE BUTTON
     local CloseBtn=Instance.new("TextButton")
     CloseBtn.Size=UDim2.new(0,28,0,28); CloseBtn.Position=UDim2.new(1,-38,0,8)
@@ -1628,7 +1658,7 @@ _GuiKeys = Keys
     GuiRefs.categoryList=CatList
 
     local CF=Instance.new("ScrollingFrame")
-    CF.Name="ContentFrame"; CF.Size=UDim2.new(1,-24,1,-118); CF.Position=UDim2.new(0,12,0,63)
+    CF.Name="ContentFrame"; CF.Size=UDim2.new(1,-24,1,-130); CF.Position=UDim2.new(0,12,0,95)
     CF.BackgroundTransparency=1; CF.BorderSizePixel=0; CF.ScrollBarThickness=6; CF.ScrollBarImageColor3=C.blue
     CF.CanvasSize=UDim2.new(0,0,0,0); CF.AutomaticCanvasSize=Enum.AutomaticSize.Y
     CF.ScrollingDirection=Enum.ScrollingDirection.Y; CF.ScrollingEnabled=true; CF.Active=true
