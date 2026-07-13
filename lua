@@ -1,533 +1,697 @@
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UIS = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local HttpService = game:GetService("HttpService")
-local LP = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
 
+local PACKS = {
+	["Adidas Sports"] = {
+		WalkAnim = 18537392113,
+		RunAnim  = 18537384940,
+		JumpAnim = 18537380791,
+		FallAnim = 18537367238,
+		SwimIdle = 18537387180,
+		Swim     = 18537389531,
+		Animation1 = 18537376492,
+		Animation2 = 18537371272,
+		ClimbAnim = 18537363391,
+	},
+	["Adidas Community"] = {
+		WalkAnim = 122150855457006,
+		RunAnim  = 82598234841035,
+		JumpAnim = 75290611992385,
+		FallAnim = 98600215928904,
+		SwimIdle = 109346520324160,
+		Swim     = 133308483266208,
+		Animation1 = 122257458498464,
+		Animation2 = 102357151005774,
+		ClimbAnim = 88763136693023,
+	},
+	["Adidas Aura"] = {
+		WalkAnim = 83842218823011,
+		RunAnim  = 118320322718866,
+		JumpAnim = 109996626521204,
+		FallAnim = 95603166884636,
+		SwimIdle = 94922130551805,
+		Swim     = 134530128383903,
+		Animation1 = 110211186840347,
+		Animation2 = 114191137265065,
+		ClimbAnim = 97824616490448,
+	},
+	["Wicked Popular"] = {
+		WalkAnim = 92072849924640,
+		RunAnim = 72301599441680,
+		JumpAnim = 104325245285198,
+		FallAnim = 121152442762481,
+		Animation1 = 118832222982049,
+		ClimbAnim = 131326830509784,
+		SwimIdle = 113199415118199,
+		Swim = 99384245425157,
+		Animation2 = 76049494037641,
+	},
+	Elder = {
+		WalkAnim = 10921111375,
+		RunAnim  = 10921104374,
+		JumpAnim = 10921107367,
+		FallAnim = 10921105765,
+		SwimIdle = 10921110146,
+		Swim     = 10921108971,
+		ClimbAnim = 10921100400,
+		Animation1 = 10921101664,
+		Animation2 = 10921102574,
+	},
+	Zombie = {
+		WalkAnim = 10921355261,
+		RunAnim  = 616163682,
+		JumpAnim = 10921351278,
+		FallAnim = 10921350320,
+		SwimIdle = 10921353442,
+		Swim     = 10921352344,
+		Animation1 = 10921344533,
+		Animation2 = 10921345304,
+		ClimbAnim = 10921343576,
+	},
+	Mage = {
+		WalkAnim = 10921152678,
+		RunAnim  = 10921148209,
+		JumpAnim = 10921149743,
+		FallAnim = 10921148939,
+		SwimIdle = 10921151661,
+		Swim     = 10921150788,
+		ClimbAnim = 10921143404,
+		Animation1 = 10921144709,
+		Animation2 = 10921145797,
+	},
 
+	["Catwalk Glam"] = {
+		WalkAnim = 109168724482748,
+		RunAnim  = 81024476153754,
+		JumpAnim = 116936326516985,
+		FallAnim = 92294537340807,
+		SwimIdle = 98854111361360,
+		Swim     = 134591743181628,
+		ClimbAnim = 119377220967554,
+		Animation1 = 133806214992291,
+		Animation2 = 94970088341563,
+	},
+	Astronaut = {
+		WalkAnim = 10921046031,
+		RunAnim  = 10921039308,
+		JumpAnim = 10921042494,
+		FallAnim = 10921040576,
+		SwimIdle = 10921045006,
+		Swim     = 10921044000,
+		ClimbAnim = 10921032124,
+		Animation1 = 10921034824,
+		Animation2 = 10921036806,
+	},
+	['Wicked "Dancing Through Life"'] = {
+		WalkAnim = 73718308412641,
+		RunAnim  = 135515454877967,
+		JumpAnim = 78508480717326,
+		FallAnim = 78147885297412,
+		SwimIdle = 129183123083281,
+		Swim     = 110657013921774,
+		ClimbAnim = 129447497744818,
+		Animation1 = 92849173543269,
+		Animation2 = 132238900951109,
+	},
+	Werewolf = {
+		WalkAnim = 10921342074,
+		RunAnim  = 10921336997,
+		JumpAnim = nil,
+		FallAnim = 10921337907,
+		SwimIdle = 10921341319,
+		Swim     = 10921340419,
+		ClimbAnim = 10921329322,
+		Animation1 = 10921330408,
+		Animation2 = 10921333667,
+	},
+	Superhero = {
+		WalkAnim = 10921298616,
+		RunAnim  = 10921291831,
+		JumpAnim = 10921294559,
+		FallAnim = 10921293373,
+		SwimIdle = 10921297391,
+		Swim     = 10921295495,
+		ClimbAnim = 10921286911,
+		Animation1 = 10921288909,
+		Animation2 = 10921290167,
+	},
+	Toy = {
+		WalkAnim = 10921312010,
+		RunAnim  = 10921306285,
+		JumpAnim = 10921308158,
+		FallAnim = 10921307241,
+		SwimIdle = 10921310341,
+		Swim     = 10921309319,
+		ClimbAnim = 10921300839,
+		Animation1 = 10921301576,
+		Animation2 = nil,
+	},
+	["No Boundaries"] = {
+		WalkAnim = 18747074203,
+		RunAnim  = 18747070484,
+		JumpAnim = 18747069148,
+		FallAnim = 18747062535,
+		SwimIdle = 18747071682,
+		Swim     = 18747073181,
+		ClimbAnim = 18747060903,
+		Animation1 = 18747067405,
+		Animation2 = 18747063918,
+	},
+	NFL = {
+		WalkAnim = 110358958299415,
+		RunAnim  = 117333533048078,
+		JumpAnim = 119846112151352,
+		FallAnim = 129773241321032,
+		SwimIdle = 79090109939093,
+		Swim     = 132697394189921,
+		ClimbAnim = 134630013742019,
+		Animation1 = 92080889861410,
+		Animation2 = 74451233229259,
+	},
+	["Amazon Unboxed"] = {
+		WalkAnim = 90478085024465,
+		RunAnim  = 134824450619865,
+		JumpAnim = 121454505477205,
+		FallAnim = 94788218468396,
+		SwimIdle = 129126268464847,
+		Swim     = 105962919001086,
+		ClimbAnim = 121145883950231,
+		Animation1 = 98281136301627,
+		Animation2 = nil,
+	},
+	Vampire = {
+		WalkAnim = 10921326949,
+		RunAnim  = 10921320299,
+		JumpAnim = 10921322186,
+		FallAnim = 10921321317,
+		SwimIdle = 10921325443,
+		Swim     = 10921324408,
+		ClimbAnim = 10921314188,
+		Animation1 = 10921315373,
+		Animation2 = nil,
+	},
 
-
--- // THEME (PINK FLOWER)
-local BG         = Color3.fromRGB(45, 10, 40)
-local CARD_BG    = Color3.fromRGB(110, 20, 100)
-local CARD_HOV   = Color3.fromRGB(235, 95, 210)
-local BORDER     = Color3.fromRGB(255, 150, 230)
-local BORDER2    = Color3.fromRGB(255, 205, 245)
-local WHITE      = Color3.fromRGB(255, 255, 255)
-local DIM        = Color3.fromRGB(255, 225, 245)
-local KB_BG      = Color3.fromRGB(135, 15, 95)
-
-local flowerEmojis = {"🌸", "🌺", "💮", "🌷", "🌼", "🌻"}
-local flowerColors = {
-    Color3.fromRGB(255, 140, 220),
-    Color3.fromRGB(255, 110, 205),
-    Color3.fromRGB(255, 170, 245),
-    Color3.fromRGB(255, 200, 255),
-    Color3.fromRGB(250, 135, 225),
-    Color3.fromRGB(255, 155, 240),
+	["Ninja"] = {
+		Run=656118852, Walk=656121766, Jump=656117878, Fall=656115606,
+		Swim=656119721, SwimIdle=656121397, Climb=656114359,
+		Idle={656117400,656118341,886742569}
+	},
+	["Robot"] = {
+		Run=616091570, Walk=616095330, Jump=616090535, Fall=616087089,
+		Swim=616092998, SwimIdle=616094091, Climb=616086039,
+		Idle={616088211,616089559,885531463}
+	},
+	["Levitation"] = {
+		Run=616010382, Walk=616013216, Jump=616008936, Fall=616005863,
+		Swim=616011509, SwimIdle=616012453, Climb=616003713,
+		Idle={616006778,616008087,886862142}
+	},
+	["Stylish"] = {
+		Run=616140816, Walk=616146177, Jump=616139451, Fall=616134815,
+		Swim=616143378, SwimIdle=616144772, Climb=616133594,
+		Idle={616136790,616138447,886888594}
+	},
+	["Bubbly"] = {
+		Run=910025107, Walk=910034870, Jump=910016857, Fall=910001910,
+		Swim=910028158, SwimIdle=910030921, Climb=909997997,
+		Idle={910004836,910009958,1018536639}
+	},
+	["Cartoon"] = {
+		Run=742638842, Walk=742640026, Jump=742637942, Fall=742637151,
+		Swim=742639220, SwimIdle=742639812, Climb=742636889,
+		Idle={742637544,742638445,885477856}
+	},
 }
 
--- // STATE
-local State = {
-    autoBatToggled = false,
-    hittingCooldown = false,
-    guiVisible = true,
-    mobileMode = false,
-}
-
-local Keys = {
-    autoBat = Enum.KeyCode.X,
-    autoBatType = "Keyboard", -- "Keyboard" or "Gamepad"
-    guiHide = Enum.KeyCode.LeftControl,
-}
-
-local h, hrp = nil, nil
-
--- // CONFIG
-local function saveConfig()
-    local cfg = {
-        autoBatKey = Keys.autoBat.Name,
-        autoBatKeyType = Keys.autoBatType,
-        mobileMode = State.mobileMode,
-    }
-    pcall(function() 
-        writefile("EnvyAutoBatDesyncConfig.json", HttpService:JSONEncode(cfg)) 
-    end)
+-- UTILS
+local function waitForAnimate(char)
+	for _ = 1, 40 do
+		local a = char:FindFirstChild("Animate")
+		if a and a:FindFirstChild("idle") and a:FindFirstChild("run") and a:FindFirstChild("walk") then
+			return a
+		end
+		task.wait(0.1)
+	end
+	return nil
 end
 
-local function loadConfig()
-    local hasFile = false
-    pcall(function() hasFile = isfile("EnvyAutoBatDesyncConfig.json") end)
-    if not hasFile then return end
-    
-    local ok, cfg = pcall(function() 
-        return HttpService:JSONDecode(readfile("EnvyAutoBatDesyncConfig.json")) 
-    end)
-    if not ok or not cfg then return end
-    
-    if cfg.autoBatKey and Enum.KeyCode[cfg.autoBatKey] then
-        Keys.autoBat = Enum.KeyCode[cfg.autoBatKey]
-    end
-    
-    if cfg.autoBatKeyType then
-        Keys.autoBatType = cfg.autoBatKeyType
-    end
-    
-    if cfg.mobileMode ~= nil then 
-        State.mobileMode = cfg.mobileMode 
-    end
+local function setAnim(animObj, id)
+	if animObj and id then
+		animObj.AnimationId = "rbxassetid://" .. tostring(id)
+	end
 end
 
-loadConfig()
-
--- // CLEANUP OLD GUI
-for _, name in pairs({"EnvyAutoBatDesyncGUI", "MwvaneNewaBatDesyncGUI", "PhazeAutoBatDesyncGUI"}) do
-    local old = game:GetService("CoreGui"):FindFirstChild(name)
-    if old then old:Destroy() end
+local function stopAllTracks(hum)
+	if not hum then return end
+	for _, t in ipairs(hum:GetPlayingAnimationTracks()) do
+		pcall(function() t:Stop(0) end)
+	end
 end
 
--- // GUI
-local gui = Instance.new("ScreenGui")
-gui.Name="dundTPBatGUI"; gui.ResetOnSpawn=false; gui.DisplayOrder=10
-gui.IgnoreGuiInset=true; gui.Parent=LP:WaitForChild("PlayerGui")
-
-local main = Instance.new("Frame",gui)
-main.Name="Main"; main.Size=UDim2.new(0,320,0,120); main.Position=UDim2.new(0.5,-160,0.5,-60)
-main.BackgroundColor3=BG; main.BorderSizePixel=0; main.Active=true; main.ClipsDescendants=true
-Instance.new("UICorner",main).CornerRadius=UDim.new(0,14)
-local mainStroke = Instance.new("UIStroke",main); mainStroke.Color=BORDER; mainStroke.Thickness=2
-local mainGrad = Instance.new("UIGradient", main)
-mainGrad.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 190, 245)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(220, 90, 185)),
-})
-mainGrad.Rotation = 270
-
--- // FALLING FLOWERS BACKGROUND
--- // BACKGROUND IMAGE (replace BG_ASSET_ID with your uploaded rb asset id)
-local BG_ASSET_ID = 0 -- e.g. 123456789
-if BG_ASSET_ID and BG_ASSET_ID ~= 0 then
-    local bgImg = Instance.new("ImageLabel", main)
-    bgImg.Name = "BackgroundImage"
-    bgImg.Size = UDim2.new(1, 0, 1, 0)
-    bgImg.Position = UDim2.new(0, 0, 0, 0)
-    bgImg.Image = "rbxassetid://" .. tostring(BG_ASSET_ID)
-    bgImg.BackgroundTransparency = 1
-    bgImg.ZIndex = 0
-    bgImg.ImageTransparency = 0.12
-    bgImg.ScaleType = Enum.ScaleType.Crop
-    bgImg.ImageColor3 = Color3.fromRGB(255, 230, 250)
+local function ensureAnim(folder, name)
+	if not folder then return nil end
+	local a = folder:FindFirstChild(name)
+	if not a then
+		a = Instance.new("Animation")
+		a.Name = name
+		a.Parent = folder
+	end
+	return a
 end
 
-local leafContainer = Instance.new("Frame", main)
-leafContainer.Size = UDim2.new(1, 0, 1, 0)
-leafContainer.Position = UDim2.new(0, 0, 0, 0)
-leafContainer.BackgroundTransparency = 1
-leafContainer.BorderSizePixel = 0
-leafContainer.ZIndex = 1
-
-local leavesRunning = true
--- Optional leaf image asset (set to your uploaded asset id)
-local LEAF_ASSET_ID = 0 -- e.g. 987654321
-
-local function spawnLeaf()
-    local x = math.random()
-    local fallDuration = math.random(6, 12)
-    local drift = (math.random() - 0.5) * 0.45
-    local targetX = math.clamp(x + drift, 0, 1)
-
-    if LEAF_ASSET_ID and LEAF_ASSET_ID ~= 0 then
-        local sizePx = math.random(18, 48)
-        local leaf = Instance.new("ImageLabel", leafContainer)
-        leaf.Size = UDim2.new(0, sizePx, 0, sizePx)
-        leaf.BackgroundTransparency = 1
-        leaf.Image = "rbxassetid://" .. tostring(LEAF_ASSET_ID)
-        leaf.ImageColor3 = Color3.fromRGB(255, 170, 240)
-        leaf.ImageTransparency = 0
-        leaf.AnchorPoint = Vector2.new(0.5, 0.5)
-        leaf.Position = UDim2.new(x, 0, -0.08, 0)
-        leaf.ZIndex = 2
-
-        local tweenInfo = TweenInfo.new(fallDuration, Enum.EasingStyle.Linear)
-        local goals = {Position = UDim2.new(targetX, 0, 1.12, 0), Rotation = math.random(-720, 720), ImageTransparency = 1}
-        local tw = TweenService:Create(leaf, tweenInfo, goals)
-        tw:Play()
-        tw.Completed:Connect(function()
-            if leaf and leaf.Parent then leaf:Destroy() end
-        end)
-    else
-        local leaf = Instance.new("TextLabel", leafContainer)
-        leaf.Size = UDim2.new(0, math.random(26, 40), 0, math.random(26, 40))
-        leaf.BackgroundTransparency = 1
-        leaf.Text = flowerEmojis[math.random(#flowerEmojis)]
-        leaf.TextColor3 = flowerColors[math.random(#flowerColors)]
-        leaf.TextStrokeTransparency = 0.8
-        leaf.TextStrokeColor3 = Color3.fromRGB(255, 245, 255)
-        leaf.TextSize = math.random(20, 34)
-        leaf.AnchorPoint = Vector2.new(0.5, 0.5)
-        leaf.Position = UDim2.new(x, 0, -0.08, 0)
-        leaf.ZIndex = 2
-
-        local tweenInfo = TweenInfo.new(fallDuration, Enum.EasingStyle.Linear)
-        local goals = {Position = UDim2.new(targetX, 0, 1.12, 0), Rotation = math.random(-720, 720), TextTransparency = 1}
-        local tw = TweenService:Create(leaf, tweenInfo, goals)
-        tw:Play()
-        tw.Completed:Connect(function()
-            if leaf and leaf.Parent then leaf:Destroy() end
-        end)
-    end
+local function ensureIdleSlots(idleFolder, n)
+	if not idleFolder then return end
+	n = n or 2
+	for i=1,n do
+		ensureAnim(idleFolder, "Animation" .. i)
+	end
 end
 
--- loop spawner
-task.spawn(function()
-    while leavesRunning and gui and gui.Parent do
-        spawnLeaf()
-        task.wait(math.random() * 0.6 + 0.25)
-    end
+-- pick helper (supports both formats)
+local function pick(pack, ...)
+	for i = 1, select("#", ...) do
+		local k = select(i, ...)
+		local v = pack[k]
+		if v ~= nil then return v end
+	end
+	return nil
+end
+
+-- APPLY PACK
+local ATTR_LAST = "AnimPack_Last"
+local applying = false
+
+local function applyPack(packName)
+	if applying then return false end
+	applying = true
+
+	local pack = PACKS[packName]
+	if not pack then
+		warn("Unknown pack:", packName)
+		applying = false
+		return false
+	end
+
+	local char = player.Character or player.CharacterAdded:Wait()
+	local animate = waitForAnimate(char)
+	if not animate then
+		warn("Animate not found")
+		applying = false
+		return false
+	end
+
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	stopAllTracks(hum)
+
+	-- Ensure common objects exist
+	local runObj   = ensureAnim(animate:FindFirstChild("run"),   "RunAnim")
+	local walkObj  = ensureAnim(animate:FindFirstChild("walk"),  "WalkAnim")
+	local jumpObj  = ensureAnim(animate:FindFirstChild("jump"),  "JumpAnim")
+	local fallObj  = ensureAnim(animate:FindFirstChild("fall"),  "FallAnim")
+	local climbObj = ensureAnim(animate:FindFirstChild("climb"), "ClimbAnim")
+	local swimObj  = ensureAnim(animate:FindFirstChild("swim"),     "Swim")
+	local swimIdleObj = ensureAnim(animate:FindFirstChild("swimidle"), "SwimIdle")
+	local idleFolder = animate:FindFirstChild("idle")
+
+	-- Movement: prefer Format B keys, fallback to Format A keys
+	setAnim(walkObj,  pick(pack, "WalkAnim", "Walk"))
+	setAnim(runObj,   pick(pack, "RunAnim", "Run"))
+	setAnim(jumpObj,  pick(pack, "JumpAnim", "Jump"))
+	setAnim(fallObj,  pick(pack, "FallAnim", "Fall"))
+	setAnim(climbObj, pick(pack, "ClimbAnim", "Climb"))
+
+	setAnim(swimObj,      pick(pack, "Swim"))
+	setAnim(swimIdleObj,  pick(pack, "SwimIdle") or pick(pack, "Swim"))
+
+	-- Idle: Format B Animation1/Animation2 OR Format A Idle array
+	if idleFolder then
+		local a1 = pick(pack, "Animation1")
+		local a2 = pick(pack, "Animation2")
+
+		if a1 or a2 then
+			ensureIdleSlots(idleFolder, 2)
+			local id1 = a1 or a2
+			local id2 = a2 or a1 or id1
+			setAnim(idleFolder:FindFirstChild("Animation1"), id1)
+			setAnim(idleFolder:FindFirstChild("Animation2"), id2)
+		elseif pack.Idle and #pack.Idle > 0 then
+			ensureIdleSlots(idleFolder, math.max(2, #pack.Idle))
+			setAnim(idleFolder:FindFirstChild("Animation1"), pack.Idle[1])
+			setAnim(idleFolder:FindFirstChild("Animation2"), pack.Idle[2] or pack.Idle[1])
+			for i = 3, #pack.Idle do
+				local a = idleFolder:FindFirstChild("Animation" .. i)
+				if a then setAnim(a, pack.Idle[i]) end
+			end
+		end
+	end
+
+	-- Refresh Animate
+	animate.Disabled = true
+	task.wait(0.06)
+	animate.Disabled = false
+
+	-- Nudge state
+	if hum then
+		pcall(function()
+			hum:ChangeState(Enum.HumanoidStateType.Landed)
+			task.wait(0.03)
+			hum:ChangeState(Enum.HumanoidStateType.Running)
+		end)
+	end
+
+	pcall(function() player:SetAttribute(ATTR_LAST, packName) end)
+
+	applying = false
+	return true
+end
+
+-- Reapply on respawn (session)
+player.CharacterAdded:Connect(function()
+	task.wait(0.6)
+	local saved = player:GetAttribute(ATTR_LAST)
+	if type(saved) == "string" and saved ~= "" and PACKS[saved] then
+		applyPack(saved)
+	end
 end)
 
+-- GUI
+local function getParentGui()
+	return player:WaitForChild("PlayerGui")
+end
+
+-- cleanup old UI
 do
-    local dragging, dragInput, dragStart, mainStart = false, nil, nil, nil
-    main.InputBegan:Connect(function(inp)
-        if inp.UserInputType==Enum.UserInputType.MouseButton1 or inp.UserInputType==Enum.UserInputType.Touch then
-            dragging=true; dragStart=inp.Position; mainStart=main.Position
-            inp.Changed:Connect(function()
-                if inp.UserInputState==Enum.UserInputState.End then dragging=false end
-            end)
-        end
-    end)
-    main.InputChanged:Connect(function(inp)
-        if inp.UserInputType==Enum.UserInputType.MouseMovement or inp.UserInputType==Enum.UserInputType.Touch then dragInput=inp end
-    end)
-    UIS.InputChanged:Connect(function(inp)
-        if inp==dragInput and dragging then
-            local dx = inp.Position.X - dragStart.X
-            local dy = inp.Position.Y - dragStart.Y
-            main.Position = UDim2.new(mainStart.X.Scale, mainStart.X.Offset+dx, mainStart.Y.Scale, mainStart.Y.Offset+dy)
-        end
-    end)
+	local pg = getParentGui()
+	local old = pg:FindFirstChild("AnimPackGUI")
+	if old then old:Destroy() end
 end
 
--- // HEADER
-local header = Instance.new("Frame",main)
-header.Size=UDim2.new(1,0,0,44); header.BackgroundTransparency=1; header.BorderSizePixel=0; header.ZIndex=6
-Instance.new("UICorner",header).CornerRadius=UDim.new(0,12)
+-- ====== INTRO ======
+local introGui = Instance.new("ScreenGui")
+introGui.Name = "IntroGUI"
+introGui.ResetOnSpawn = false
+introGui.Parent = getParentGui()
 
-local headerBG = Instance.new("Frame", header)
-headerBG.Size = UDim2.new(1, -8, 1, 0)
-headerBG.Position = UDim2.new(0, 4, 0, 4)
-headerBG.BackgroundColor3 = CARD_BG
-headerBG.BorderSizePixel = 0
-Instance.new("UICorner", headerBG).CornerRadius = UDim.new(0,10)
-local headerStroke = Instance.new("UIStroke", headerBG); headerStroke.Color = BORDER2; headerStroke.Thickness = 2; headerStroke.Transparency = 0.25
+local introText = Instance.new("TextLabel")
+introText.Size = UDim2.new(1, 0, 1, 0)
+introText.BackgroundTransparency = 1
+introText.Text = "dund on top"
+introText.TextColor3 = Color3.fromRGB(0, 255, 0)
+introText.TextScaled = true
+introText.Font = Enum.Font.GothamBold
+introText.TextStrokeTransparency = 0.3
+introText.Parent = introGui
 
-local titleLbl = Instance.new("TextLabel", headerBG)
-titleLbl.Size=UDim2.new(0.65,0,1,0); titleLbl.Position=UDim2.new(0,12,0,0)
-titleLbl.BackgroundTransparency=1; titleLbl.Text="dund tp bat"
-titleLbl.TextColor3=Color3.fromRGB(240,230,255); titleLbl.Font=Enum.Font.GothamBlack; titleLbl.TextSize=14
-titleLbl.TextXAlignment=Enum.TextXAlignment.Left; titleLbl.ZIndex=8
+task.wait(1)
+introGui:Destroy()
+-- ==================
 
-local subtitle = Instance.new("TextLabel", headerBG)
-subtitle.Size = UDim2.new(0.3,0,1,0); subtitle.Position = UDim2.new(0.65, 0, 0, 0)
-subtitle.BackgroundTransparency = 1; subtitle.Text = "BY FANDS"; subtitle.Font = Enum.Font.Gotham; subtitle.TextSize = 10
-subtitle.TextColor3 = Color3.fromRGB(200,170,255); subtitle.TextXAlignment = Enum.TextXAlignment.Right
+local gui = Instance.new("ScreenGui")
+gui.Name = "AnimPackGUI"
+gui.ResetOnSpawn = false
+gui.Parent = getParentGui()
 
-local statusLbl = Instance.new("TextLabel", headerBG)
-statusLbl.Size = UDim2.new(0, 110, 0, 28)
-statusLbl.Position = UDim2.new(1, -122, 0.5, -14)
-statusLbl.BackgroundColor3 = KB_BG; statusLbl.BorderSizePixel = 0
-Instance.new("UICorner", statusLbl).CornerRadius = UDim.new(0,8)
-local statusStroke = Instance.new("UIStroke", statusLbl); statusStroke.Color = Color3.fromRGB(255,130,215); statusStroke.Thickness = 1
-local statusSmall = Instance.new("TextLabel", statusLbl)
-statusSmall.Size = UDim2.new(0.45, 0, 1, 0); statusSmall.Position = UDim2.new(0,6,0,0)
-statusSmall.BackgroundTransparency = 1; statusSmall.Text = "Status"; statusSmall.Font = Enum.Font.Gotham; statusSmall.TextSize = 10; statusSmall.TextColor3 = Color3.fromRGB(255,210,245)
-local statusVal = Instance.new("TextLabel", statusLbl)
-statusVal.Size = UDim2.new(0.5, -8, 1, 0); statusVal.Position = UDim2.new(0.5, 0, 0, 0)
-statusVal.BackgroundTransparency = 1; statusVal.Text = "INACTIVE"; statusVal.Font = Enum.Font.GothamBold; statusVal.TextSize = 11; statusVal.TextColor3 = Color3.fromRGB(255,180,240)
-statusVal.TextXAlignment = Enum.TextXAlignment.Right
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 420, 0, 620) -- larger rectangular
+frame.Position = UDim2.new(0.5, -210, 0.5, -310)
+frame.BackgroundColor3 = Color3.fromRGB(18, 6, 36) -- dark purple
+frame.BorderSizePixel = 0
+frame.Parent = gui
+frame.Active = true
+frame.ClipsDescendants = true
 
--- Mobile/PC Toggle Button
-local modeToggleBtn = Instance.new("TextButton", header)
-modeToggleBtn.Size = UDim2.new(0, 50, 0, 24)
-modeToggleBtn.Position = UDim2.new(1, -82, 0.5, -12)
-modeToggleBtn.BackgroundColor3 = KB_BG
-modeToggleBtn.BorderSizePixel = 0
-modeToggleBtn.Text = State.mobileMode and "PC" or "MOBILE"
-modeToggleBtn.TextColor3 = WHITE
-modeToggleBtn.Font = Enum.Font.GothamBold
-modeToggleBtn.TextSize = 8
-modeToggleBtn.ZIndex = 10
-Instance.new("UICorner", modeToggleBtn).CornerRadius = UDim.new(0, 5)
-local modeToggleStroke = Instance.new("UIStroke", modeToggleBtn)
-modeToggleStroke.Color = BORDER2
-modeToggleStroke.Thickness = 1
+local fc = Instance.new("UICorner"); fc.CornerRadius = UDim.new(0, 6); fc.Parent = frame
+local st = Instance.new("UIStroke"); st.Color = Color3.fromRGB(180, 110, 230); st.Transparency = 0.4; st.Parent = frame
 
-local closeBtn = Instance.new("TextButton",main)
-closeBtn.Size=UDim2.new(0,24,0,24); closeBtn.Position=UDim2.new(1,-32,0,8)
-closeBtn.BackgroundColor3=KB_BG; closeBtn.BorderSizePixel=0
-closeBtn.Text="X"; closeBtn.TextColor3=WHITE; closeBtn.Font=Enum.Font.GothamBlack
-closeBtn.TextSize=12; closeBtn.ZIndex=10
-Instance.new("UICorner",closeBtn).CornerRadius=UDim.new(0,6)
-local closeBtnStroke = Instance.new("UIStroke",closeBtn); closeBtnStroke.Color=BORDER
-closeBtn.MouseEnter:Connect(function()
-    TweenService:Create(closeBtn,TweenInfo.new(0.1),{BackgroundColor3=CARD_HOV}):Play()
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 36)
+titleBar.BackgroundTransparency = 1
+titleBar.Parent = frame
+titleBar.Active = true
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -24, 0, 28)
+title.Position = UDim2.new(0, 12, 0, 4)
+title.BackgroundTransparency = 1
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextColor3 = Color3.fromRGB(240, 240, 245)
+title.Text = "dund aim"
+title.Parent = titleBar
+
+-- Subtitle "Made by weekly"
+local sub = Instance.new("TextLabel")
+sub.Size = UDim2.new(1, -120, 0, 16)
+sub.Position = UDim2.new(0, 12, 0, 18) -- inside title bar
+sub.BackgroundTransparency = 1
+sub.TextXAlignment = Enum.TextXAlignment.Left
+sub.Font = Enum.Font.Gotham
+sub.TextSize = 12
+sub.TextColor3 = Color3.fromRGB(200, 160, 255)
+sub.Text = "by itspakk"
+sub.Parent = titleBar
+
+local hint = Instance.new("TextLabel")
+hint.Size = UDim2.new(0, 110, 1, 0)
+hint.Position = UDim2.new(1, -230, 0, 0)
+hint.BackgroundTransparency = 1
+hint.TextXAlignment = Enum.TextXAlignment.Right
+hint.Font = Enum.Font.Gotham
+hint.TextSize = 12
+hint.TextColor3 = Color3.fromRGB(210, 180, 255)
+hint.Text = "(, hide)"
+hint.Parent = titleBar
+
+local miniBtn = Instance.new("TextButton")
+miniBtn.Size = UDim2.new(0, 36, 0, 36)
+miniBtn.Position = UDim2.new(1, -72, 0, 0)
+miniBtn.Text = "-"
+miniBtn.Font = Enum.Font.GothamBold
+miniBtn.TextSize = 18
+miniBtn.TextColor3 = Color3.fromRGB(255,255,255)
+miniBtn.BackgroundTransparency = 1
+miniBtn.Parent = titleBar
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 36, 0, 36)
+closeBtn.Position = UDim2.new(1, -36, 0, 0)
+closeBtn.Text = "X"
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 16
+closeBtn.TextColor3 = Color3.fromRGB(255,180,200)
+closeBtn.BackgroundTransparency = 1
+closeBtn.Parent = titleBar
+
+-- drag
+local dragging, dragStart, startPos = false, nil, nil
+titleBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+	end
 end)
-closeBtn.MouseLeave:Connect(function()
-    TweenService:Create(closeBtn,TweenInfo.new(0.1),{BackgroundColor3=KB_BG}):Play()
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = false
+	end
 end)
-closeBtn.MouseButton1Click:Connect(function()
-    State.autoBatToggled = false
-    leavesRunning = false
-    gui:Destroy()
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
 end)
 
--- // CONTENT AREA
-local content = Instance.new("Frame",main)
-content.Size=UDim2.new(1,-20,1,-50); content.Position=UDim2.new(0,10,0,44)
-content.BackgroundTransparency=1; content.BorderSizePixel=0
+-- current label
+local current = Instance.new("TextLabel")
+current.Size = UDim2.new(1, -24, 0, 16)
+current.Position = UDim2.new(0, 12, 0, 72) -- below subtitle
+current.BackgroundTransparency = 1
+current.TextXAlignment = Enum.TextXAlignment.Left
+current.Font = Enum.Font.Gotham
+current.TextSize = 13
+current.TextColor3 = Color3.fromRGB(210, 190, 255)
+current.Text = "Current: (none)"
+current.Parent = frame
 
--- // AUTO BAT TOGGLE ROW
-local toggleRow = Instance.new("Frame",content)
-toggleRow.Size=UDim2.new(1,0,0,32); toggleRow.BackgroundColor3=CARD_BG; toggleRow.BorderSizePixel=0
-Instance.new("UICorner",toggleRow).CornerRadius=UDim.new(0,7)
-local toggleRowStroke = Instance.new("UIStroke",toggleRow); toggleRowStroke.Color=BORDER
-local toggleLbl = Instance.new("TextLabel",toggleRow)
-toggleLbl.Size=UDim2.new(0,80,1,0); toggleLbl.Position=UDim2.new(0,10,0,0)
-toggleLbl.BackgroundTransparency=1; toggleLbl.Text="Auto Bat"; toggleLbl.TextColor3=WHITE
-toggleLbl.Font=Enum.Font.GothamBold; toggleLbl.TextSize=11; toggleLbl.TextXAlignment=Enum.TextXAlignment.Left
+-- search bar
+local searchBox = Instance.new("TextBox")
+searchBox.Size = UDim2.new(1, -24, 0, 28)
+searchBox.Position = UDim2.new(0, 12, 0, 92)
+searchBox.BackgroundColor3 = Color3.fromRGB(25, 10, 40)
+searchBox.TextColor3 = Color3.fromRGB(255,255,255)
+searchBox.PlaceholderText = "Search pack..."
+searchBox.Text = ""
+searchBox.ClearTextOnFocus = false
+searchBox.Font = Enum.Font.Gotham
+searchBox.TextSize = 13
+searchBox.BorderSizePixel = 0
+searchBox.Parent = frame
+Instance.new("UICorner", searchBox).CornerRadius = UDim.new(0, 6)
 
--- Keybind button
-local keyBtn = Instance.new("TextButton",toggleRow)
-keyBtn.Size=UDim2.new(0,44,0,20); keyBtn.Position=UDim2.new(1,-90,0.5,-10)
-keyBtn.BackgroundColor3=KB_BG; keyBtn.BorderSizePixel=0; keyBtn.Text=Keys.autoBat.Name
-keyBtn.TextColor3=WHITE; keyBtn.Font=Enum.Font.GothamBold; keyBtn.TextSize=8; keyBtn.ZIndex=11
-Instance.new("UICorner",keyBtn).CornerRadius=UDim.new(0,5)
-local ks = Instance.new("UIStroke",keyBtn); ks.Color=BORDER2; ks.Thickness=1
-local kListening = false; local kConn
+-- list container
+local listFrame = Instance.new("Frame")
+listFrame.Size = UDim2.new(1, -24, 1, -240)
+listFrame.Position = UDim2.new(0, 12, 0, 132)
+listFrame.BackgroundColor3 = Color3.fromRGB(20, 8, 40)
+listFrame.BorderSizePixel = 0
+listFrame.Parent = frame
+Instance.new("UICorner", listFrame).CornerRadius = UDim.new(0, 6)
 
-local function stopListen(key)
-    kListening = false
-    if kConn then 
-        kConn:Disconnect()
-        kConn = nil 
-    end
-    TweenService:Create(ks, TweenInfo.new(0.1), {Color = BORDER2}):Play()
-    keyBtn.TextColor3 = WHITE
-    if key then 
-        keyBtn.Text = key.Name
-        Keys.autoBat = key
-        saveConfig()
-    end
+local scroll = Instance.new("ScrollingFrame")
+scroll.Size = UDim2.new(1, -10, 1, -10)
+scroll.Position = UDim2.new(0, 5, 0, 5)
+scroll.BackgroundTransparency = 1
+scroll.BorderSizePixel = 0
+scroll.ScrollBarThickness = 6
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.Parent = listFrame
+
+local layout = Instance.new("UIListLayout")
+layout.Padding = UDim.new(0, 6)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Parent = scroll
+
+local pad = Instance.new("UIPadding")
+pad.PaddingTop = UDim.new(0, 6)
+pad.PaddingBottom = UDim.new(0, 6)
+pad.PaddingLeft = UDim.new(0, 6)
+pad.PaddingRight = UDim.new(0, 6)
+pad.Parent = scroll
+
+local function refreshCanvas()
+	task.wait()
+	scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+end
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refreshCanvas)
+
+-- minimize
+local minimized = false
+local expandedSize = frame.Size
+local minimizedSize = UDim2.new(expandedSize.X.Scale, expandedSize.X.Offset, 0, 36)
+
+local function setMinimized(on)
+	minimized = on
+	if minimized then
+		frame.Size = minimizedSize
+		miniBtn.Text = "+"
+		current.Visible = false
+		searchBox.Visible = false
+		listFrame.Visible = false
+		sub.Visible = false
+	else
+		frame.Size = expandedSize
+		miniBtn.Text = "-"
+		current.Visible = true
+		searchBox.Visible = true
+		listFrame.Visible = true
+		sub.Visible = true
+	end
 end
 
-keyBtn.MouseButton1Click:Connect(function()
-    if kListening then 
-        stopListen(nil)
-        return 
-    end
-    
-    kListening = true
-    keyBtn.Text = "..."
-    keyBtn.TextColor3 = WHITE
-    TweenService:Create(ks, TweenInfo.new(0.1), {Color = WHITE}):Play()
-    
-    kConn = UIS.InputBegan:Connect(function(inp)
-        if not kListening then return end
-        
-        -- Accept both keyboard and gamepad inputs
-        if inp.UserInputType == Enum.UserInputType.Keyboard then
-            if inp.KeyCode == Enum.KeyCode.Escape then 
-                stopListen(nil)
-                return 
-            end
-            Keys.autoBatType = "Keyboard"
-            stopListen(inp.KeyCode)
-        elseif inp.UserInputType == Enum.UserInputType.Gamepad1 then
-            Keys.autoBatType = "Gamepad"
-            stopListen(inp.KeyCode)
-        end
-    end)
+miniBtn.Activated:Connect(function()
+	setMinimized(not minimized)
 end)
 
--- Toggle pill
-local pillBg = Instance.new("Frame",toggleRow)
-pillBg.Size=UDim2.new(0,36,0,19); pillBg.Position=UDim2.new(1,-46,0.5,-9.5)
-pillBg.BackgroundColor3=KB_BG; pillBg.BorderSizePixel=0; pillBg.ZIndex=8
-Instance.new("UICorner",pillBg).CornerRadius=UDim.new(0,10)
-local pStroke = Instance.new("UIStroke",pillBg); pStroke.Color=BORDER2; pStroke.Thickness=1
-local dot = Instance.new("Frame",pillBg)
-dot.Size=UDim2.new(0,13,0,13); dot.Position=UDim2.new(0,2,0.5,-6.5)
-dot.BackgroundColor3=Color3.fromRGB(180,100,210); dot.BorderSizePixel=0; dot.ZIndex=9
-Instance.new("UICorner",dot).CornerRadius=UDim.new(0,4)
+closeBtn.Activated:Connect(function()
+	gui:Destroy()
+end)
 
--- Mobile button (full width)
-local mobileBtn = Instance.new("TextButton", toggleRow)
-mobileBtn.Size = UDim2.new(1, -12, 1, -6)
-mobileBtn.Position = UDim2.new(0, 6, 0, 3)
-mobileBtn.BackgroundColor3 = Color3.fromRGB(255, 175, 240)
-mobileBtn.BorderSizePixel = 0
-mobileBtn.Text = "AUTO BAT"
-mobileBtn.TextColor3 = BG
-mobileBtn.Font = Enum.Font.GothamBold
-mobileBtn.TextSize = 11
-mobileBtn.Visible = State.mobileMode
-mobileBtn.ZIndex = 12
-Instance.new("UICorner", mobileBtn).CornerRadius = UDim.new(0, 5)
-local mobileBtnStroke = Instance.new("UIStroke", mobileBtn)
-mobileBtnStroke.Color = Color3.fromRGB(255, 205, 245)
-mobileBtnStroke.Thickness = 1
+-- comma hide/show
+UserInputService.InputBegan:Connect(function(input, gp)
+	if gp then return end
+	if input.KeyCode == Enum.KeyCode.Comma then
+		gui.Enabled = not gui.Enabled
+	end
+end)
 
-local function setToggleVisual(on)
-    TweenService:Create(pillBg,TweenInfo.new(0.18),{BackgroundColor3=on and Color3.fromRGB(255, 225, 245) or Color3.fromRGB(45, 15, 40)}):Play()
-    TweenService:Create(pStroke,TweenInfo.new(0.18),{Color=on and Color3.fromRGB(255, 205, 245) or BORDER2}):Play()
-    TweenService:Create(dot,TweenInfo.new(0.18,Enum.EasingStyle.Back),{
-        Position=on and UDim2.new(1,-15,0.5,-6.5) or UDim2.new(0,2,0.5,-6.5),
-        BackgroundColor3=on and Color3.fromRGB(255, 160, 230) or Color3.fromRGB(65, 20, 75)
-    }):Play()
-    
-    -- Update mobile button appearance
-    TweenService:Create(mobileBtn,TweenInfo.new(0.18),{BackgroundColor3=on and Color3.fromRGB(255, 225, 245) or Color3.fromRGB(255, 175, 240)}):Play()
-    TweenService:Create(mobileBtnStroke,TweenInfo.new(0.18),{Color=on and Color3.fromRGB(255, 205, 245) or Color3.fromRGB(255, 205, 245)}):Play()
-    mobileBtn.TextColor3 = on and BG or WHITE
+-- ordering: Adidas packs always top, then alphabetical
+local ADIDAS_TOP_ORDER = { "Adidas Sports", "Adidas Community", "Adidas Aura" }
+local adidasRank = {}
+for i, n in ipairs(ADIDAS_TOP_ORDER) do adidasRank[n] = i end
+
+local allNames = {}
+for name in pairs(PACKS) do table.insert(allNames, name) end
+
+table.sort(allNames, function(a, b)
+	local ra, rb = adidasRank[a], adidasRank[b]
+	if ra and rb then return ra < rb end
+	if ra then return true end
+	if rb then return false end
+	return a:lower() < b:lower()
+end)
+
+local buttonsByName = {}
+
+local selectedButton = nil
+
+local function setSelected(btn)
+	if selectedButton and selectedButton.Parent then
+		selectedButton.BackgroundColor3 = Color3.fromRGB(30,30,30)
+		local s = selectedButton:FindFirstChildOfClass("UIStroke")
+		if s then s.Color = Color3.fromRGB(60,60,60) end
+		selectedButton.TextColor3 = Color3.fromRGB(220,220,220)
+	end
+	selectedButton = btn
+	if selectedButton then
+		selectedButton.BackgroundColor3 = Color3.fromRGB(232,80,190)
+		local s = selectedButton:FindFirstChildOfClass("UIStroke")
+		if s then s.Color = Color3.fromRGB(180,80,140) end
+		selectedButton.TextColor3 = Color3.fromRGB(255,255,255)
+	end
 end
 
-local function updateMode()
-    if State.mobileMode then
-        toggleLbl.Visible = false
-        keyBtn.Visible = false
-        pillBg.Visible = false
-        mobileBtn.Visible = true
-        modeToggleBtn.Text = "PC"
-    else
-        toggleLbl.Visible = true
-        keyBtn.Visible = true
-        pillBg.Visible = true
-        mobileBtn.Visible = false
-        modeToggleBtn.Text = "MOBILE"
-    end
+local function createButton(name, order)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, 0, 0, 40)
+	btn.BackgroundColor3 = Color3.fromRGB(30,30,30)
+	btn.TextColor3 = Color3.fromRGB(220,220,220)
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 14
+	btn.Text = name
+	btn.AutoButtonColor = false
+	btn.LayoutOrder = order
+	btn.BorderSizePixel = 0
+	btn.Parent = scroll
+	local corner = Instance.new("UICorner", btn); corner.CornerRadius = UDim.new(0, 6)
+	local stroke = Instance.new("UIStroke", btn); stroke.Color = Color3.fromRGB(60,60,60); stroke.Transparency = 0.6; stroke.Thickness = 1
+
+	btn.MouseButton1Click:Connect(function()
+		setSelected(btn)
+		local ok = applyPack(name)
+		current.Text = ok and ("Current: " .. name) or ("Current: (failed) " .. name)
+	end)
+
+	buttonsByName[name] = btn
 end
 
-updateMode()
+for i, name in ipairs(allNames) do
+	createButton(name, i)
+end
+refreshCanvas()
 
--- Mode toggle button click
-modeToggleBtn.MouseButton1Click:Connect(function()
-    State.mobileMode = not State.mobileMode
-    updateMode()
-    saveConfig()
-    
-    TweenService:Create(modeToggleStroke, TweenInfo.new(0.15), {Color = WHITE}):Play()
-    task.wait(0.15)
-    TweenService:Create(modeToggleStroke, TweenInfo.new(0.15), {Color = BORDER2}):Play()
-end)
-
--- Mobile button click - toggles on/off
-mobileBtn.MouseButton1Click:Connect(function()
-    State.autoBatToggled = not State.autoBatToggled
-    setToggleVisual(State.autoBatToggled)
-end)
-
-local toggleClk = Instance.new("TextButton",toggleRow)
-toggleClk.Size=UDim2.new(1,0,1,0); toggleClk.BackgroundTransparency=1; toggleClk.Text=""; toggleClk.ZIndex=6
-toggleClk.MouseButton1Click:Connect(function()
-    if State.mobileMode then return end -- Don't trigger if in mobile mode
-    State.autoBatToggled=not State.autoBatToggled
-    setToggleVisual(State.autoBatToggled)
-end)
-toggleClk.MouseEnter:Connect(function() 
-    if not State.mobileMode then
-        TweenService:Create(toggleRow,TweenInfo.new(0.1),{BackgroundColor3=CARD_HOV}):Play() 
-    end
-end)
-toggleClk.MouseLeave:Connect(function() 
-    if not State.mobileMode then
-        TweenService:Create(toggleRow,TweenInfo.new(0.1),{BackgroundColor3=CARD_BG}):Play() 
-    end
-end)
-
--- // BAT LOGIC
-local function getBat()
-    local char=LP.Character; if not char then return nil end
-    local tool=char:FindFirstChild("Bat"); if tool then return tool end
-    local bp2=LP:FindFirstChild("Backpack")
-    if bp2 then tool=bp2:FindFirstChild("Bat"); if tool then tool.Parent=char; return tool end end
-    return nil
+local function applyFilter(text)
+	text = (text or ""):lower()
+	for name, btn in pairs(buttonsByName) do
+		btn.Visible = (text == "") or (name:lower():find(text, 1, true) ~= nil)
+	end
+	refreshCanvas()
 end
 
-local function tryHitBat()
-    if State.hittingCooldown then return end; State.hittingCooldown=true
-    pcall(function()
-        local bat=getBat(); if bat then
-            bat:Activate(); local ev=bat:FindFirstChildWhichIsA("RemoteEvent")
-            if ev then ev:FireServer() end
-        end
-    end)
-    task.delay(0.08, function() State.hittingCooldown=false end)
-end
-
-local function getClosestPlayer()
-    if not hrp then return nil,math.huge end
-    local cp,cd=nil,math.huge
-    for _,p in pairs(Players:GetPlayers()) do
-        if p~=LP and p.Character then
-            local tr=p.Character:FindFirstChild("HumanoidRootPart")
-            if tr then local d=(hrp.Position-tr.Position).Magnitude; if d<cd then cd=d; cp=p end end
-        end
-    end
-    return cp,cd
-end
-
--- // CHARACTER SETUP
-local function setupChar(char)
-    task.wait(0.1)
-    h=char:WaitForChild("Humanoid",5); hrp=char:WaitForChild("HumanoidRootPart",5)
-    if not h or not hrp then return end
-end
-
-LP.CharacterAdded:Connect(setupChar)
-if LP.Character then task.spawn(function() setupChar(LP.Character) end) end
-
--- // BAT AIMBOT HEARTBEAT
-RunService.Heartbeat:Connect(function()
-    if not (State.autoBatToggled and h and hrp) then return end
-    local target,dist=getClosestPlayer()
-    if target and target.Character then
-        local tr=target.Character:FindFirstChild("HumanoidRootPart")
-        if tr then
-            if sethiddenproperty then
-                sethiddenproperty(hrp, "PhysicsRepRootPart", tr)
-            end
-            local targetPos = tr.Position + Vector3.new(0, 0.9, 0)
-            if (hrp.Position - targetPos).Magnitude > 8 then
-                hrp.CFrame = CFrame.new(targetPos)
-            end
-            local cam = workspace.CurrentCamera
-            cam.CFrame = CFrame.new(cam.CFrame.Position, tr.Position)
-            tryHitBat()
-        end
-    end
+searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+	applyFilter(searchBox.Text)
 end)
+applyFilter("")
 
--- // KEYBIND HANDLER (only active when NOT in mobile mode)
-UIS.InputBegan:Connect(function(inp, gp)
-    if State.mobileMode then return end -- Skip if in mobile mode
-    if gp then return end
-    
-    -- Check if input matches configured type and key
-    if Keys.autoBatType == "Keyboard" and inp.UserInputType == Enum.UserInputType.Keyboard then
-        if inp.KeyCode == Keys.autoBat then
-            State.autoBatToggled = not State.autoBatToggled
-            setToggleVisual(State.autoBatToggled)
-        elseif inp.KeyCode == Keys.guiHide then
-            State.guiVisible = not State.guiVisible
-            main.Visible = State.guiVisible
-        end
-    elseif Keys.autoBatType == "Gamepad" and inp.UserInputType == Enum.UserInputType.Gamepad1 then
-        if inp.KeyCode == Keys.autoBat then
-            State.autoBatToggled = not State.autoBatToggled
-            setToggleVisual(State.autoBatToggled)
-        end
-    end
+-- auto-load last pack (session)
+task.defer(function()
+	local saved = player:GetAttribute(ATTR_LAST)
+	if type(saved) == "string" and saved ~= "" and PACKS[saved] then
+		current.Text = "Current: " .. saved .. " (saved)"
+		task.wait(0.2)
+		applyPack(saved)
+	end
 end)
-
-print("[dund tp bat] Loaded!")
