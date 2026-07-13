@@ -84,10 +84,10 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 220, 0, 120)
-main.Position = UDim2.new(0.5, -110, 0.5, -60)
-main.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
-main.BackgroundTransparency = 0.05
+main.Size = UDim2.new(0, 180, 0, 100)
+main.Position = UDim2.new(0.5, -90, 0.5, -50)
+main.BackgroundColor3 = Color3.fromRGB(25, 90, 200)
+main.BackgroundTransparency = 0
 main.BorderSizePixel = 0
 main.Active = true
 main.Draggable = true
@@ -108,17 +108,16 @@ bgImage.Name = "BackgroundImage"
 bgImage.Size = UDim2.new(1, 0, 1, 0)
 bgImage.Position = UDim2.new(0, 0, 0, 0)
 bgImage.BackgroundTransparency = 1
-bgImage.Image = "rbxassetid://133214118279549"
-bgImage.ScaleType = Enum.ScaleType.Crop
+bgImage.Image = ""
 bgImage.ZIndex = -1
-bgImage.ImageTransparency = 0.1
+bgImage.ImageTransparency = 1
 bgImage.Parent = main
 
 local glow = Instance.new("Frame")
 glow.Size = UDim2.new(1, 0, 1, 0)
 glow.Position = UDim2.new(0, 0, 0, 0)
-glow.BackgroundColor3 = BLUE.Glow
-glow.BackgroundTransparency = 0.92
+glow.BackgroundColor3 = Color3.fromRGB(40, 120, 255)
+glow.BackgroundTransparency = 0.9
 glow.BorderSizePixel = 0
 glow.Parent = main
 
@@ -261,14 +260,13 @@ end)
 task.spawn(function()
     while ScreenGui.Parent do
         if tpBatToggled then
-            local pulse = 0.1 + (math.sin(tick() * 3) * 0.2)
-            mainStroke.Transparency = pulse
+            mainStroke.Transparency = 0.1
             mainStroke.Color = BLUE.Glow
-            glow.BackgroundTransparency = 0.85 + (math.sin(tick() * 2) * 0.1)
+            glow.BackgroundTransparency = 0.9
         else
-            mainStroke.Transparency = 0.3
+            mainStroke.Transparency = 0.2
             mainStroke.Color = BLUE.Border
-            glow.BackgroundTransparency = 0.95
+            glow.BackgroundTransparency = 0.9
         end
         task.wait()
     end
