@@ -99,8 +99,8 @@ mainCorner.Parent = main
 
 local mainStroke = Instance.new("UIStroke")
 mainStroke.Thickness = 1.5
-mainStroke.Color = Color3.fromRGB(80, 170, 255)
-mainStroke.Transparency = 0.2
+mainStroke.Color = Color3.fromRGB(70, 135, 235)
+mainStroke.Transparency = 0.18
 mainStroke.Parent = main
 
 local bgImage = Instance.new("ImageLabel")
@@ -124,8 +124,8 @@ mainGradient.Parent = main
 local glow = Instance.new("Frame")
 glow.Size = UDim2.new(1, 0, 1, 0)
 glow.Position = UDim2.new(0, 0, 0, 0)
-glow.BackgroundColor3 = Color3.fromRGB(35, 80, 165)
-glow.BackgroundTransparency = 0.9
+glow.BackgroundColor3 = Color3.fromRGB(25, 65, 150)
+glow.BackgroundTransparency = 0.85
 glow.BorderSizePixel = 0
 glow.Parent = main
 
@@ -149,8 +149,8 @@ title.Parent = main
 local divider = Instance.new("Frame")
 divider.Size = UDim2.new(0.85, 0, 0, 1)
 divider.Position = UDim2.new(0.075, 0, 0, 42)
-divider.BackgroundColor3 = Color3.fromRGB(150, 205, 255)
-divider.BackgroundTransparency = 0.45
+divider.BackgroundColor3 = Color3.fromRGB(120, 190, 255)
+divider.BackgroundTransparency = 0.55
 divider.BorderSizePixel = 0
 divider.Parent = main
 
