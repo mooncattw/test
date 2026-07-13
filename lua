@@ -86,7 +86,7 @@ ScreenGui.Parent = CoreGui
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 180, 0, 100)
 main.Position = UDim2.new(0.5, -90, 0.5, -50)
-main.BackgroundColor3 = Color3.fromRGB(25, 90, 200)
+main.BackgroundColor3 = Color3.fromRGB(18, 45, 150)
 main.BackgroundTransparency = 0
 main.BorderSizePixel = 0
 main.Active = true
@@ -113,11 +113,19 @@ bgImage.ZIndex = -1
 bgImage.ImageTransparency = 1
 bgImage.Parent = main
 
+local mainGradient = Instance.new("UIGradient")
+mainGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(22, 50, 170)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 90, 230))
+}
+mainGradient.Rotation = 90
+mainGradient.Parent = main
+
 local glow = Instance.new("Frame")
 glow.Size = UDim2.new(1, 0, 1, 0)
 glow.Position = UDim2.new(0, 0, 0, 0)
-glow.BackgroundColor3 = Color3.fromRGB(40, 120, 255)
-glow.BackgroundTransparency = 0.9
+glow.BackgroundColor3 = Color3.fromRGB(55, 145, 255)
+glow.BackgroundTransparency = 0.88
 glow.BorderSizePixel = 0
 glow.Parent = main
 
@@ -130,19 +138,19 @@ title.Size = UDim2.new(1, -60, 0, 35)
 title.Position = UDim2.new(0, 10, 0, 4)
 title.BackgroundTransparency = 1
 title.Text = "MOON HUB"
-title.TextColor3 = BLUE.Glow
+title.TextColor3 = Color3.fromRGB(245, 245, 255)
 title.Font = Enum.Font.GothamBlack
 title.TextSize = 20
-title.TextStrokeTransparency = 0
-title.TextStrokeColor3 = BLUE.Dark
+title.TextStrokeTransparency = 0.7
+title.TextStrokeColor3 = Color3.fromRGB(10, 25, 85)
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = main
 
 local divider = Instance.new("Frame")
 divider.Size = UDim2.new(0.85, 0, 0, 1)
 divider.Position = UDim2.new(0.075, 0, 0, 42)
-divider.BackgroundColor3 = BLUE.Border
-divider.BackgroundTransparency = 0.3
+divider.BackgroundColor3 = Color3.fromRGB(150, 205, 255)
+divider.BackgroundTransparency = 0.45
 divider.BorderSizePixel = 0
 divider.Parent = main
 
@@ -162,9 +170,9 @@ tpLabel.Parent = main
 local tpKeyBtn = Instance.new("TextButton")
 tpKeyBtn.Size = UDim2.new(0.22, 0, 0, 24)
 tpKeyBtn.Position = UDim2.new(0.28, 0, 0, 50)
-tpKeyBtn.BackgroundColor3 = BLUE.Card
+tpKeyBtn.BackgroundColor3 = Color3.fromRGB(20, 55, 150)
 tpKeyBtn.Text = "T"
-tpKeyBtn.TextColor3 = BLUE.Main
+tpKeyBtn.TextColor3 = Color3.fromRGB(175, 215, 255)
 tpKeyBtn.Font = Enum.Font.GothamBold
 tpKeyBtn.TextSize = 12
 tpKeyBtn.BorderSizePixel = 0
@@ -191,9 +199,9 @@ end)
 local tpToggleBtn = Instance.new("TextButton")
 tpToggleBtn.Size = UDim2.new(0.42, 0, 0, 24)
 tpToggleBtn.Position = UDim2.new(0.55, 0, 0, 50)
-tpToggleBtn.BackgroundColor3 = BLUE.Glow
+tpToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 145, 255)
 tpToggleBtn.Text = "TP BAT"
-tpToggleBtn.TextColor3 = BLUE.White
+tpToggleBtn.TextColor3 = Color3.fromRGB(245, 245, 255)
 tpToggleBtn.Font = Enum.Font.GothamBold
 tpToggleBtn.TextSize = 10
 tpToggleBtn.BorderSizePixel = 0
@@ -212,15 +220,15 @@ end)
 
 local function updateVisuals()
     if tpBatToggled then
-        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 30, 55)
-        tpToggleBtn.TextColor3 = BLUE.Main
-        mainStroke.Color = BLUE.Glow
-        mainStroke.Transparency = 0.1
+        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 60, 145)
+        tpToggleBtn.TextColor3 = Color3.fromRGB(225, 235, 255)
+        mainStroke.Color = Color3.fromRGB(120, 190, 255)
+        mainStroke.Transparency = 0.15
     else
-        tpToggleBtn.BackgroundColor3 = BLUE.Glow
-        tpToggleBtn.TextColor3 = BLUE.White
-        mainStroke.Color = BLUE.Border
-        mainStroke.Transparency = 0.3
+        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(55, 145, 255)
+        tpToggleBtn.TextColor3 = Color3.fromRGB(245, 245, 255)
+        mainStroke.Color = Color3.fromRGB(140, 200, 255)
+        mainStroke.Transparency = 0.2
     end
     tpKeyBtn.Text = CONFIG.TpBatKey.Name
 end
