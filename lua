@@ -86,7 +86,7 @@ ScreenGui.Parent = CoreGui
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 180, 0, 100)
 main.Position = UDim2.new(0.5, -90, 0.5, -50)
-main.BackgroundColor3 = Color3.fromRGB(18, 45, 150)
+main.BackgroundColor3 = Color3.fromRGB(10, 18, 40)
 main.BackgroundTransparency = 0
 main.BorderSizePixel = 0
 main.Active = true
@@ -115,8 +115,8 @@ bgImage.Parent = main
 
 local mainGradient = Instance.new("UIGradient")
 mainGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(22, 50, 170)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 90, 230))
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(12, 24, 58)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(18, 35, 75))
 }
 mainGradient.Rotation = 90
 mainGradient.Parent = main
@@ -124,8 +124,8 @@ mainGradient.Parent = main
 local glow = Instance.new("Frame")
 glow.Size = UDim2.new(1, 0, 1, 0)
 glow.Position = UDim2.new(0, 0, 0, 0)
-glow.BackgroundColor3 = Color3.fromRGB(55, 145, 255)
-glow.BackgroundTransparency = 0.88
+glow.BackgroundColor3 = Color3.fromRGB(45, 90, 170)
+glow.BackgroundTransparency = 0.95
 glow.BorderSizePixel = 0
 glow.Parent = main
 
@@ -159,18 +159,18 @@ tpLabel.Size = UDim2.new(0.2, 0, 0, 14)
 tpLabel.Position = UDim2.new(0.05, 0, 0, 50)
 tpLabel.BackgroundTransparency = 1
 tpLabel.Text = "TP BAT"
-tpLabel.TextColor3 = BLUE.Light
+tpLabel.TextColor3 = Color3.fromRGB(180, 200, 245)
 tpLabel.Font = Enum.Font.GothamBold
 tpLabel.TextSize = 10
 tpLabel.TextXAlignment = Enum.TextXAlignment.Left
-tpLabel.TextStrokeTransparency = 0.3
-tpLabel.TextStrokeColor3 = BLUE.Dark
+tpLabel.TextStrokeTransparency = 0.4
+tpLabel.TextStrokeColor3 = Color3.fromRGB(15, 30, 65)
 tpLabel.Parent = main
 
 local tpKeyBtn = Instance.new("TextButton")
 tpKeyBtn.Size = UDim2.new(0.22, 0, 0, 24)
 tpKeyBtn.Position = UDim2.new(0.28, 0, 0, 50)
-tpKeyBtn.BackgroundColor3 = Color3.fromRGB(20, 55, 150)
+tpKeyBtn.BackgroundColor3 = Color3.fromRGB(15, 35, 90)
 tpKeyBtn.Text = "T"
 tpKeyBtn.TextColor3 = Color3.fromRGB(175, 215, 255)
 tpKeyBtn.Font = Enum.Font.GothamBold
@@ -199,9 +199,9 @@ end)
 local tpToggleBtn = Instance.new("TextButton")
 tpToggleBtn.Size = UDim2.new(0.42, 0, 0, 24)
 tpToggleBtn.Position = UDim2.new(0.55, 0, 0, 50)
-tpToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 145, 255)
+tpToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 110, 210)
 tpToggleBtn.Text = "TP BAT"
-tpToggleBtn.TextColor3 = Color3.fromRGB(245, 245, 255)
+tpToggleBtn.TextColor3 = Color3.fromRGB(235, 240, 255)
 tpToggleBtn.Font = Enum.Font.GothamBold
 tpToggleBtn.TextSize = 10
 tpToggleBtn.BorderSizePixel = 0
@@ -220,15 +220,15 @@ end)
 
 local function updateVisuals()
     if tpBatToggled then
-        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 60, 145)
+        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 45, 120)
         tpToggleBtn.TextColor3 = Color3.fromRGB(225, 235, 255)
-        mainStroke.Color = Color3.fromRGB(120, 190, 255)
-        mainStroke.Transparency = 0.15
+        mainStroke.Color = Color3.fromRGB(90, 160, 220)
+        mainStroke.Transparency = 0.18
     else
-        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(55, 145, 255)
-        tpToggleBtn.TextColor3 = Color3.fromRGB(245, 245, 255)
-        mainStroke.Color = Color3.fromRGB(140, 200, 255)
-        mainStroke.Transparency = 0.2
+        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 90, 170)
+        tpToggleBtn.TextColor3 = Color3.fromRGB(235, 240, 255)
+        mainStroke.Color = Color3.fromRGB(100, 170, 210)
+        mainStroke.Transparency = 0.22
     end
     tpKeyBtn.Text = CONFIG.TpBatKey.Name
 end
