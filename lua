@@ -212,6 +212,18 @@ local tpCorner = Instance.new("UICorner")
 tpCorner.CornerRadius = UDim.new(0, 5)
 tpCorner.Parent = tpToggleBtn
 
+tpToggleBtn.MouseButton1Down:Connect(function()
+    if tpBatToggled then
+        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(18, 45, 125)
+    else
+        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(25, 80, 170)
+    end
+end)
+
+tpToggleBtn.MouseButton1Up:Connect(function()
+    updateVisuals()
+end)
+
 tpToggleBtn.MouseButton1Click:Connect(function()
     tpBatToggled = not tpBatToggled
     updateVisuals()
