@@ -13,6 +13,7 @@ local CONFIG = {
 
 local tpBatToggled = false
 local tpBatCooldown = false
+local tpTogglePressed = false
 
 local function getHRP()
     local character = LocalPlayer.Character
@@ -213,14 +214,12 @@ tpCorner.CornerRadius = UDim.new(0, 5)
 tpCorner.Parent = tpToggleBtn
 
 tpToggleBtn.MouseButton1Down:Connect(function()
-    if tpBatToggled then
-        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(18, 45, 125)
-    else
-        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(25, 80, 170)
-    end
+    tpTogglePressed = true
+    updateVisuals()
 end)
 
 tpToggleBtn.MouseButton1Up:Connect(function()
+    tpTogglePressed = false
     updateVisuals()
 end)
 
@@ -229,19 +228,26 @@ tpToggleBtn.MouseButton1Click:Connect(function()
     updateVisuals()
 end)
 
-
 local function updateVisuals()
-    if tpBatToggled then
+    if tpTogglePressed then
+        tpToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 55, 140)
+        tpToggleBtn.TextColor3 = Color3.fromRGB(220, 230, 255)
+    elseif tpBatToggled then
         tpToggleBtn.BackgroundColor3 = Color3.fromRGB(22, 50, 130)
         tpToggleBtn.TextColor3 = Color3.fromRGB(225, 235, 255)
-        mainStroke.Color = Color3.fromRGB(80, 150, 210)
-        mainStroke.Transparency = 0.18
     else
         tpToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 170)
         tpToggleBtn.TextColor3 = Color3.fromRGB(235, 240, 255)
+    end
+
+    if tpBatToggled then
+        mainStroke.Color = Color3.fromRGB(80, 150, 210)
+        mainStroke.Transparency = 0.18
+    else
         mainStroke.Color = Color3.fromRGB(90, 160, 200)
         mainStroke.Transparency = 0.22
     end
+
     tpKeyBtn.Text = CONFIG.TpBatKey.Name
 end
 
