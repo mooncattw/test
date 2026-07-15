@@ -1,361 +1,565 @@
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local Stats = game:GetService("Stats")
-local lp = Players.LocalPlayer
+local Players           = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService        = game:GetService("RunService")
+local TweenService      = game:GetService("TweenService")
+local UserInputService  = game:GetService("UserInputService")
+local HttpService       = game:GetService("HttpService")
 
-local CONFIG = {
-    AUTO_STEAL_ENABLED = true,
-    HOLD_MIN = 1.3,
-    HOLD_MAX = 2.6,
-    ENTRY_DELAY = 0.3,
-    COOLDOWN = 0.1,
-    STEAL_RANGE = 8,
-    PRIME_RANGE = 70,
+local lp        = Players.LocalPlayer
+local playerGui = lp:WaitForChild("PlayerGui")
+local _enabled  = true
+local _seen     = {}
+local _focused  = nil
+
+local ANTHROPIC_KEY = "sk-ant-api03-placeholder-replace-with-real-key"
+
+local T = {
+    BG     = Color3.fromRGB(18,18,20),
+    Card   = Color3.fromRGB(24,24,26),
+    Border = Color3.fromRGB(45,45,50),
+    Accent = Color3.fromRGB(100,220,100),
+    Green  = Color3.fromRGB(80,220,80),
+    Red    = Color3.fromRGB(255,70,70),
+    Yellow = Color3.fromRGB(255,195,50),
+    White  = Color3.fromRGB(230,230,235),
+    Dim    = Color3.fromRGB(90,90,100),
+    HdrBG  = Color3.fromRGB(20,20,22),
 }
-
-local S = {
-    Players = Players,
-    ReplicatedStorage = game:GetService("ReplicatedStorage"),
-    RunService = RunService,
-}
-
-local Packages = S.ReplicatedStorage:WaitForChild("Packages")
-local Datas = S.ReplicatedStorage:WaitForChild("Datas")
-local AnimalsData = require(Datas:WaitForChild("Animals"))
-
-local plots = workspace:WaitForChild("Plots")
-
-local syncRemotes = (function()
-    local folder = Packages:WaitForChild("Synchronizer")
-    return {
-        channelFolder = folder:WaitForChild("Channel"),
-        routeRemote = folder:WaitForChild("CommunicationRoute"),
-        requestData = folder:FindFirstChild("RequestData"),
-    }
-end)()
-
-local plotAnimalSync = { caches = {}, connections = {} }
-
-local function splitSyncPath(path)
-    if typeof(path) == "table" then return path end
-    local out = {}
-    for part in string.gmatch(tostring(path), "[^%.]+") do
-        table.insert(out, tonumber(part) or part)
-    end
-    return out
+local F = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local function Tw(o,i,p) TweenService:Create(o,i,p):Play() end
+local function Corner(p,r)
+    local c=Instance.new("UICorner"); c.CornerRadius=UDim.new(0,r or 8); c.Parent=p
+end
+local function Stroke(p,col,th)
+    local s=Instance.new("UIStroke"); s.Color=col or T.Border
+    s.Thickness=th or 1; s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border; s.Parent=p; return s
 end
 
-local function resolveSyncPath(path, root)
-    local current = root
-    local parent, key
-    for _, part in ipairs(splitSyncPath(path)) do
-        parent = current
-        key = part
-        current = current and current[part] or nil
-    end
-    return current, parent, key
-end
+pcall(function()
+    if game.CoreGui:FindFirstChild("SDLCPaste") then game.CoreGui.SDLCPaste:Destroy() end
+end)
+pcall(function()
+    if playerGui:FindFirstChild("SDLCPaste") then playerGui.SDLCPaste:Destroy() end
+end)
 
-local function applyPlotSyncDiff(channelName, packet)
-    local cache = plotAnimalSync.caches[channelName]
-    if typeof(cache) ~= "table" then return end
-    local path, action, a, b = packet[1], packet[2], packet[3], packet[4]
-    local current, parent, key = resolveSyncPath(path, cache)
-    if action == "Changed" then
-        if parent then parent[key] = a end
-    elseif action == "ArrayInsert" then
-        if current then table.insert(current, b, a) end
-    elseif action == "ArrayRemoved" then
-        if current then table.remove(current, b) end
-    elseif action == "DictionaryInsert" then
-        if current then current[b] = a end
-    elseif action == "DictionaryRemoved" then
-        if current then current[b] = nil end
-    end
-end
+local GUI = Instance.new("ScreenGui")
+GUI.Name="SDLCPaste"; GUI.ResetOnSpawn=false; GUI.IgnoreGuiInset=true
+GUI.DisplayOrder=999
+if not pcall(function() GUI.Parent=game.CoreGui end) then GUI.Parent=playerGui end
 
-local function attachPlotChannel(remote)
-    local channelName = tostring(remote.Name)
-    if not plots:FindFirstChild(channelName) then return end
-    
-    if not plotAnimalSync.caches[channelName] then
-        if syncRemotes.requestData then
-            local ok, data = pcall(function()
-                return syncRemotes.requestData:InvokeServer(channelName)
-            end)
-            plotAnimalSync.caches[channelName] = ok and data or {}
-        else
-            plotAnimalSync.caches[channelName] = {}
+local WIN_W = 230
+
+local Win = Instance.new("Frame")
+Win.Name="Win"
+Win.Size=UDim2.new(0,WIN_W,0,10)
+Win.AutomaticSize=Enum.AutomaticSize.Y
+Win.AnchorPoint=Vector2.new(1,0)
+Win.Position=UDim2.new(1,-14,0,52)
+Win.BackgroundColor3=Color3.fromRGB(18,18,20)
+Win.BackgroundTransparency=0
+Win.BorderSizePixel=0
+Win.ZIndex=100
+Win.ClipsDescendants=true
+Win.Parent=GUI
+Corner(Win,10)
+
+local WBorder=Stroke(Win, Color3.fromRGB(50,50,55), 1)
+
+local WinList=Instance.new("UIListLayout")
+WinList.FillDirection=Enum.FillDirection.Vertical
+WinList.Padding=UDim.new(0,0)
+WinList.SortOrder=Enum.SortOrder.LayoutOrder
+WinList.HorizontalAlignment=Enum.HorizontalAlignment.Center
+WinList.Parent=Win
+
+local Hdr=Instance.new("Frame")
+Hdr.Size=UDim2.new(1,0,0,52)
+Hdr.BackgroundColor3=Color3.fromRGB(20,20,22)
+Hdr.BackgroundTransparency=0
+Hdr.BorderSizePixel=0
+Hdr.LayoutOrder=1
+Hdr.Active=true
+Hdr.ZIndex=101
+Hdr.Parent=Win
+Corner(Hdr,10)
+
+
+local HdrFill=Instance.new("Frame")
+HdrFill.Size=UDim2.new(1,0,0,12)
+HdrFill.Position=UDim2.new(0,0,1,-12)
+HdrFill.BackgroundColor3=Color3.fromRGB(20,20,22)
+HdrFill.BorderSizePixel=0
+HdrFill.ZIndex=101
+HdrFill.Parent=Hdr
+
+local HdrLine=Instance.new("Frame")
+HdrLine.Size=UDim2.new(1,0,0,1)
+HdrLine.Position=UDim2.new(0,0,1,0)
+HdrLine.BackgroundColor3=Color3.fromRGB(45,45,50)
+HdrLine.BackgroundTransparency=0
+HdrLine.BorderSizePixel=0
+HdrLine.ZIndex=102
+HdrLine.Parent=Hdr
+
+local Logo=Instance.new("Frame")
+Logo.Size=UDim2.new(0,28,0,28)
+Logo.Position=UDim2.new(0,12,0.5,-14)
+Logo.BackgroundColor3=Color3.fromRGB(50,50,55)
+Logo.BorderSizePixel=0
+Logo.ZIndex=103
+Logo.Parent=Hdr
+Corner(Logo,7)
+local LogoTxt=Instance.new("TextLabel")
+LogoTxt.Size=UDim2.new(1,0,1,0)
+LogoTxt.BackgroundTransparency=1
+LogoTxt.Text="S"
+LogoTxt.TextSize=14
+LogoTxt.Font=Enum.Font.GothamBlack
+LogoTxt.TextColor3=T.White
+LogoTxt.TextXAlignment=Enum.TextXAlignment.Center
+LogoTxt.TextYAlignment=Enum.TextYAlignment.Center
+LogoTxt.ZIndex=104
+LogoTxt.Parent=Logo
+
+local TitleL=Instance.new("TextLabel")
+TitleL.Size=UDim2.new(0,120,0,20)
+TitleL.Position=UDim2.new(0,50,0,10)
+TitleL.BackgroundTransparency=1
+TitleL.Text="HUGO'S SCRIPT"
+TitleL.TextSize=13
+TitleL.Font=Enum.Font.GothamBlack
+TitleL.TextColor3=T.White
+TitleL.TextXAlignment=Enum.TextXAlignment.Left
+TitleL.TextYAlignment=Enum.TextYAlignment.Center
+TitleL.ZIndex=102
+TitleL.Parent=Hdr
+
+local SubTitleL=Instance.new("TextLabel")
+SubTitleL.Size=UDim2.new(0,120,0,14)
+SubTitleL.Position=UDim2.new(0,50,0,28)
+SubTitleL.BackgroundTransparency=1
+SubTitleL.Text="auto redeem"
+SubTitleL.TextSize=10
+SubTitleL.Font=Enum.Font.Gotham
+SubTitleL.TextColor3=T.Dim
+SubTitleL.TextXAlignment=Enum.TextXAlignment.Left
+SubTitleL.TextYAlignment=Enum.TextYAlignment.Center
+SubTitleL.ZIndex=102
+SubTitleL.Parent=Hdr
+
+local OnBtn=Instance.new("TextButton")
+OnBtn.Size=UDim2.new(0,46,0,26)
+OnBtn.AnchorPoint=Vector2.new(1,0.5)
+OnBtn.Position=UDim2.new(1,-10,0.5,0)
+OnBtn.BackgroundColor3=Color3.fromRGB(80,220,80)
+OnBtn.BorderSizePixel=0
+OnBtn.AutoButtonColor=false
+OnBtn.Text="ON"
+OnBtn.TextSize=11
+OnBtn.Font=Enum.Font.GothamBlack
+OnBtn.TextColor3=Color3.fromRGB(10,10,10)
+OnBtn.ZIndex=103
+OnBtn.Parent=Hdr
+Corner(OnBtn,8)
+local OnS=Stroke(OnBtn,Color3.fromRGB(80,220,80),1)
+
+do
+    local drag,ds,ws,mv
+    Hdr.InputBegan:Connect(function(inp)
+        if inp.UserInputType==Enum.UserInputType.MouseButton1
+        or inp.UserInputType==Enum.UserInputType.Touch then
+            drag=true; mv=false; ds=inp.Position; ws=Win.Position
         end
-    end
-
-    plotAnimalSync.connections[remote] = remote.OnClientEvent:Connect(function(queue)
-        for _, packet in ipairs(queue) do
-            applyPlotSyncDiff(channelName, packet)
+    end)
+    Hdr.InputEnded:Connect(function(inp)
+        if inp.UserInputType==Enum.UserInputType.MouseButton1
+        or inp.UserInputType==Enum.UserInputType.Touch then drag=false end
+    end)
+    UserInputService.InputChanged:Connect(function(inp)
+        if drag and (inp.UserInputType==Enum.UserInputType.MouseMovement
+        or inp.UserInputType==Enum.UserInputType.Touch) then
+            local d=inp.Position-ds
+            if not mv and d.Magnitude<5 then return end
+            mv=true
+            Win.Position=UDim2.new(ws.X.Scale,ws.X.Offset+d.X,ws.Y.Scale,ws.Y.Offset+d.Y)
         end
     end)
 end
 
-for _, child in ipairs(syncRemotes.channelFolder:GetChildren()) do
-    if child:IsA("RemoteEvent") then attachPlotChannel(child) end
+local Body=Instance.new("Frame")
+Body.Size=UDim2.new(1,0,0,0)
+Body.AutomaticSize=Enum.AutomaticSize.Y
+Body.BackgroundTransparency=1
+Body.BorderSizePixel=0
+Body.LayoutOrder=2
+Body.ZIndex=101
+Body.Parent=Win
+
+local BL=Instance.new("UIListLayout")
+BL.FillDirection=Enum.FillDirection.Vertical
+BL.Padding=UDim.new(0,5)
+BL.HorizontalAlignment=Enum.HorizontalAlignment.Center
+BL.Parent=Body
+
+local BPad=Instance.new("UIPadding")
+BPad.PaddingTop=UDim.new(0,7)
+BPad.PaddingBottom=UDim.new(0,9)
+BPad.PaddingLeft=UDim.new(0,8)
+BPad.PaddingRight=UDim.new(0,8)
+BPad.Parent=Body
+
+local StatusCard=Instance.new("Frame")
+StatusCard.Size=UDim2.new(1,0,0,32)
+StatusCard.BackgroundColor3=Color3.fromRGB(22,22,24)
+StatusCard.BackgroundTransparency=0
+StatusCard.BorderSizePixel=0
+StatusCard.ZIndex=102
+StatusCard.Parent=Body
+Corner(StatusCard,8)
+Stroke(StatusCard,Color3.fromRGB(45,45,50),1)
+
+local SDot=Instance.new("Frame")
+SDot.Size=UDim2.new(0,7,0,7)
+SDot.Position=UDim2.new(0,10,0.5,-3.5)
+SDot.BackgroundColor3=T.Dim
+SDot.BorderSizePixel=0
+SDot.ZIndex=103
+SDot.Parent=StatusCard
+Corner(SDot,4)
+
+local SLbl=Instance.new("TextLabel")
+SLbl.Size=UDim2.new(1,-26,1,0)
+SLbl.Position=UDim2.new(0,24,0,0)
+SLbl.BackgroundTransparency=1
+SLbl.Text="Click the code box first"
+SLbl.TextSize=11
+SLbl.Font=Enum.Font.GothamMedium
+SLbl.TextColor3=T.Dim
+SLbl.TextXAlignment=Enum.TextXAlignment.Left
+SLbl.TextYAlignment=Enum.TextYAlignment.Center
+SLbl.ZIndex=103
+SLbl.Parent=StatusCard
+
+local CodeCard=Instance.new("Frame")
+CodeCard.Size=UDim2.new(1,0,0,60)
+CodeCard.BackgroundColor3=Color3.fromRGB(16,16,18)
+CodeCard.BackgroundTransparency=0
+CodeCard.BorderSizePixel=0
+CodeCard.ZIndex=102
+CodeCard.Parent=Body
+Corner(CodeCard,8)
+local CodeStroke=Stroke(CodeCard,Color3.fromRGB(45,45,50),1)
+
+local CodeSmall=Instance.new("TextLabel")
+CodeSmall.Size=UDim2.new(1,-10,0,14)
+CodeSmall.Position=UDim2.new(0,10,0,8)
+CodeSmall.BackgroundTransparency=1
+CodeSmall.Text="DETECTED"
+CodeSmall.TextSize=8
+CodeSmall.Font=Enum.Font.GothamBold
+CodeSmall.TextColor3=Color3.fromRGB(80,80,90)
+CodeSmall.TextXAlignment=Enum.TextXAlignment.Left
+CodeSmall.ZIndex=103
+CodeSmall.Parent=CodeCard
+
+local CodeVal=Instance.new("TextLabel")
+CodeVal.Size=UDim2.new(1,-10,0,28)
+CodeVal.Position=UDim2.new(0,10,0,26)
+CodeVal.BackgroundTransparency=1
+CodeVal.Text="—"
+CodeVal.TextSize=18
+CodeVal.Font=Enum.Font.GothamBlack
+CodeVal.TextColor3=T.Dim
+CodeVal.TextXAlignment=Enum.TextXAlignment.Left
+CodeVal.TextYAlignment=Enum.TextYAlignment.Center
+CodeVal.ZIndex=103
+CodeVal.Parent=CodeCard
+
+local RiddleCard=Instance.new("Frame")
+RiddleCard.Size=UDim2.new(1,0,0,0)
+RiddleCard.AutomaticSize=Enum.AutomaticSize.Y
+RiddleCard.BackgroundColor3=Color3.fromRGB(30,22,8)
+RiddleCard.BackgroundTransparency=0
+RiddleCard.BorderSizePixel=0
+RiddleCard.Visible=false
+RiddleCard.ZIndex=102
+RiddleCard.Parent=Body
+Corner(RiddleCard,7)
+Stroke(RiddleCard,T.Yellow,1)
+local RiddlePad=Instance.new("UIPadding")
+RiddlePad.PaddingTop=UDim.new(0,5); RiddlePad.PaddingBottom=UDim.new(0,6)
+RiddlePad.PaddingLeft=UDim.new(0,8); RiddlePad.PaddingRight=UDim.new(0,8)
+RiddlePad.Parent=RiddleCard
+local RLL=Instance.new("UIListLayout")
+RLL.FillDirection=Enum.FillDirection.Vertical
+RLL.Padding=UDim.new(0,2)
+RLL.Parent=RiddleCard
+local RTag=Instance.new("TextLabel")
+RTag.Size=UDim2.new(1,0,0,11)
+RTag.BackgroundTransparency=1
+RTag.Text="🧩 RIDDLE SOLVER"
+RTag.TextSize=7; RTag.Font=Enum.Font.GothamBold
+RTag.TextColor3=T.Yellow
+RTag.TextXAlignment=Enum.TextXAlignment.Left
+RTag.ZIndex=103; RTag.Parent=RiddleCard
+local RMsg=Instance.new("TextLabel")
+RMsg.Size=UDim2.new(1,0,0,14)
+RMsg.BackgroundTransparency=1; RMsg.Text=""
+RMsg.TextSize=10; RMsg.Font=Enum.Font.GothamMedium
+RMsg.TextColor3=T.White; RMsg.TextXAlignment=Enum.TextXAlignment.Left
+RMsg.TextWrapped=true; RMsg.ZIndex=103; RMsg.Parent=RiddleCard
+
+local function setStatus(msg, col)
+    col=col or T.Dim
+    SLbl.Text=msg; SLbl.TextColor3=col; SDot.BackgroundColor3=col
 end
-syncRemotes.channelFolder.ChildAdded:Connect(function(child)
-    if child:IsA("RemoteEvent") then attachPlotChannel(child) end
+
+local function flashCode(code, col)
+    col=col or T.Accent
+    CodeVal.Text=code; CodeVal.TextColor3=col
+    Tw(CodeStroke, TweenInfo.new(0.1), {Color=col})
+    task.delay(0.6, function()
+        Tw(CodeStroke, TweenInfo.new(0.5), {Color=T.Border})
+        Tw(CodeVal, TweenInfo.new(0.5), {TextColor3=col})
+    end)
+end
+
+local function showRiddle(msg, col)
+    RMsg.Text=msg; RMsg.TextColor3=col or T.White
+    RiddleCard.Visible=true
+end
+local function hideRiddle()
+    RiddleCard.Visible=false
+end
+
+OnBtn.MouseButton1Click:Connect(function()
+    _enabled=not _enabled
+    if _enabled then
+        OnBtn.Text="ON"; OnBtn.BackgroundColor3=Color3.fromRGB(80,220,80); OnS.Color=Color3.fromRGB(80,220,80)
+        OnBtn.TextColor3=Color3.fromRGB(10,10,10)
+        setStatus(_focused and "Ready — watching" or "Click the code box first",
+            _focused and T.Green or T.Dim)
+    else
+        OnBtn.Text="OFF"; OnBtn.BackgroundColor3=T.Red; OnS.Color=T.Red
+        OnBtn.TextColor3=T.White; setStatus("Paused",T.Dim)
+    end
 end)
 
-local allAnimalsCache = {}
-local StealState = { active = false, startTime = 0 }
-
-local progressBarBg, progressFill, statusLabel, infoLabel, bannerFrame, bannerStroke
-
-local function updateUI()
-    local statusText = StealState.active and "STEALING" or (#allAnimalsCache > 0 and "READY" or "SCANNING")
-    local progressValue = StealState.active and 1 or math.clamp(#allAnimalsCache / 18, 0, 1)
-
-    if progressFill then
-        progressFill.Size = UDim2.new(progressValue, 0, 1, 0)
+UserInputService.TextBoxFocused:Connect(function(box)
+    _focused=box
+    if _enabled then setStatus("Ready — watching",T.Green) end
+end)
+UserInputService.TextBoxFocusReleased:Connect(function(box)
+    if _focused==box then
+        _focused=nil
+        if _enabled then setStatus("Click the code box first",T.Dim) end
     end
+end)
 
-    if statusLabel then
-        statusLabel.Text = statusText
+local function appendToBox(text)
+    if not text or text=="" then return end
+    if not _focused or not _focused.Parent then
+        setStatus("Click the code box first!",T.Yellow)
+        flashCode(text, T.Yellow)
+        return
     end
-
-    if infoLabel then
-        infoLabel.Text = string.format("Auto Steal • %s • %d targets", statusText:lower(), #allAnimalsCache)
+    local cur=_focused.Text or ""
+    if cur=="" then
+        _focused.Text=text
+    else
+        _focused.Text=cur.." "..text
     end
+    setStatus("Appended!",T.Green)
+    flashCode(text,T.Green)
 end
 
-local function getPlotOwner(plot)
-    local sign = plot:FindFirstChild("PlotSign")
-    local frame = sign and sign:FindFirstChild("SurfaceGui") and sign.SurfaceGui:FindFirstChild("Frame")
-    local label = frame and frame:FindFirstChild("TextLabel")
-    if not label or label.Text == "Empty Base" then return nil end
-    return label.Text:gsub("'s [Bb]ase$", ""):gsub("%s+$", "")
+local RIDDLE_KW={
+    "when was","how old","what year","what month","birthday","age of",
+    "released","release date","hint","riddle","figure out","guess",
+    "first letter","combine","spell","backwards","months","years",
+    "old is","how many","what is","do you know","can you","which month",
+    "which year","how long","since when",
+}
+local function isRiddle(txt)
+    local l=txt:lower()
+    for _,p in ipairs(RIDDLE_KW) do if l:find(p,1,true) then return true end end
+    return false
 end
 
-local function isMyBaseAnimal(animalData)
-    if not animalData or not animalData.plot then return false end
-    local plot = plots:FindFirstChild(animalData.plot)
-    return plot and getPlotOwner(plot) == lp.DisplayName
-end
-
-local function findProximityPromptForAnimal(animalData)
-    local plot = plots:FindFirstChild(animalData.plot)
-    if not plot then return nil end
-    local podiums = plot:FindFirstChild("AnimalPodiums")
-    if not podiums then return nil end
-    local podium = podiums:FindFirstChild(animalData.slot)
-    if not podium then return nil end
-    local base = podium:FindFirstChild("Base")
-    local spawn = base and base:FindFirstChild("Spawn")
-    local attach = spawn and spawn:FindFirstChild("PromptAttachment")
-    if not attach then return nil end
-    for _, p in ipairs(attach:GetChildren()) do
-        if p:IsA("ProximityPrompt") then
-            return p
-        end
-    end
+local SAB={rm="MAY",ry="2024",rf="MAY2024",sa="24",c="MAY24"}
+local function solveLocal(txt)
+    local l=txt:lower()
+    if (l:find("month") or l:find("when")) and (l:find("sab") or l:find("steal") or l:find("releas")) then return SAB.rm end
+    if l:find("year") and (l:find("sab") or l:find("releas")) then return SAB.ry end
+    if (l:find("when") or l:find("date")) and (l:find("sab") or l:find("steal") or l:find("releas")) then return SAB.rf end
+    if (l:find("age") or l:find("old")) and l:find("sammy") then return SAB.sa end
+    if (l:find("age") or l:find("old")) and (l:find("month") or l:find("when") or l:find("releas")) then return SAB.c end
+    if l:find("may") and l:find("24") then return SAB.c end
     return nil
 end
 
-local function getAnimalPosition(animalData)
-    local plot = plots:FindFirstChild(animalData.plot)
-    if not plot then return nil end
-    local podiums = plot:FindFirstChild("AnimalPodiums")
-    local podium = podiums and podiums:FindFirstChild(animalData.slot)
-    return podium and podium:GetPivot().Position
-end
-
-local function distToAnimal(animalData)
-    local character = lp.Character
-    if not character then return math.huge end
-    local hrp = character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("UpperTorso")
-    local pos = getAnimalPosition(animalData)
-    if not hrp or not pos then return math.huge end
-    return (hrp.Position - pos).Magnitude
-end
-
-local function pickClosest()
-    local character = lp.Character
-    if not character then return nil end
-    local hrp = character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("UpperTorso")
-    if not hrp then return nil end
-
-    local best, bestDist = nil, math.huge
-    for _, animal in ipairs(allAnimalsCache) do
-        if isMyBaseAnimal(animal) then continue end
-        local dist = distToAnimal(animal)
-        if dist <= CONFIG.PRIME_RANGE and dist < bestDist then
-            bestDist = dist
-            best = animal
+local function callAI(prompt)
+    if not ANTHROPIC_KEY or ANTHROPIC_KEY=="" then return nil end
+    local ok,result=pcall(function()
+        local body=HttpService:JSONEncode({
+            model="claude-sonnet-4-6",
+            max_tokens=40,
+            system="Decode Roblox promo codes for Steal a Brainrot (SAB). SAB released May 2024. Sammy is 24. Output ONLY the code uppercase no spaces nothing else.",
+            messages={{role="user",content=prompt}}
+        })
+        local resp=HttpService:RequestAsync({
+            Url="https://api.anthropic.com/v1/messages",
+            Method="POST",
+            Headers={
+                ["Content-Type"]="application/json",
+                ["x-api-key"]=ANTHROPIC_KEY,
+                ["anthropic-version"]="2023-06-01",
+            },
+            Body=body,
+        })
+        if resp.StatusCode==200 then
+            local data=HttpService:JSONDecode(resp.Body)
+            if data and data.content and data.content[1] then return data.content[1].text end
         end
-    end
-    return best
-end
-
-local function attemptSteal(animalData)
-    if StealState.active then return false end
-    
-    local prompt = findProximityPromptForAnimal(animalData)
-    if not prompt then return false end
-
-    StealState.active = true
-    StealState.startTime = tick()
-
-    task.spawn(function()
-        if prompt.HoldDuration > 0 then
-            prompt:InputHoldBegin()
-            task.wait(CONFIG.HOLD_MIN)
-            
-            while (tick() - StealState.startTime) < CONFIG.HOLD_MAX do
-                if distToAnimal(animalData) <= CONFIG.STEAL_RANGE then
-                    prompt:InputHoldEnd()
-                    task.wait(CONFIG.ENTRY_DELAY)
-                    prompt:InputBegan()
-                    task.wait(0.1)
-                    prompt:InputEnded()
-                    break
-                end
-                task.wait()
-            end
-        else
-        
-            prompt:InputBegan()
-            task.wait(0.1)
-            prompt:InputEnded()
-        end
-
-        StealState.active = false
-        task.wait(CONFIG.COOLDOWN)
+        return nil
     end)
-    return true
+    if ok and result then return tostring(result):match("^%s*([A-Z0-9_%-]+)%s*$") end
+    return nil
 end
 
-local function scanAllPlots()
-    local newCache = {}
-    for _, plot in ipairs(plots:GetChildren()) do
-        local cache = plotAnimalSync.caches[plot.Name]
-        if not cache or typeof(cache.AnimalList) ~= "table" then continue end
-        
-        for slot, animalData in pairs(cache.AnimalList) do
-            if typeof(animalData) == "table" then
-                local info = AnimalsData[animalData.Index]
-                if info then
-                    table.insert(newCache, {
-                        name = info.DisplayName or animalData.Index,
-                        plot = plot.Name,
-                        slot = tostring(slot),
-                        uid = plot.Name .. "_" .. tostring(slot),
-                    })
-                end
+local function extractWords(txt)
+    local words={}
+    for w in txt:gmatch("%S+") do
+        local clean=w:gsub("[^A-Za-z0-9]","")
+        if #clean>=2 then
+            local isUpper=clean==clean:upper() and clean:match("[A-Z]")
+            local isLower=clean==clean:lower() and clean:match("[a-z]") and #clean>=3
+            if isUpper or isLower then
+                table.insert(words,clean)
             end
         end
     end
-    allAnimalsCache = newCache
+    if #words>0 then return table.concat(words," ") end
+    return nil
 end
 
-local function startAutoSteal()
-    RunService.Heartbeat:Connect(function()
-        if not CONFIG.AUTO_STEAL_ENABLED or StealState.active then return end
-        
-        local target = pickClosest()
-        if target then
-            attemptSteal(target)
+local function processGlobal(txt)
+    if not _enabled then return end
+    if not txt or type(txt)~="string" or #txt<2 then return end
+    if _seen[txt] then return end
+    _seen[txt]=true
+    task.delay(20, function() _seen[txt]=nil end)
+
+    if isRiddle(txt) then
+        showRiddle("Solving...",T.Yellow)
+        setStatus("Riddle detected...",T.Yellow)
+        local ans=solveLocal(txt)
+        if ans then
+            showRiddle("Answer: "..ans,T.Green)
+            setStatus("Solved: "..ans,T.Green)
+            appendToBox(ans)
+            task.delay(4,hideRiddle); return
         end
+        showRiddle("Asking AI...",T.Yellow)
+        task.spawn(function()
+            local ai=callAI("Sammy said: \""..txt.."\". SAB=May2024,Sammy=24. Code only.")
+            if ai then
+                showRiddle("AI: "..ai,T.Green)
+                setStatus("AI solved: "..ai,T.Green)
+                appendToBox(ai)
+                task.delay(4,hideRiddle)
+            else
+                showRiddle("Could not solve",T.Red)
+                setStatus("Riddle unsolved",T.Red)
+                task.delay(3,function()
+                    hideRiddle()
+                    setStatus(_focused and "Ready — watching" or "Click the code box first",
+                        _focused and T.Green or T.Dim)
+                end)
+            end
+        end)
+        return
+    end
+
+    local words=extractWords(txt)
+    if words then appendToBox(words) end
+end
+
+local _watched={}
+local function watchLabel(obj)
+    if _watched[obj] then return end
+    _watched[obj]=true
+    obj:GetPropertyChangedSignal("Text"):Connect(function()
+        processGlobal(obj.Text)
     end)
 end
 
-local function setupUI()
-    local sg = lp.PlayerGui:FindFirstChild("Moon Hub")
-    if not sg then
-        sg = Instance.new("ScreenGui")
-        sg.Name = "Moon Hub"
-        sg.ResetOnSpawn = false
-        sg.Parent = lp.PlayerGui
+local BAD={"backpack","inventory","chatmain","bubblechat","overhead","nametag","leaderboard","hudgui"}
+local GOOD={"global","announce","notif","banner","broadcast","event","popup","sammy","alert","header","news","system","message","center"}
+local function classify(obj)
+    local n=(obj.Name or ""):lower()
+    local pn=((obj.Parent and obj.Parent.Name) or ""):lower()
+    local gpn=((obj.Parent and obj.Parent.Parent and obj.Parent.Parent.Name) or ""):lower()
+    for _,b in ipairs(BAD) do if n:find(b) or pn:find(b) then return false end end
+    for _,g in ipairs(GOOD) do
+        if n:find(g) or pn:find(g) or gpn:find(g) then return true end
     end
-
-    local container = Instance.new("Frame")
-    container.Size = UDim2.new(0, 300, 0, 110)
-    container.Position = UDim2.new(0.5, -150, 0, 24)
-    container.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
-    container.BackgroundTransparency = 0.08
-    container.Parent = sg
-    Instance.new("UICorner", container).CornerRadius = UDim.new(0, 16)
-
-    local containerStroke = Instance.new("UIStroke", container)
-    containerStroke.Color = Color3.fromRGB(84, 130, 220)
-    containerStroke.Thickness = 1.2
-
-    bannerFrame = Instance.new("Frame")
-    bannerFrame.Size = UDim2.new(1, -16, 0, 36)
-    bannerFrame.Position = UDim2.new(0, 8, 0, 8)
-    bannerFrame.BackgroundColor3 = Color3.fromRGB(20, 28, 45)
-    bannerFrame.Parent = container
-    Instance.new("UICorner", bannerFrame).CornerRadius = UDim.new(0, 10)
-
-    bannerStroke = Instance.new("UIStroke", bannerFrame)
-    bannerStroke.Color = Color3.fromRGB(92, 166, 255)
-    bannerStroke.Thickness = 1.1
-
-    local titleLabel = Instance.new("TextLabel")
-    titleLabel.Size = UDim2.new(1, -12, 1, 0)
-    titleLabel.Position = UDim2.new(0, 6, 0, 0)
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.Font = Enum.Font.GothamBold
-    titleLabel.TextSize = 15
-    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    titleLabel.Text = "AUTO STEAL"
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    titleLabel.Parent = bannerFrame
-
-    infoLabel = Instance.new("TextLabel")
-    infoLabel.Size = UDim2.new(1, -16, 0, 20)
-    infoLabel.Position = UDim2.new(0, 8, 0, 48)
-    infoLabel.BackgroundTransparency = 1
-    infoLabel.Font = Enum.Font.Gotham
-    infoLabel.TextSize = 13
-    infoLabel.TextColor3 = Color3.fromRGB(200, 220, 255)
-    infoLabel.Text = "Auto Steal • standby • 0 targets"
-    infoLabel.TextXAlignment = Enum.TextXAlignment.Left
-    infoLabel.Parent = container
-
-    progressBarBg = Instance.new("Frame")
-    progressBarBg.Size = UDim2.new(1, -16, 0, 12)
-    progressBarBg.Position = UDim2.new(0, 8, 0, 78)
-    progressBarBg.BackgroundColor3 = Color3.fromRGB(16, 20, 30)
-    progressBarBg.Parent = container
-    Instance.new("UICorner", progressBarBg).CornerRadius = UDim.new(0, 8)
-
-    progressFill = Instance.new("Frame")
-    progressFill.Size = UDim2.new(0, 0, 1, 0)
-    progressFill.BackgroundColor3 = Color3.fromRGB(0, 160, 255)
-    progressFill.Parent = progressBarBg
-    Instance.new("UICorner", progressFill).CornerRadius = UDim.new(0, 8)
-
-    local fillGradient = Instance.new("UIGradient", progressFill)
-    fillGradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 200, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 120, 200)),
-    })
-
-    statusLabel = Instance.new("TextLabel")
-    statusLabel.Size = UDim2.new(1, -16, 0, 20)
-    statusLabel.Position = UDim2.new(0, 8, 0, 54)
-    statusLabel.BackgroundTransparency = 1
-    statusLabel.Font = Enum.Font.GothamBold
-    statusLabel.TextSize = 12
-    statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    statusLabel.Text = "READY"
-    statusLabel.TextXAlignment = Enum.TextXAlignment.Right
-    statusLabel.Parent = container
+    return false
 end
 
-setupUI()
-updateUI()
-startAutoSteal()
-task.spawn(function()
-    while task.wait(4) do
-        scanAllPlots()
-        updateUI()
+playerGui.DescendantAdded:Connect(function(obj)
+    task.wait(0.04)
+    if obj:IsA("TextLabel") then
+        local txt=obj.Text or ""
+        if classify(obj) or extractWords(txt) or isRiddle(txt) then
+            watchLabel(obj)
+            if #txt>1 then processGlobal(txt) end
+        end
+        obj:GetPropertyChangedSignal("Text"):Connect(function()
+            local t=obj.Text or ""
+            if classify(obj) or extractWords(t) or isRiddle(t) then
+                if not _watched[obj] then watchLabel(obj) end
+                processGlobal(t)
+            end
+        end)
     end
 end)
+
+pcall(function()
+    local tcs=game:GetService("TextChatService")
+    if tcs and tcs.MessageReceived then
+        tcs.MessageReceived:Connect(function(msg)
+            if not msg then return end
+            processGlobal(msg.Text or "")
+        end)
+    end
+end)
+
+pcall(function()
+    local shared=ReplicatedStorage:WaitForChild("Shared",5)
+    if not shared then return end
+    local flags=shared:WaitForChild("Flags",5); if not flags then return end
+    local cf=flags:WaitForChild("CodesFlags",5); if not cf then return end
+    cf.ChildAdded:Connect(function(obj)
+        processGlobal(obj.Name)
+        if obj:IsA("StringValue") then
+            processGlobal(tostring(obj.Value))
+            obj:GetPropertyChangedSignal("Value"):Connect(function()
+                processGlobal(tostring(obj.Value))
+            end)
+        end
+    end)
+end)
+
+pcall(function()
+    local ctrl=ReplicatedStorage:WaitForChild("Controllers",5)
+    if not ctrl then return end
+    local cc=ctrl:WaitForChild("CodesController",5); if not cc then return end
+    cc.DescendantAdded:Connect(function(obj)
+        if obj:IsA("StringValue") then processGlobal(tostring(obj.Value)) end
+        processGlobal(obj.Name)
+    end)
+end)
+
+setStatus("Click the code box first",T.Dim)
+flashCode("—",T.Dim)
