@@ -97,6 +97,8 @@ end
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "MoonHub_New"
 ScreenGui.ResetOnSpawn = false
+ScreenGui.ClipToDeviceSafeArea = false
+ScreenGui.ScreenInsets = Enum.ViewportInsets.None
 ScreenGui.Parent = CoreGui
 
 local function createAnimatedStroke(parent, thickness, speed)
@@ -309,7 +311,7 @@ UserInputService.InputBegan:Connect(function(input, gpe)
     end
 end)
 
--- // Sıkışma Yapmayan, Sıfır Sınırlı, Kusursuz Sürükleme Sistemi //
+-- // Tamamen Sınırsız, Sıkışmayan Serbest Sürükleme Sistemi //
 do
     local dragging = false
     local dragInput
@@ -318,7 +320,7 @@ do
 
     local function updateDrag(input)
         local delta = input.Position - dragStart
-        -- Scale çakışmasını önlemek için doğrudan tamamen Offset bazlı hareket ettiriyoruz
+        -- Hiçbir limit/clamp koymadan doğrudan serbestçe her yere kaydır
         main.Position = UDim2.new(0, startPos.X + delta.X, 0, startPos.Y + delta.Y)
     end
 
@@ -326,7 +328,6 @@ do
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
-            -- Başlangıç konumunu doğrudan piksellerle (AbsolutePosition) hafızaya alıyoruz
             startPos = main.AbsolutePosition
             
             local endedConnection
