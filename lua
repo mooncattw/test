@@ -309,7 +309,7 @@ UserInputService.InputBegan:Connect(function(input, gpe)
     end
 end)
 
--- // Sekme ve Kaçma Yapmayan, Her Yerden Sürüklenebilir Kusursuz Drag Sistemi //
+-- // Sıkışma Yapmayan, Sıfır Sınırlı, Kusursuz Sürükleme Sistemi //
 do
     local dragging = false
     local dragInput
@@ -318,23 +318,16 @@ do
 
     local function updateDrag(input)
         local delta = input.Position - dragStart
-        local camera = workspace.CurrentCamera
-        local viewportSize = camera and camera.ViewportSize or Vector2.new(1920, 1080)
-        
-        local targetX = startPos.X.Offset + delta.X
-        local targetY = startPos.Y.Offset + delta.Y
-        
-        targetX = math.clamp(targetX, 0, viewportSize.X - main.AbsoluteSize.X)
-        targetY = math.clamp(targetY, 0, viewportSize.Y - main.AbsoluteSize.Y)
-        
-        main.Position = UDim2.new(startPos.X.Scale, targetX, startPos.Y.Scale, targetY)
+        -- Scale çakışmasını önlemek için doğrudan tamamen Offset bazlı hareket ettiriyoruz
+        main.Position = UDim2.new(0, startPos.X + delta.X, 0, startPos.Y + delta.Y)
     end
 
     main.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
-            startPos = main.Position
+            -- Başlangıç konumunu doğrudan piksellerle (AbsolutePosition) hafızaya alıyoruz
+            startPos = main.AbsolutePosition
             
             local endedConnection
             endedConnection = input.Changed:Connect(function()
