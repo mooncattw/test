@@ -9,7 +9,7 @@ local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 
 local CONFIG = {
-    Draggable = false,
+    Draggable = true,
     TpBatKey = nil,
 }
 
@@ -308,6 +308,58 @@ UserInputService.InputBegan:Connect(function(input, gpe)
         setToggle(not tpBatToggled)
     end
 end)
+
+-- // Sekme ve Kaçma Yapmayan, Her Yerden Sürüklenebilir Kusursuz Drag Sistemi //
+do
+    local dragging = false
+    local dragInput
+    local dragStart
+    local startPos
+
+    local function updateDrag(input)
+        local delta = input.Position - dragStart
+        local camera = workspace.CurrentCamera
+        local viewportSize = camera and camera.ViewportSize or Vector2.new(1920, 1080)
+        
+        local targetX = startPos.X.Offset + delta.X
+        local targetY = startPos.Y.Offset + delta.Y
+        
+        targetX = math.clamp(targetX, 0, viewportSize.X - main.AbsoluteSize.X)
+        targetY = math.clamp(targetY, 0, viewportSize.Y - main.AbsoluteSize.Y)
+        
+        main.Position = UDim2.new(startPos.X.Scale, targetX, startPos.Y.Scale, targetY)
+    end
+
+    main.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = main.Position
+            
+            local endedConnection
+            endedConnection = input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                    if endedConnection then
+                        endedConnection:Disconnect()
+                    end
+                end
+            end)
+        end
+    end)
+
+    main.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            updateDrag(input)
+        end
+    end)
+end
 
 RunService.Heartbeat:Connect(function()
     if not tpBatToggled then return end
