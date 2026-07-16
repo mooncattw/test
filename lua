@@ -7,10 +7,9 @@ local CoreGui = game:GetService("CoreGui")
 local player = Players.LocalPlayer
 local NEON_COLOR = Color3.fromRGB(0, 170, 255)
 
--- Global Değişkenler
+-- Global Ayarlar
 getgenv().AntiBat = false
 getgenv().InfJump = false
-local InfJumpPart = nil
 
 -- Sürükleme Fonksiyonu
 local function makeDraggable(frame)
@@ -40,7 +39,7 @@ local function makeDraggable(frame)
     end)
 end
 
--- Animasyonlu Neon Işık Fonksiyonu
+-- Animasyonlu Neon Kenarlık Fonksiyonu
 local function createAnimatedStroke(parent, thickness, speed)
     local stroke = Instance.new("UIStroke")
     stroke.Thickness = thickness or 2
@@ -66,7 +65,7 @@ end
 
 -- GUI Oluşturma
 local gui = Instance.new("ScreenGui")
-gui.Name = "MoonHub"
+gui.Name = "MoonHub_Fixed"
 gui.ResetOnSpawn = false
 gui.Parent = CoreGui
 
@@ -83,18 +82,26 @@ Instance.new("UICorner", main).CornerRadius = UDim.new(0, 16)
 createAnimatedStroke(main, 2.5, 0.9)
 makeDraggable(main)
 
+-- Moon Hub Başlığı (Neonlu)
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 50)
 title.BackgroundTransparency = 1
 title.Text = "Moon Hub"
 title.Font = Enum.Font.GothamBlack
-title.TextSize = 20
+title.TextSize = 22
 title.TextColor3 = NEON_COLOR
 title.Parent = main
 
--- ÖZELLİK KODLARI (LOGIC)
+-- Yazı etrafına neon efekti (Stroke)
+local titleStroke = Instance.new("UIStroke")
+titleStroke.Thickness = 1.5
+titleStroke.Color = NEON_COLOR
+titleStroke.Transparency = 0.2
+titleStroke.Parent = title
 
--- Anti-Bat Döngüsü
+-- ÖZELLİK KODLARI
+
+-- 1. Anti Bat Sistemi
 RunService.Heartbeat:Connect(function()
     if getgenv().AntiBat then
         local char = player.Character
@@ -102,52 +109,36 @@ RunService.Heartbeat:Connect(function()
         local hum = char and char:FindFirstChildOfClass("Humanoid")
         
         if root and hum then
-            -- Bayılma Engelleme (Hız Titreşimi)
-            local currentVel = root.Velocity
-            root.Velocity = Vector3.new(4000, currentVel.Y, 4000)
+            -- Bayılmayı engellemek için velocity flicker
+            local oldVel = root.Velocity
+            root.Velocity = Vector3.new(4000, oldVel.Y, 4000)
             RunService.RenderStepped:Wait()
-            root.Velocity = currentVel
+            root.Velocity = oldVel
 
-            -- Ragdoll İptali
-            local state = hum:GetState()
-            if state == Enum.HumanoidStateType.Physics or state == Enum.HumanoidStateType.Ragdoll or state == Enum.HumanoidStateType.FallingDown then
+            -- Ragdoll halinden çıkarma
+            if hum:GetState() == Enum.HumanoidStateType.Physics or hum:GetState() == Enum.HumanoidStateType.Ragdoll or hum:GetState() == Enum.HumanoidStateType.FallingDown then
                 hum:ChangeState(Enum.HumanoidStateType.Running)
             end
         end
     end
 end)
 
--- Inf Jump Döngüsü (Platformlu)
-RunService.Heartbeat:Connect(function()
+-- 2. Infinite Jump Sistemi (Fixlendi: Hareket ederken havada durmaz)
+UserInputService.JumpRequest:Connect(function()
     if getgenv().InfJump then
         local char = player.Character
-        local root = char and char:FindFirstChild("HumanoidRootPart")
         local hum = char and char:FindFirstChildOfClass("Humanoid")
+        local root = char and char:FindFirstChild("HumanoidRootPart")
         
-        if root and hum then
-            local isJumping = UserInputService:IsKeyDown(Enum.KeyCode.Space) or hum.Jump
-            if isJumping then
-                if not InfJumpPart then
-                    InfJumpPart = Instance.new("Part")
-                    InfJumpPart.Size = Vector3.new(10, 0.5, 10)
-                    InfJumpPart.Anchored = true
-                    InfJumpPart.Transparency = 1
-                    InfJumpPart.Parent = workspace
-                end
-                InfJumpPart.Position = root.Position - Vector3.new(0, 3.45, 0)
-                if root.Velocity.Y < 50 then
-                    root.Velocity = Vector3.new(root.Velocity.X, 50, root.Velocity.X)
-                end
-            else
-                if InfJumpPart then InfJumpPart.Position = Vector3.new(0, -1000, 0) end
-            end
+        if hum and root then
+            hum:ChangeState(Enum.HumanoidStateType.Jumping)
+            -- Momentum koruması için X ve Z eksenine dokunmadan sadece Y (yukarı) hızı verilir
+            root.Velocity = Vector3.new(root.Velocity.X, 50, root.Velocity.Z)
         end
-    else
-        if InfJumpPart then InfJumpPart.Position = Vector3.new(0, -1000, 0) end
     end
 end)
 
--- Toggle Fonksiyonu
+-- Toggle UI Oluşturucu
 local function createToggle(text, yOffset, callback)
     local row = Instance.new("Frame")
     row.Size = UDim2.new(1, -30, 0, 48)
@@ -155,7 +146,7 @@ local function createToggle(text, yOffset, callback)
     row.BackgroundColor3 = Color3.fromRGB(22, 25, 45)
     row.Parent = main
     Instance.new("UICorner", row).CornerRadius = UDim.new(0, 10)
-    createAnimatedStroke(row, 1.5, 1.2) -- Buton etrafındaki ışık
+    createAnimatedStroke(row, 1.5, 1.2)
     
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(0.6, 0, 1, 0)
@@ -196,8 +187,8 @@ local function createToggle(text, yOffset, callback)
     end)
 end
 
--- Butonları Ekle
-createToggle("Anti-Bat", 60, function(state)
+-- Butonları Yerleştir
+createToggle("Anti Bat", 60, function(state)
     getgenv().AntiBat = state
 end)
 
@@ -205,4 +196,4 @@ createToggle("Inf Jump", 120, function(state)
     getgenv().InfJump = state
 end)
 
-print("Moon Hub başarıyla yüklendi.")
+print("Moon Hub v4 Yüklendi. İyi eğlenceler!")
