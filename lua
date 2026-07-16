@@ -1,3 +1,125 @@
+! Meowl
+pleaseeee0672
+•
+.gg/25ms
+
+TrevRol simgesi, Irish Hub Member — 13.07.2026 03:07
+
+--// SERVICES
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local Stats = game:GetService("Stats")... (6 KB kaldı)
+
+message.txt
+56 KB
+Auto Duel With Plot detector (used sum irish waypoints)
+-- AUTO LEFT & AUTO RIGHT - Automated movement between positions with Plot Detection
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+local UIS = game:GetService("UserInputService")
+local LP = Players.LocalPlayer
+
+message.txt
+9 KB
+TrevRol simgesi, Irish Hub Member — 13.07.2026 03:23
+ONLY LEAKED IN IRISH AND SOURCESHUB
+
+LEAKED BY TREV 
+LEAKED BY TREV 
+LEAKED BY TREV 
+LEAKED BY TREV 
+LEAKED BY TREV 
+LEAKED BY TREV ... (50 KB kaldı)
+
+message.txt
+100 KB
+乂𝑷ℎ𝐚𝑛𝑡𝑜𝑚乂 [ ʙʀᴏʟʏ ✦] — 13.07.2026 04:28
+
+Print leaked by KUMA/PHANTOM on dc 
+
+https://discord.gg/hCUmN8cGJj
+
+Print leaked by KUMA/PHANTOM on dc 
+
+Mwane speed bypass by @phantom:KUMA on dc.txt
+21 KB
+repeat task.wait() until game:IsLoaded()
+--[[
+    LUST HUB BYPASS - Ultra Glass Style (Silver/Gray Edition)
+    - Hyper-transparent glass-morphism design with silver accents
+    - PC Mode: Silver/Gray accents, configurable keybind, power 10k-150k
+    - Mobile Mode: Silver/Gray accents, simple on/off toggle, power 10k-100k
+
+Lust bypass by Broly.txt
+21 KB
+乂𝑷ℎ𝐚𝑛𝑡𝑜𝑚乂 [ ʙʀᴏʟʏ ✦] — 13.07.2026 05:42
+repeat task.wait() until game:IsLoaded()
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
+local HS = game:GetService("HttpService")... (93 KB kaldı)
+
+Sure hub. By Broly leak everywhere.txt
+143 KB
+TrevRol simgesi, Irish Hub Member — 13.07.2026 06:05
+
+repeat task.wait() until game:IsLoaded()
+-- ============================================================
+-- ClovesDuel v1.0 - Duel Helper
+-- ============================================================
+
+local Players         = game:GetService("Players")... (32 KB kaldı)
+
+message.txt
+82 KB
+ [NGA], 
+! infinity — 13.07.2026 08:55
+Not ace or old
+Narco [N4VU],  — 13.07.2026 09:01
+@Source Leaker Bro Who Have Undeteched Auto Play
+! infinity — 13.07.2026 10:27
+İletildi
+Görsel
+Görsel
+--SOURUNA BAT TP
+--discord.gg/kastorhub
+--LEKAD BY FRNK33.
+repeat task.wait() until game:IsLoaded()
+
+local UserInputService = game:GetService("UserInputService")
+
+SPECTRUM BYPASS.txt
+28 KB
+--SPECTRUM MOBILE
+--discord.gg/kastorhub
+--LEKAD BY FRNK33.
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")... (81 KB kaldı)
+
+SPECTRUM MOBILE.txt
+131 KB
+FANTASTICRol simgesi, Irish Hub Member — 13.07.2026 11:24
+Görsel
+repeat task.wait() until game:IsLoaded()
+-- ============================================================
+-- F.9 Hub v5.3 - FULL SIZE, NO PILL ACCENT, CUSTOM BG
+-- ============================================================
+
+local Players         = game:GetService("Players")... (47 KB kaldı)
+
+kuuuu.txt
+97 KB
+! ironic | zRol simgesi, On Top — 13.07.2026 11:37
+@! infinity leak it here
+Ppl wants it
+! eme / m [iris], Rol simgesi, Server Booster — 13.07.2026 12:54
+@Source Leaker we’re gonna set a system up so yall can get paid soon idk if we can do it but we’ll try
+Larp until u made itRol simgesi, moderator — 13.07.2026 13:10
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
@@ -5,377 +127,1030 @@ local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 local LP = Players.LocalPlayer
 
--- // PALETĂ CULORI
-local PURPLE      = Color3.fromRGB(165, 55, 255)  
-local PINK_SUB    = Color3.fromRGB(235, 90, 200)  
-local LIGHT_GRAY  = Color3.fromRGB(150, 150, 160) 
-local WHITE       = Color3.fromRGB(255, 255, 255) 
-local DARK_BG     = Color3.fromRGB(10, 6, 14)     
-local CARD_BG     = Color3.fromRGB(20, 12, 28)     
-local STATUS_OFF  = Color3.fromRGB(220, 60, 90)   
-local STATUS_ON   = Color3.fromRGB(60, 220, 120)  
+message.lua.txt
+20 KB
+Koko [67], Rol simgesi, Irish Hub Member — 13.07.2026 13:32
+Ek dosya türü: document
+HOOK LAGGER BY WEEKLY-1.TXT
+10.43 KB
+Tung tung tung sahurRol simgesi, Irish Hub Member — 13.07.2026 14:28
+İletildi
+Görsel
+-- leak by discord.gg/GvnWg3uvRh
 
--- // STATE
-local State = {
-    autoBatToggled = false,
-    hittingCooldown = false,
-    guiVisible = true,
-    isMobileMode = false,
-    uiLocked = false,
-}
+repeat task.wait() until game:IsLoaded()
+local Players,RunService,UIS,TS,Lighting,HS = game:GetService("Players"),game:GetService("RunService"),game:GetService("UserInputService"),game:GetService("TweenService"),game:GetService("Lighting"),game:GetService("HttpService")
+local LP = Players.LocalPlayer
+local NS,CS = 60,30... (74 KB kaldı)
 
-local Keys = {
-    autoBat = Enum.KeyCode.X,
-    guiHide = Enum.KeyCode.LeftControl,
-}
+Joker hub 🃏.txt
+124 KB
+İletildi
+Görsel
+repeat task.wait() until game:IsLoaded()
+-- ============================================================
+-- Faded.vs [Freemium] - REDUCED FEATURES
+-- ============================================================
 
-local h, hrp = nil, nil
-local kListening = false
-local listeningConn = nil -- Salvează conexiunea pentru schimbarea tastei
+local Players         = game:GetService("Players")
 
--- // CONFIG
-local function saveConfig()
-    local cfg = { autoBatKey = Keys.autoBat.Name, isMobile = State.isMobileMode, uiLocked = State.uiLocked }
-    pcall(function() writefile("EthernalAutoBatOnlyConfig.json", HttpService:JSONEncode(cfg)) end)
-end
+message.txt
+47 KB
+İletildi
+Görsel
+repeat task.wait() until game:IsLoaded()
 
-local function loadConfig()
-    if isfile and isfile("EthernalAutoBatOnlyConfig.json") then
-        local ok, cfg = pcall(function() return HttpService:JSONDecode(readfile("EthernalAutoBatOnlyConfig.json")) end)
-        if ok and cfg then
-            if cfg.autoBatKey and Enum.KeyCode[cfg.autoBatKey] then Keys.autoBat = Enum.KeyCode[cfg.autoBatKey] end
-            if cfg.isMobile ~= nil then State.isMobileMode = cfg.isMobile end
-            if cfg.uiLocked ~= nil then State.uiLocked = cfg.uiLocked end
-        end
-    end
-end
-loadConfig()
-
--- // CLEANUP
-for _, name in pairs({"EthernalHub_AutoBat_Poza"}) do
-    local old = game:GetService("CoreGui"):FindFirstChild(name) or LP:WaitForChild("PlayerGui"):FindFirstChild(name)
-    if old then old:Destroy() end
-end
-
--- // GUI SETUP
-local gui = Instance.new("ScreenGui")
-gui.Name = "EthernalHub_AutoBat_Poza"; gui.ResetOnSpawn = false; gui.DisplayOrder = 15
-gui.IgnoreGuiInset = true; gui.Parent = LP:WaitForChild("PlayerGui")
-
-local main = Instance.new("ImageLabel", gui)
-main.Name = "Main"; main.Size = UDim2.new(0, 270, 0, 195); main.Position = UDim2.new(0.5, -135, 0.5, 45)
-main.BackgroundTransparency = 1; main.BorderSizePixel = 0; main.Active = true; main.ClipsDescendants = true
-main.Image = "rbxassetid://103472352491221" 
-main.ScaleType = Enum.ScaleType.Crop
-Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
-
-local tint = Instance.new("Frame", main)
-tint.Size = UDim2.new(1, 0, 1, 0); tint.BackgroundColor3 = DARK_BG; tint.BackgroundTransparency = 0.85; tint.ZIndex = 1
-
-local mainStroke = Instance.new("UIStroke", main); mainStroke.Color = PURPLE; mainStroke.Thickness = 1.5
-
--- Dragging logic
 do
-    local dragging, dragInput, dragStart, mainStart = false, nil, nil, nil
-    main.InputBegan:Connect(function(inp)
-        if State.uiLocked and State.isMobileMode then return end
-        if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then
-            dragging = true; dragStart = inp.Position; mainStart = main.Position
-            inp.Changed:Connect(function() if inp.UserInputState == Enum.UserInputState.End then dragging = false end end)
-        end
-    end)
-    main.InputChanged:Connect(function(inp) 
-        if State.uiLocked and State.isMobileMode then return end
-        if inp.UserInputType == Enum.UserInputType.MouseMovement or inp.UserInputType == Enum.UserInputType.Touch then dragInput = inp end 
-    end)
-    UIS.InputChanged:Connect(function(inp)
-        if State.uiLocked and State.isMobileMode then dragging = false; return end
-        if inp == dragInput and dragging then
-            local dx = inp.Position.X - dragStart.X; local dy = inp.Position.Y - dragStart.Y
-            main.Position = UDim2.new(mainStart.X.Scale, mainStart.X.Offset + dx, mainStart.Y.Scale, mainStart.Y.Offset + dy)
-        end
-    end)
+local _TS = game:GetService("TweenService")
+local _SS = game:GetService("SoundService")
+local _PL = game:GetService("Players").LocalPlayer... (11 KB kaldı)
+
+message.txt
+61 KB
+CatinjapanRol simgesi, Irish Hub Member — 13.07.2026 16:21
+İletildi
+-- ============================================================================
+-- DISCORD.GG/SPECTRUMCC DISCORD.GG/SPECTRUMCC
+-- LEAKED BY ZERRIX 
+--LEAKED BY ZERRIX
+--DISCORD.GG/SPECTRUMCC
+-- ============================================================================
+
+message.txt
+18 KB
+İletildi
+Görsel
+İletildi
+Görsel
+İletildi
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local LP = Players.LocalPlayer
+
+message.txt
+18 KB
+İletildi
+Görsel
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+Vision Hub lagger by weekly.txt
+12 KB
+CatinjapanRol simgesi, Irish Hub Member — 13.07.2026 16:30
+İletildi
+Görsel
+-- leaked by https://discord.gg/PEp8BuS6mV
+
+local FearDuelLaggerGUI = Instance.new("ScreenGui")
+FearDuelLaggerGUI.Name = "FearDuelLaggerGUI"
+FearDuelLaggerGUI.IgnoreGuiInset = true
+FearDuelLaggerGUI.ResetOnSpawn = false
+
+message.txt
+16 KB
+CatinjapanRol simgesi, Irish Hub Member — 13.07.2026 16:52
+İletildi
+Görsel
+    Fully Reconstructed Logger.lua
+    Original author: @Bhmatrades on discord
+    Function: Logs all API calls, instance creations, HTTP requests, etc. to logged.txt
+    UI: Loaded remotely from Luarmor (see bottom)
+]]
+print("Made by @Bhmatrades on discord")
+
+V4mp_insta_reset.txt
+13 KB
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
+
+galactic_free_lagger.txt
+15 KB
+! gloomy [iris], Rol simgesi, moderator — 13.07.2026 17:08
+Anyone got a good bypass
+CatinjapanRol simgesi, Irish Hub Member — 13.07.2026 17:15
+İletildi
+ Prada Lagger V1 @everyone 
+Görsel
+--// PRADA LAGGER V1
+--// discord.gg/pepsiduels
+
+--// SERVICES
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+message.txt
+15 KB
+! infinity — 13.07.2026 17:15
+That’s aimbot bypass he’s talking about speed bypass
+CatinjapanRol simgesi, Irish Hub Member — 13.07.2026 17:15
+Ohhhh
+
+
+-- // PREMIUM DARK UI PATCH
+local BG         = Color3.fromRGB(10,10,14)
+local SIDEBAR_BG = Color3.fromRGB(18,18,26)
+local CARD_BG    = Color3.fromRGB(28,28,38)... (122 KB kaldı)
+
+FEAR.SOURCE.lua.txt
+172 KB
+! ironic | zRol simgesi, On Top — 13.07.2026 17:21
+103 bytes
+Not even a source
+! ironic | zRol simgesi, On Top — 13.07.2026 20:03
+@Source Leaker LEAK MFS
+CatinjapanRol simgesi, Irish Hub Member — 13.07.2026 20:03
+I already leaked
+! ironic | zRol simgesi, On Top — 13.07.2026 20:04
+U leaked all leaked sources
+CatinjapanRol simgesi, Irish Hub Member — 13.07.2026 20:05
+So you guys had ethernal bypass before I leaked?
+! ironic | zRol simgesi, On Top — 13.07.2026 20:07
+Stp talking now
+CatinjapanRol simgesi, Irish Hub Member — 13.07.2026 20:14
+repeat task.wait() until game:IsLoaded()
+local Players,RunService,UIS,TS,Lighting,HS = game:GetService("Players"),game:GetService("RunService"),game:GetService("UserInputService"),game:GetService("TweenService"),game:GetService("Lighting"),game:GetService("HttpService")
+local LP = Players.LocalPlayer
+local NS,CS = 60,30
+local LAGGER_SPEED = 15
+local LAGGER_CARRY_SPEED = 24.5... (18 KB kaldı)
+
+Ace2.0Hub modified.txt
+68 KB
+CatinjapanRol simgesi, Irish Hub Member — 13.07.2026 20:14
+Some nga tried to copy ace but it’s lit cursed
+Narco [N4VU],  — 13.07.2026 21:23
+@Source Leaker Who Have Anti Bat V2
+ [N4VU], 
+! infinity — 13.07.2026 21:24
+Amigo
+CatinjapanRol simgesi, Irish Hub Member — 13.07.2026 21:24
+Leak source
+You hit 50 reacts
+Narco [N4VU],  — 13.07.2026 21:24
+leak
+OVERSEER [NGA], Rol simgesi, Irish Hub Member — 13.07.2026 22:15
+Görsel
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local LP = Players.LocalPlayer
+
+message (58).txt
+17 KB
+CatinjapanRol simgesi, Irish Hub Member — 13.07.2026 22:30
+İletildi
+Görsel
+-- ============================================================
+-- ORVYN BYPASS BAT (Reconstructed from image + Sakura logic)
+-- ============================================================
+local Players     = game:GetService("Players")
+local RunService  = game:GetService("RunService")
+local TweenService= game:GetService("TweenService")
+
+by brighter.txt
+16 KB
+! Scythe [vamp], Rol simgesi, Irish Hub Member — 13.07.2026 22:35
+Holy skid
+! infinity — 13.07.2026 22:35
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+Phantom anti bat.txt
+13 KB
+Narco [N4VU],  — 13.07.2026 22:58
+this op?
+ [N4VU], 
+! infinity — 13.07.2026 22:59
+Idk
+! infinity — 13.07.2026 23:32
+İletildi
+just a Irish skid I messed up the corners and font
+Görsel
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local HttpService = game:GetService("HttpService")
+local ContentProvider = game:GetService("ContentProvider")
+
+Fade lagger leaked by @printed owner.txt
+23 KB
+ [iris], 
+TrevRol simgesi, Irish Hub Member — 14.07.2026 01:19
+THATS WHAT I WANT
+TrevRol simgesi, Irish Hub Member — 14.07.2026 02:05
+Görsel
+-- ============================================================
+-- Faded.vs
+-- ============================================================
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")... (43 KB kaldı)
+
+message.txt
+93 KB
+I am pibble wash my bellyRol simgesi, Irish Hub Member — 14.07.2026 07:25
+Here yall go
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local LP = Players.LocalPlayer
+
+Envy auto bat.txt
+16 KB
+! infinity — 14.07.2026 08:23
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local LP = Players.LocalPlayer
+
+message.txt
+18 KB
+! infinity — 14.07.2026 08:23
+Görsel
+! infinity — 14.07.2026 11:45
+İletildi
+print("[Ethernal Hub] Init alternative Purple UI with Image Background...")
+
+repeat task.wait() until game:IsLoaded()
+
+local UIS           = game:GetService("UserInputService")
+local HS            = game:GetService("HttpService")
+
+message.txt
+15 KB
+
+Sources Hub ╽#9K  •  13.06.2026
+Rainy speed bypass
+Görsel
+﻿
+--SOURUNA BAT TP
+--discord.gg/kastorhub
+--LEKAD BY FRNK33.
+repeat task.wait() until game:IsLoaded()
+
+local UserInputService = game:GetService("UserInputService")
+local HttpService = game:GetService("HttpService")
+local CoreGui = game:GetService("CoreGui")
+local NetworkClient = game:GetService("NetworkClient")
+
+-- Cleanup old GUI
+local function CleanupOldGUIs()
+    local existing = CoreGui:FindFirstChild("MwvaneBypass")
+    if existing then existing:Destroy() end
 end
+CleanupOldGUIs()
 
--- // HEADER
-local header = Instance.new("Frame", main)
-header.Size = UDim2.new(1, 0, 0, 42); header.BackgroundTransparency = 1; header.ZIndex = 2
+-- Config
+local ConfigFile = "SPectrum.cc.json"
+local Config = { 
+    Keybind = "V", 
+    GamepadKey = "ButtonY",
+    PCPower = 100000,
+    MobilePower = 72000,
+    Mode = "PC",
+    MobileScale = 1.0,
+    Locked = false,
+}
 
-local title = Instance.new("TextLabel", header)
-title.Size = UDim2.new(0, 90, 1, 0); title.Position = UDim2.new(0, 14, 0, 0)
-title.BackgroundTransparency = 1; title.Text = "ETHERNAL"; title.TextColor3 = PURPLE 
-title.Font = Enum.Font.GothamBlack; title.TextSize = 14; title.TextXAlignment = Enum.TextXAlignment.Left; title.ZIndex = 3
-
-local subTitle = Instance.new("TextLabel", header)
-subTitle.Size = UDim2.new(0, 70, 1, 0); subTitle.Position = UDim2.new(0, 94, 0, 0)
-subTitle.BackgroundTransparency = 1; subTitle.Text = "auto bat"; subTitle.TextColor3 = PINK_SUB
-subTitle.Font = Enum.Font.Gotham; subTitle.TextSize = 11; subTitle.TextXAlignment = Enum.TextXAlignment.Left; subTitle.ZIndex = 3
-
--- BUTON SCHIMBARE MOD
-local modeBtn = Instance.new("TextButton", header)
-modeBtn.Size = UDim2.new(0, 52, 0, 18); modeBtn.Position = UDim2.new(1, -66, 0.5, -9)
-modeBtn.BackgroundColor3 = Color3.fromRGB(30, 15, 45); modeBtn.Text = State.isMobileMode and "MOBILE" or "PC"
-modeBtn.TextColor3 = WHITE; modeBtn.Font = Enum.Font.GothamBold; modeBtn.TextSize = 9; modeBtn.ZIndex = 4
-Instance.new("UICorner", modeBtn).CornerRadius = UDim.new(0, 4)
-local modeStroke = Instance.new("UIStroke", modeBtn); modeStroke.Color = PURPLE
-
--- BUTON LOCK UI
-local lockBtn = Instance.new("TextButton", header)
-lockBtn.Size = UDim2.new(0, 60, 0, 18); lockBtn.Position = UDim2.new(1, -132, 0.5, -9)
-lockBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30); lockBtn.Text = State.uiLocked and "🔒 LOCKED" or "🔓 UNLOCK"
-lockBtn.TextColor3 = State.uiLocked and STATUS_ON or LIGHT_GRAY
-lockBtn.Font = Enum.Font.GothamBold; lockBtn.TextSize = 8; lockBtn.ZIndex = 4; lockBtn.Visible = false
-Instance.new("UICorner", lockBtn).CornerRadius = UDim.new(0, 4)
-local lockStroke = Instance.new("UIStroke", lockBtn); lockStroke.Color = Color3.fromRGB(60, 40, 90)
-
-local line = Instance.new("Frame", main)
-line.Size = UDim2.new(1, 0, 0, 1); line.Position = UDim2.new(0, 0, 0, 42)
-line.BackgroundColor3 = Color3.fromRGB(80, 50, 110); line.BorderSizePixel = 0; line.ZIndex = 2
-
--- // CONTENT CONTAINERS
-local container = Instance.new("Frame", main)
-container.Size = UDim2.new(1, -24, 1, -54); container.Position = UDim2.new(0, 12, 0, 48)
-container.BackgroundTransparency = 1; container.ZIndex = 2
-
--- [ INTERFAȚA MOD PC ]
-local pcCard = Instance.new("Frame", container)
-pcCard.Size = UDim2.new(1, 0, 0, 80); pcCard.BackgroundColor3 = CARD_BG; pcCard.BackgroundTransparency = 0.3; pcCard.BorderSizePixel = 0
-Instance.new("UICorner", pcCard).CornerRadius = UDim.new(0, 8)
-local cardStroke = Instance.new("UIStroke", pcCard); cardStroke.Color = Color3.fromRGB(80, 50, 110)
-
-local autoBatLbl = Instance.new("TextLabel", pcCard)
-autoBatLbl.Size = UDim2.new(0, 100, 0, 22); autoBatLbl.Position = UDim2.new(0, 12, 0, 12)
-autoBatLbl.BackgroundTransparency = 1; autoBatLbl.Text = "Auto Bat"; autoBatLbl.TextColor3 = WHITE
-autoBatLbl.Font = Enum.Font.GothamBold; autoBatLbl.TextSize = 13; autoBatLbl.TextXAlignment = Enum.TextXAlignment.Left
-
-local statusLbl = Instance.new("TextLabel", pcCard)
-statusLbl.Size = UDim2.new(0, 100, 0, 16); statusLbl.Position = UDim2.new(0, 12, 0, 32)
-statusLbl.BackgroundTransparency = 1; statusLbl.Text = "STATUS: OFF"; statusLbl.TextColor3 = STATUS_OFF
-statusLbl.Font = Enum.Font.GothamBlack; statusLbl.TextSize = 9; statusLbl.TextXAlignment = Enum.TextXAlignment.Left
-
-local keyPrefix = Instance.new("TextLabel", pcCard)
-keyPrefix.Size = UDim2.new(0, 30, 0, 16); keyPrefix.Position = UDim2.new(0, 12, 0, 52)
-keyPrefix.BackgroundTransparency = 1; keyPrefix.Text = "KEY:"; keyPrefix.TextColor3 = LIGHT_GRAY
-keyPrefix.Font = Enum.Font.GothamBold; keyPrefix.TextSize = 9; keyPrefix.TextXAlignment = Enum.TextXAlignment.Left
-
-local keyBtn = Instance.new("TextButton", pcCard)
-keyBtn.Size = UDim2.new(0, 45, 0, 16); keyBtn.Position = UDim2.new(0, 42, 0, 52)
-keyBtn.BackgroundColor3 = Color3.fromRGB(12, 8, 16); keyBtn.BorderSizePixel = 0; keyBtn.Text = Keys.autoBat.Name
-keyBtn.TextColor3 = PURPLE; keyBtn.Font = Enum.Font.GothamBlack; keyBtn.TextSize = 10
-Instance.new("UICorner", keyBtn).CornerRadius = UDim.new(0, 4)
-
-local pillBg = Instance.new("Frame", pcCard)
-pillBg.Size = UDim2.new(0, 38, 0, 20); pillBg.Position = UDim2.new(1, -50, 0.5, -10)
-pillBg.BackgroundColor3 = Color3.fromRGB(30, 20, 40); pillBg.BorderSizePixel = 0
-Instance.new("UICorner", pillBg).CornerRadius = UDim.new(0, 10)
-local pillStroke = Instance.new("UIStroke", pillBg); pillStroke.Color = Color3.fromRGB(80, 50, 110)
-
-local dot = Instance.new("Frame", pillBg)
-dot.Size = UDim2.new(0, 14, 0, 14); dot.Position = UDim2.new(0, 3, 0.5, -7)
-dot.BackgroundColor3 = Color3.fromRGB(90, 60, 120); dot.BorderSizePixel = 0
-Instance.new("UICorner", dot).CornerRadius = UDim.new(0, 7)
-
-local toggleClk = Instance.new("TextButton", pcCard)
-toggleClk.Size = UDim2.new(1, -60, 1, 0); toggleClk.BackgroundTransparency = 1; toggleClk.Text = ""
-
-
--- [ INTERFAȚA MOD MOBILE - BUTON MARE ]
-local mobileCard = Instance.new("Frame", container)
-mobileCard.Size = UDim2.new(1, 0, 0, 80); mobileCard.BackgroundTransparency = 1; mobileCard.BorderSizePixel = 0
-mobileCard.Visible = false
-
-local bigMobileBtn = Instance.new("TextButton", mobileCard)
-bigMobileBtn.Size = UDim2.new(1, 0, 1, 0); bigMobileBtn.Position = UDim2.new(0, 0, 0, 0)
-bigMobileBtn.BackgroundColor3 = STATUS_OFF
-bigMobileBtn.Text = "TAP TO ACTIVATE"
-bigMobileBtn.TextColor3 = WHITE
-bigMobileBtn.Font = Enum.Font.GothamBlack
-bigMobileBtn.TextSize = 13 
-Instance.new("UICorner", bigMobileBtn).CornerRadius = UDim.new(0, 8) 
-local mobileBtnStroke = Instance.new("UIStroke", bigMobileBtn); mobileBtnStroke.Color = PURPLE; mobileBtnStroke.Thickness = 1.5
-
-
--- // DISCORD FOOTER ROW
-local discordCard = Instance.new("Frame", container)
-discordCard.Size = UDim2.new(1, 0, 0, 32); discordCard.Position = UDim2.new(0, 0, 0, 92)
-discordCard.BackgroundColor3 = CARD_BG; discordCard.BackgroundTransparency = 0.3; discordCard.BorderSizePixel = 0
-Instance.new("UICorner", discordCard).CornerRadius = UDim.new(0, 6)
-local discStroke = Instance.new("UIStroke", discordCard); discStroke.Color = Color3.fromRGB(80, 50, 110)
-
-local discLbl = Instance.new("TextLabel", discordCard)
-discLbl.Size = UDim2.new(1, 0, 1, 0); discLbl.BackgroundTransparency = 1
-discLbl.Text = "DISCORD.GG/ETHERNAL"; discLbl.TextColor3 = PURPLE
-discLbl.Font = Enum.Font.GothamBlack; discLbl.TextSize = 10
-
-
--- // REFRESH VIEW FUNCTION
-local function updateView()
-    if State.isMobileMode then
-        pcCard.Visible = false
-        mobileCard.Visible = true
-        lockBtn.Visible = true 
-        modeBtn.Position = UDim2.new(1, -66, 0.5, -9)
-        modeBtn.Text = "MOBILE"
-        bigMobileBtn.BackgroundColor3 = State.autoBatToggled and STATUS_ON or STATUS_OFF
-        bigMobileBtn.Text = State.autoBatToggled and "AUTO BAT: ON" or "TAP TO ACTIVATE"
-    else
-        pcCard.Visible = true
-        mobileCard.Visible = false
-        lockBtn.Visible = false 
-        modeBtn.Position = UDim2.new(1, -66, 0.5, -9)
-        modeBtn.Text = "PC"
-        statusLbl.Text = State.autoBatToggled and "STATUS: ON" or "STATUS: OFF"
-        statusLbl.TextColor3 = State.autoBatToggled and STATUS_ON or STATUS_OFF
-        dot.Position = State.autoBatToggled and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)
-        dot.BackgroundColor3 = State.autoBatToggled and PURPLE or Color3.fromRGB(90, 60, 120)
+local function SaveConfig()
+    if writefile then
+        pcall(function() writefile(ConfigFile, HttpService:JSONEncode(Config)) end)
     end
-    
-    lockBtn.Text = State.uiLocked and "🔒 LOCKED" or "🔓 UNLOCK"
-    lockBtn.TextColor3 = State.uiLocked and STATUS_ON or LIGHT_GRAY
-    lockStroke.Color = State.uiLocked and STATUS_ON or Color3.fromRGB(60, 40, 90)
 end
-updateView()
 
--- Switch mod tactil / PC
-modeBtn.MouseButton1Click:Connect(function()
-    State.isMobileMode = not State.isMobileMode
-    saveConfig()
-    updateView()
+local function LoadConfig()
+    if isfile and isfile(ConfigFile) then
+        local success, data = pcall(function() return HttpService:JSONDecode(readfile(ConfigFile)) end)
+        if success and data then
+            if type(data.Keybind) == "string" then Config.Keybind = data.Keybind end
+            if type(data.GamepadKey) == "string" then Config.GamepadKey = data.GamepadKey end
+            if type(data.PCPower) == "number" then Config.PCPower = math.clamp(data.PCPower, 10000, 150000) end
+            if type(data.MobilePower) == "number" then Config.MobilePower = math.clamp(data.MobilePower, 10000, 100000) end
+            if type(data.Mode) == "string" and (data.Mode == "PC" or data.Mode == "Mobile") then Config.Mode = data.Mode end
+            if type(data.MobileScale) == "number" then Config.MobileScale = math.clamp(data.MobileScale, 0.7, 1.6) end
+            if type(data.Locked) == "boolean" then Config.Locked = data.Locked end
+        end
+    end
+end
+LoadConfig()
+
+-- Gamepad detection
+local GAMEPAD_BUTTONS = {
+    ButtonA=true, ButtonB=true, ButtonX=true, ButtonY=true,
+    ButtonL1=true, ButtonR1=true, ButtonL2=true, ButtonR2=true,
+    ButtonL3=true, ButtonR3=true, ButtonStart=true, ButtonSelect=true,
+    DPadUp=true, DPadDown=true, DPadLeft=true, DPadRight=true,
+}
+local function isGamepadKeyName(name)
+    return GAMEPAD_BUTTONS[name] == true
+end
+
+-- Bomb builder
+local DEPTH = 290
+local function buildBomb(power)
+    local maintable = {}
+    local spammedtable = {}
+    table.insert(spammedtable, {})
+    local z = spammedtable[1]
+    for i = 1, DEPTH do
+        local tableins = {}
+        table.insert(z, tableins)
+        z = tableins
+    end
+    local maxRep = math.floor(power / (DEPTH + 2))
+    for i = 1, maxRep do
+        table.insert(maintable, spammedtable)
+    end
+    return maintable
+end
+
+-- GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "MwvaneBypass"
+ScreenGui.Parent = CoreGui
+ScreenGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 10)
+MainFrame.BackgroundTransparency = 0.15
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainFrame.Size = UDim2.new(0, 260, 0, 260)
+MainFrame.ClipsDescendants = true
+local MainScale = Instance.new("UIScale", MainFrame)
+MainScale.Scale = 1.0
+local MainCorner = Instance.new("UICorner", MainFrame)
+MainCorner.CornerRadius = UDim.new(0, 16)
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(155, 89, 182)
+MainStroke.Thickness = 1.2
+MainStroke.Transparency = 0.5
+
+local GlowFrame = Instance.new("Frame", MainFrame)
+GlowFrame.Size = UDim2.new(1, 0, 1, 0)
+GlowFrame.BackgroundColor3 = Color3.fromRGB(142, 68, 173)
+GlowFrame.BackgroundTransparency = 0.95
+GlowFrame.BorderSizePixel = 0
+local GlowCorner = Instance.new("UICorner", GlowFrame)
+GlowCorner.CornerRadius = UDim.new(0, 16)
+
+-- Header
+local Header = Instance.new("Frame")
+Header.Parent = MainFrame
+Header.BackgroundTransparency = 1
+Header.Size = UDim2.new(1, 0, 0, 55)
+
+local Title = Instance.new("TextLabel", Header)
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 15, 0, 0)
+Title.Size = UDim2.new(0.55, -15, 1, 0)
+Title.Font = Enum.Font.GothamBlack
+Title.Text = "Spectrum.cc"
+Title.TextColor3 = Color3.fromRGB(155, 89, 182)
+Title.TextSize = 15
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+local Subtitle = Instance.new("TextLabel", Header)
+Subtitle.BackgroundTransparency = 1
+Subtitle.Position = UDim2.new(0, 15, 0, 28)
+Subtitle.Size = UDim2.new(0.5, -15, 0, 15)
+Subtitle.Font = Enum.Font.Gotham
+Subtitle.Text = "bypass tool"
+Subtitle.TextColor3 = Color3.fromRGB(180, 180, 210)
+Subtitle.TextSize = 9
+Subtitle.TextXAlignment = Enum.TextXAlignment.Left
+
+-- LOCK BUTTON
+local LockBtn = Instance.new("TextButton", Header)
+LockBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+LockBtn.BackgroundTransparency = 0
+LockBtn.Font = Enum.Font.GothamBold
+LockBtn.Text = Config.Locked and "🔒" or "🔓"
+LockBtn.TextColor3 = Config.Locked and Color3.fromRGB(255, 255, 0) or Color3.fromRGB(220, 220, 255)
+LockBtn.TextSize = 18
+LockBtn.AutoButtonColor = false
+LockBtn.Size = UDim2.new(0, 35, 0, 30)
+LockBtn.Position = UDim2.new(0.48, -45, 0.5, -15)  -- default for PC
+local LockCorner = Instance.new("UICorner", LockBtn)
+LockCorner.CornerRadius = UDim.new(0, 8)
+local LockStroke = Instance.new("UIStroke", LockBtn)
+LockStroke.Color = Color3.fromRGB(155, 89, 182)
+LockStroke.Thickness = 1.5
+
+-- Mode Switch Button
+local ModeSwitchBtn = Instance.new("TextButton", Header)
+ModeSwitchBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+ModeSwitchBtn.Font = Enum.Font.GothamBold
+ModeSwitchBtn.Text = Config.Mode == "PC" and "PC" or "MOBILE"
+ModeSwitchBtn.TextColor3 = Color3.fromRGB(155, 89, 182)
+ModeSwitchBtn.TextSize = 12
+ModeSwitchBtn.AutoButtonColor = false
+local ModeCorner = Instance.new("UICorner", ModeSwitchBtn)
+ModeCorner.CornerRadius = UDim.new(0, 20)
+local ModeStroke = Instance.new("UIStroke", ModeSwitchBtn)
+ModeStroke.Color = Color3.fromRGB(155, 89, 182)
+ModeStroke.Thickness = 1
+
+-- Size input (mobile only)
+local SizeBox = Instance.new("TextBox", Header)
+SizeBox.Size = UDim2.new(0, 40, 0, 24)
+SizeBox.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+SizeBox.Font = Enum.Font.GothamBold
+SizeBox.Text = tostring(Config.MobileScale)
+SizeBox.TextColor3 = Color3.fromRGB(155, 89, 182)
+SizeBox.TextSize = 11
+SizeBox.ClearTextOnFocus = false
+SizeBox.Visible = false
+local SizeBoxCorner = Instance.new("UICorner", SizeBox)
+SizeBoxCorner.CornerRadius = UDim.new(0, 8)
+local SizeBoxStroke = Instance.new("UIStroke", SizeBox)
+SizeBoxStroke.Color = Color3.fromRGB(155, 89, 182)
+SizeBoxStroke.Thickness = 1
+local SizeBoxTag = Instance.new("TextLabel", Header)
+SizeBoxTag.BackgroundTransparency = 1
+SizeBoxTag.Font = Enum.Font.Gotham
+SizeBoxTag.Text = "size"
+SizeBoxTag.TextColor3 = Color3.fromRGB(150, 150, 180)
+SizeBoxTag.TextSize = 8
+SizeBoxTag.TextXAlignment = Enum.TextXAlignment.Center
+SizeBoxTag.Visible = false
+
+-- Content
+local ContentFrame = Instance.new("ScrollingFrame")
+ContentFrame.Parent = MainFrame
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.Position = UDim2.new(0, 10, 0, 60)
+ContentFrame.Size = UDim2.new(1, -20, 1, -70)
+ContentFrame.ScrollBarThickness = 3
+ContentFrame.ScrollBarImageColor3 = Color3.fromRGB(155, 89, 182)
+ContentFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+local Container = Instance.new("Frame")
+Container.Parent = ContentFrame
+Container.BackgroundTransparency = 1
+Container.Size = UDim2.new(1, 0, 0, 0)
+
+local UIList = Instance.new("UIListLayout", Container)
+UIList.SortOrder = Enum.SortOrder.LayoutOrder
+UIList.Padding = UDim.new(0, 10)
+
+local function updateCanvas()
+    ContentFrame.CanvasSize = UDim2.new(0, 0, 0, Container.AbsoluteSize.Y + 5)
+end
+UIList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+task.defer(updateCanvas)
+
+-- Helper to build keybind rows
+local function makeKeyCard(parent, labelText, btnText)
+    local card = Instance.new("Frame", parent)
+    card.Size = UDim2.new(1, 0, 0, 35)
+    card.BackgroundColor3 = Color3.fromRGB(10, 10, 18)
+    card.BackgroundTransparency = 0.5
+    local corner = Instance.new("UICorner", card)
+    corner.CornerRadius = UDim.new(0, 12)
+    local stroke = Instance.new("UIStroke", card)
+    stroke.Color = Color3.fromRGB(100, 60, 130)
+    stroke.Thickness = 0.5
+
+    local label = Instance.new("TextLabel", card)
+    label.Size = UDim2.new(0.5, -10, 1, 0)
+    label.Position = UDim2.new(0, 10, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.Gotham
+    label.Text = labelText
+    label.TextColor3 = Color3.fromRGB(200, 200, 230)
+    label.TextSize = 11
+    label.TextXAlignment = Enum.TextXAlignment.Left
+
+    local btn = Instance.new("TextButton", card)
+    btn.Position = UDim2.new(0.62, 0, 0.5, -10)
+    btn.Size = UDim2.new(0, 75, 0, 20)
+    btn.BackgroundColor3 = Color3.fromRGB(20, 20, 35)
+    btn.Font = Enum.Font.GothamBold
+    btn.Text = btnText
+    btn.TextColor3 = Color3.fromRGB(155, 89, 182)
+    btn.TextSize = 10
+    local bcorner = Instance.new("UICorner", btn)
+    bcorner.CornerRadius = UDim.new(0, 6)
+    return card, btn
+end
+
+-- PC Mode
+local PCElements = Instance.new("Frame", Container)
+PCElements.Size = UDim2.new(1, 0, 0, 0)
+PCElements.BackgroundTransparency = 1
+PCElements.Visible = Config.Mode == "PC"
+
+local PCUIList = Instance.new("UIListLayout", PCElements)
+PCUIList.SortOrder = Enum.SortOrder.LayoutOrder
+PCUIList.Padding = UDim.new(0, 8)
+
+local PCCard = Instance.new("Frame", PCElements)
+PCCard.Size = UDim2.new(1, 0, 0, 45)
+PCCard.BackgroundColor3 = Color3.fromRGB(10, 10, 18)
+PCCard.BackgroundTransparency = 0.5
+local PCCardCorner = Instance.new("UICorner", PCCard)
+PCCardCorner.CornerRadius = UDim.new(0, 12)
+local PCCardStroke = Instance.new("UIStroke", PCCard)
+PCCardStroke.Color = Color3.fromRGB(100, 60, 130)
+PCCardStroke.Thickness = 0.5
+
+local PCToggleBtn = Instance.new("TextButton", PCCard)
+PCToggleBtn.Size = UDim2.new(1, -20, 1, -10)
+PCToggleBtn.Position = UDim2.new(0, 10, 0, 5)
+PCToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+PCToggleBtn.Font = Enum.Font.GothamBold
+PCToggleBtn.Text = "DISABLED"
+PCToggleBtn.TextColor3 = Color3.fromRGB(150, 150, 180)
+PCToggleBtn.TextSize = 13
+PCToggleBtn.AutoButtonColor = false
+local PCToggleCorner = Instance.new("UICorner", PCToggleBtn)
+PCToggleCorner.CornerRadius = UDim.new(0, 8)
+local PCToggleStroke = Instance.new("UIStroke", PCToggleBtn)
+PCToggleStroke.Thickness = 2
+PCToggleStroke.Color = Color3.fromRGB(155, 89, 182)
+PCToggleStroke.Transparency = 0.5
+
+local PCKeyCard, PCKeybindBtn = makeKeyCard(PCElements, "Keybind", Config.Keybind)
+local PCPadCard, PCPadBtn = makeKeyCard(PCElements, "Controller", Config.GamepadKey)
+
+local PCPowerCard = Instance.new("Frame", PCElements)
+PCPowerCard.Size = UDim2.new(1, 0, 0, 35)
+PCPowerCard.BackgroundColor3 = Color3.fromRGB(10, 10, 18)
+PCPowerCard.BackgroundTransparency = 0.5
+local PCPowerCorner = Instance.new("UICorner", PCPowerCard)
+PCPowerCorner.CornerRadius = UDim.new(0, 12)
+local PCPowerStroke = Instance.new("UIStroke", PCPowerCard)
+PCPowerStroke.Color = Color3.fromRGB(100, 60, 130)
+PCPowerStroke.Thickness = 0.5
+
+local PCPowerLabel = Instance.new("TextLabel", PCPowerCard)
+PCPowerLabel.Size = UDim2.new(0.5, -10, 1, 0)
+PCPowerLabel.Position = UDim2.new(0, 10, 0, 0)
+PCPowerLabel.BackgroundTransparency = 1
+PCPowerLabel.Font = Enum.Font.Gotham
+PCPowerLabel.Text = "Power"
+PCPowerLabel.TextColor3 = Color3.fromRGB(200, 200, 230)
+PCPowerLabel.TextSize = 11
+PCPowerLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local PCPowerInput = Instance.new("TextBox", PCPowerCard)
+PCPowerInput.Position = UDim2.new(0.65, 0, 0.5, -10)
+PCPowerInput.Size = UDim2.new(0, 70, 0, 20)
+PCPowerInput.BackgroundColor3 = Color3.fromRGB(20, 20, 35)
+PCPowerInput.Font = Enum.Font.GothamBold
+PCPowerInput.Text = tostring(Config.PCPower)
+PCPowerInput.TextColor3 = Color3.fromRGB(155, 89, 182)
+PCPowerInput.TextSize = 10
+PCPowerInput.ClearTextOnFocus = false
+local PCPowerInputCorner = Instance.new("UICorner", PCPowerInput)
+PCPowerInputCorner.CornerRadius = UDim.new(0, 6)
+
+local PCFooter = Instance.new("TextLabel", PCElements)
+PCFooter.BackgroundTransparency = 1
+PCFooter.Size = UDim2.new(1, 0, 0, 20)
+PCFooter.Font = Enum.Font.Gotham
+PCFooter.Text = "v2 - " .. tostring(Config.PCPower) .. " power"
+PCFooter.TextColor3 = Color3.fromRGB(130, 130, 160)
+PCFooter.TextSize = 9
+
+-- Mobile Mode
+local MobileElements = Instance.new("Frame", Container)
+MobileElements.Size = UDim2.new(1, 0, 0, 0)
+MobileElements.BackgroundTransparency = 1
+MobileElements.Visible = Config.Mode == "Mobile"
+
+local MobileUIList = Instance.new("UIListLayout", MobileElements)
+MobileUIList.SortOrder = Enum.SortOrder.LayoutOrder
+MobileUIList.Padding = UDim.new(0, 8)
+
+local MobileCard = Instance.new("Frame", MobileElements)
+MobileCard.Size = UDim2.new(1, 0, 0, 45)
+MobileCard.BackgroundColor3 = Color3.fromRGB(10, 10, 18)
+MobileCard.BackgroundTransparency = 0.5
+local MobileCardCorner = Instance.new("UICorner", MobileCard)
+MobileCardCorner.CornerRadius = UDim.new(0, 12)
+
+local MobileToggleBtn = Instance.new("TextButton", MobileCard)
+MobileToggleBtn.Size = UDim2.new(1, -20, 1, -10)
+MobileToggleBtn.Position = UDim2.new(0, 10, 0, 5)
+MobileToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+MobileToggleBtn.Font = Enum.Font.GothamBold
+MobileToggleBtn.Text = "OFF"
+MobileToggleBtn.TextColor3 = Color3.fromRGB(150, 150, 180)
+MobileToggleBtn.TextSize = 13
+MobileToggleBtn.AutoButtonColor = false
+local MobileToggleCorner = Instance.new("UICorner", MobileToggleBtn)
+MobileToggleCorner.CornerRadius = UDim.new(0, 8)
+local MobileToggleStroke = Instance.new("UIStroke", MobileToggleBtn)
+MobileToggleStroke.Thickness = 2
+MobileToggleStroke.Color = Color3.fromRGB(155, 89, 182)
+MobileToggleStroke.Transparency = 0.5
+
+local MobilePadCard, MobilePadBtn = makeKeyCard(MobileElements, "Controller", Config.GamepadKey)
+
+local MobilePowerCard = Instance.new("Frame", MobileElements)
+MobilePowerCard.Size = UDim2.new(1, 0, 0, 35)
+MobilePowerCard.BackgroundColor3 = Color3.fromRGB(10, 10, 18)
+MobilePowerCard.BackgroundTransparency = 0.5
+local MobilePowerCorner = Instance.new("UICorner", MobilePowerCard)
+MobilePowerCorner.CornerRadius = UDim.new(0, 12)
+
+local MobilePowerLabel = Instance.new("TextLabel", MobilePowerCard)
+MobilePowerLabel.Size = UDim2.new(0.5, -10, 1, 0)
+MobilePowerLabel.Position = UDim2.new(0, 10, 0, 0)
+MobilePowerLabel.BackgroundTransparency = 1
+MobilePowerLabel.Font = Enum.Font.Gotham
+MobilePowerLabel.Text = "Power"
+MobilePowerLabel.TextColor3 = Color3.fromRGB(200, 200, 230)
+MobilePowerLabel.TextSize = 11
+MobilePowerLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local MobilePowerInput = Instance.new("TextBox", MobilePowerCard)
+MobilePowerInput.Position = UDim2.new(0.65, 0, 0.5, -10)
+MobilePowerInput.Size = UDim2.new(0, 70, 0, 20)
+MobilePowerInput.BackgroundColor3 = Color3.fromRGB(20, 20, 35)
+MobilePowerInput.Font = Enum.Font.GothamBold
+MobilePowerInput.Text = tostring(Config.MobilePower)
+MobilePowerInput.TextColor3 = Color3.fromRGB(155, 89, 182)
+MobilePowerInput.TextSize = 10
+MobilePowerInput.ClearTextOnFocus = false
+local MobilePowerInputCorner = Instance.new("UICorner", MobilePowerInput)
+MobilePowerInputCorner.CornerRadius = UDim.new(0, 6)
+
+local MobileFooter = Instance.new("TextLabel", MobileElements)
+MobileFooter.BackgroundTransparency = 1
+MobileFooter.Size = UDim2.new(1, 0, 0, 20)
+MobileFooter.Font = Enum.Font.Gotham
+MobileFooter.Text = "v2 - " .. tostring(Config.MobilePower) .. " power"
+MobileFooter.TextColor3 = Color3.fromRGB(130, 130, 160)
+MobileFooter.TextSize = 9
+
+-- Spectrum effect
+local spectrumRunning = true
+task.spawn(function()
+    local hue = 0
+    while spectrumRunning and task.wait(0.05) do
+        hue = (hue + 0.005) % 1
+        local color = Color3.fromHSV(hue, 0.8, 0.9)
+        if Title and Title.Parent then
+            Title.TextColor3 = color
+        end
+        if Subtitle and Subtitle.Parent then
+            Subtitle.TextColor3 = color
+        end
+        if ModeSwitchBtn and ModeSwitchBtn.Parent then
+            ModeSwitchBtn.TextColor3 = color
+        end
+    end
 end)
 
--- Schimbare stare Lock UI
-lockBtn.MouseButton1Click:Connect(function()
-    State.uiLocked = not State.uiLocked
-    saveConfig()
-    updateView()
-end)
+-- Bypass logic
+local running = false
+local bomb = nil
+local spamThread = nil
+local currentMode = Config.Mode
+local SPAM_DELAY = 0.12
 
--- // FIXED INTERACTION HANDLERS FOR PC KEYBIND
--- Funcție pentru a opri ascultarea tastelor
-local function stopListening()
-    if listeningConn then
-        listeningConn:Disconnect()
-        listeningConn = nil
-    end
-    kListening = false
-    keyBtn.Text = Keys.autoBat.Name
-    keyBtn.TextColor3 = PURPLE
+local function getCurrentPower()
+    return currentMode == "PC" and Config.PCPower or Config.MobilePower
 end
 
--- Funcție pentru a începe ascultarea unei taste noi
-local function startListeningForNewKey()
-    if kListening then 
-        stopListening()
-        return 
-    end
-    
-    kListening = true
-    keyBtn.Text = "..."
-    keyBtn.TextColor3 = WHITE
-    
-    -- Oprește orice conexiune existentă
-    if listeningConn then
-        listeningConn:Disconnect()
-    end
-    
-    -- Ascultă pentru următoarea tastă apăsată
-    listeningConn = UIS.InputBegan:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.Keyboard then
-            if inp.KeyCode ~= Enum.KeyCode.Escape then
-                Keys.autoBat = inp.KeyCode
-                keyBtn.Text = inp.KeyCode.Name
-                saveConfig()
+local function restartSpamLoop()
+    if running then
+        if spamThread then task.cancel(spamThread) end
+        local power = getCurrentPower()
+        bomb = buildBomb(power)
+        spamThread = task.spawn(function()
+            while running do
+                if bomb then
+                    pcall(function()
+                        game.RobloxReplicatedStorage.SetPlayerBlockList:FireServer(bomb)
+                    end)
+                end
+                task.wait(SPAM_DELAY)
             end
-            -- Oprește ascultarea după ce s-a primit o tastă
-            stopListening()
+        end)
+    end
+end
+
+local function updateToggleVisuals(enabled)
+    if currentMode == "PC" then
+        if enabled then
+            PCToggleBtn.Text = "ENABLED"
+            PCToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 0)
+            PCToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 50, 0)
+            PCToggleStroke.Color = Color3.fromRGB(0, 255, 0)
+            PCToggleStroke.Transparency = 0
+            PCCardStroke.Color = Color3.fromRGB(0, 255, 0)
+        else
+            PCToggleBtn.Text = "DISABLED"
+            PCToggleBtn.TextColor3 = Color3.fromRGB(150, 150, 180)
+            PCToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+            PCToggleStroke.Color = Color3.fromRGB(155, 89, 182)
+            PCToggleStroke.Transparency = 0.5
+            PCCardStroke.Color = Color3.fromRGB(100, 60, 130)
         end
-    end)
-end
-
-keyBtn.MouseButton1Click:Connect(startListeningForNewKey)
-
--- Toggle PC click - verifică dacă NU suntem în modul de ascultare
-toggleClk.MouseButton1Click:Connect(function()
-    if kListening then return end -- Împiedică toggle-ul în timp ce schimbi tasta
-    State.autoBatToggled = not State.autoBatToggled
-    updateView()
-end)
-
--- Toggle MOBILE click
-bigMobileBtn.MouseButton1Click:Connect(function()
-    State.autoBatToggled = not State.autoBatToggled
-    updateView()
-end)
-
--- // BAT AIMBOT LOGIC
-local function getBat()
-    local char = LP.Character; if not char then return nil end
-    local tool = char:FindFirstChild("Bat"); if tool then return tool end
-    local bp2 = LP:FindFirstChild("Backpack")
-    if bp2 then tool = bp2:FindFirstChild("Bat"); if tool then tool.Parent = char; return tool end end
-    return nil
-end
-
-local function tryHitBat()
-    if State.hittingCooldown then return end; State.hittingCooldown = true
-    pcall(function()
-        local bat = getBat(); if bat then
-            bat:Activate(); local ev = bat:FindFirstChildWhichIsA("RemoteEvent")
-            if ev then ev:FireServer() end
-        end
-    end)
-    task.delay(0.08, function() State.hittingCooldown = false end)
-end
-
-local function getClosestPlayer()
-    if not hrp then return nil, math.huge end
-    local cp, cd = nil, math.huge
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LP and p.Character then
-            local tr = p.Character:FindFirstChild("HumanoidRootPart")
-            if tr then local d = (hrp.Position - tr.Position).Magnitude; if d < cd then cd = d; cp = p end end
+    else
+        if enabled then
+            MobileToggleBtn.Text = "ON"
+            MobileToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 0)
+            MobileToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 50, 0)
+            MobileToggleStroke.Color = Color3.fromRGB(0, 255, 0)
+            MobileToggleStroke.Transparency = 0
+            MainStroke.Color = Color3.fromRGB(0, 255, 0)
+        else
+            MobileToggleBtn.Text = "OFF"
+            MobileToggleBtn.TextColor3 = Color3.fromRGB(150, 150, 180)
+            MobileToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+            MobileToggleStroke.Color = Color3.fromRGB(155, 89, 182)
+            MobileToggleStroke.Transparency = 0.5
+            MainStroke.Color = Color3.fromRGB(155, 89, 182)
         end
     end
-    return cp, cd
 end
 
-local function setupChar(char)
-    task.wait(0.1)
-    h = char:WaitForChild("Humanoid", 5); hrp = char:WaitForChild("HumanoidRootPart", 5)
+local function ToggleBypass()
+    running = not running
+    updateToggleVisuals(running)
+    if running then
+        NetworkClient:SetOutgoingKBPSLimit(math.huge)
+        restartSpamLoop()
+    else
+        if spamThread then task.cancel(spamThread) end
+        bomb = nil
+        NetworkClient:SetOutgoingKBPSLimit(0)
+    end
 end
 
-LP.CharacterAdded:Connect(setupChar)
-if LP.Character then task.spawn(function() setupChar(LP.Character) end) end
+-- Layout adjustments for PC/Mobile
+local function applyFrameSize()
+    if currentMode == "Mobile" then
+        MainScale.Scale = math.clamp(Config.MobileScale or 1.0, 0.7, 1.6)
+        MainFrame.Size = UDim2.new(0, 225, 0, 205)
+        -- Title: shorter
+        Title.TextSize = 11
+        Title.Size = UDim2.new(0, 80, 1, 0)
+        Title.Position = UDim2.new(0, 8, 0, 2)
+        -- Subtitle
+        Subtitle.Position = UDim2.new(0, 8, 0, 24)
+        Subtitle.Size = UDim2.new(0, 80, 0, 12)
+        Subtitle.TextSize = 8
+        
+        -- Right-side elements: from left to right: SizeBox, ModeSwitch, Lock
+        -- SizeBox (leftmost)
+        SizeBox.Visible = true
+        SizeBox.Size = UDim2.new(0, 40, 0, 22)
+        SizeBox.Position = UDim2.new(0, 88, 0.5, -11)  -- x = 88
+        SizeBox.TextSize = 10
+        SizeBoxTag.Visible = true
+        SizeBoxTag.Size = UDim2.new(0, 40, 0, 8)
+        SizeBoxTag.Position = UDim2.new(0, 88, 0.5, -21)
+        
+        -- ModeSwitch (middle)
+        ModeSwitchBtn.Size = UDim2.new(0, 50, 0, 22)
+        ModeSwitchBtn.Position = UDim2.new(0, 132, 0.5, -11)
+        ModeSwitchBtn.TextSize = 10
+        
+        -- LockBtn (rightmost)
+        LockBtn.Size = UDim2.new(0, 32, 0, 24)
+        LockBtn.Position = UDim2.new(0, 186, 0.5, -12)
+        LockBtn.TextSize = 16
+        
+        -- Adjust content elements (these are already in the list, but we can tweak sizes if needed)
+        MobileToggleBtn.TextSize = 13
+        MobilePowerInput.TextSize = 11
+        MobilePadBtn.TextSize = 11
+        MobilePowerInput.Size = UDim2.new(0, 56, 0, 20)
+        MobilePowerInput.Position = UDim2.new(1, -62, 0.5, -10)
+        MobilePadBtn.Size = UDim2.new(0, 56, 0, 20)
+        MobilePadBtn.Position = UDim2.new(1, -62, 0.5, -10)
+    else
+        -- PC layout
+        MainScale.Scale = 1.0
+        MainFrame.Size = UDim2.new(0, 260, 0, 260)
+        Title.TextSize = 15
+        Title.Size = UDim2.new(0.55, -15, 1, 0)
+        Title.Position = UDim2.new(0, 15, 0, 0)
+        Subtitle.Position = UDim2.new(0, 15, 0, 28)
+        Subtitle.Size = UDim2.new(0.5, -15, 0, 15)
+        Subtitle.TextSize = 9
+        
+        LockBtn.Size = UDim2.new(0, 35, 0, 30)
+        LockBtn.Position = UDim2.new(0.48, -45, 0.5, -15)
+        LockBtn.TextSize = 18
+        ModeSwitchBtn.Size = UDim2.new(0, 85, 0, 28)
+        ModeSwitchBtn.Position = UDim2.new(0.55, 0, 0.5, -14)
+        ModeSwitchBtn.TextSize = 12
+        SizeBox.Visible = false
+        SizeBoxTag.Visible = false
+    end
+end
 
-RunService.Heartbeat:Connect(function()
-    if not (State.autoBatToggled and h and hrp) then return end
-    local target, dist = getClosestPlayer()
-    if target and target.Character then
-        local tr = target.Character:FindFirstChild("HumanoidRootPart")
-        if tr then
-            if sethiddenproperty then sethiddenproperty(hrp, "PhysicsRepRootPart", tr) end
-            local targetPos = tr.Position + Vector3.new(0, 0.9, 0)
-            if (hrp.Position - targetPos).Magnitude > 8 then hrp.CFrame = CFrame.new(targetPos) end
-            local cam = workspace.CurrentCamera
-            cam.CFrame = CFrame.new(cam.CFrame.Position, tr.Position)
-            tryHitBat()
+local function SwitchMode()
+    if running then
+        running = false
+        if spamThread then task.cancel(spamThread) end
+        bomb = nil
+        NetworkClient:SetOutgoingKBPSLimit(0)
+        updateToggleVisuals(false)
+    end
+    currentMode = currentMode == "PC" and "Mobile" or "PC"
+    Config.Mode = currentMode
+    PCElements.Visible = currentMode == "PC"
+    MobileElements.Visible = currentMode == "Mobile"
+    if currentMode == "PC" then
+        ModeSwitchBtn.Text = "PC"
+        PCFooter.Text = "v2 - " .. tostring(Config.PCPower) .. " power"
+    else
+        ModeSwitchBtn.Text = "MOBILE"
+        MobileFooter.Text = "v2 - " .. tostring(Config.MobilePower) .. " power"
+    end
+    SaveConfig()
+    applyFrameSize()
+    updateCanvas()
+end
+
+-- Lock toggle
+LockBtn.MouseButton1Click:Connect(function()
+    Config.Locked = not Config.Locked
+    LockBtn.Text = Config.Locked and "🔒" or "🔓"
+    LockBtn.TextColor3 = Config.Locked and Color3.fromRGB(255, 255, 0) or Color3.fromRGB(220, 220, 255)
+    LockBtn.BackgroundColor3 = Config.Locked and Color3.fromRGB(60, 60, 20) or Color3.fromRGB(40, 40, 60)
+    SaveConfig()
+end)
+
+PCToggleBtn.MouseButton1Click:Connect(function()
+    if currentMode == "PC" then ToggleBypass() end
+end)
+MobileToggleBtn.MouseButton1Click:Connect(function()
+    if currentMode == "Mobile" then ToggleBypass() end
+end)
+ModeSwitchBtn.MouseButton1Click:Connect(SwitchMode)
+
+-- Power inputs
+PCPowerInput.FocusLost:Connect(function()
+    local numericValue = tonumber(PCPowerInput.Text)
+    if numericValue then
+        local clampedValue = math.clamp(numericValue, 10000, 150000)
+        Config.PCPower = clampedValue
+        PCPowerInput.Text = tostring(clampedValue)
+    else
+        Config.PCPower = 97000
+        PCPowerInput.Text = "97000"
+    end
+    PCFooter.Text = "v2 - " .. tostring(Config.PCPower) .. " power"
+    SaveConfig()
+    if running and currentMode == "PC" then restartSpamLoop() end
+end)
+
+MobilePowerInput.FocusLost:Connect(function()
+    local numericValue = tonumber(MobilePowerInput.Text)
+    if numericValue then
+        local clampedValue = math.clamp(numericValue, 10000, 100000)
+        Config.MobilePower = clampedValue
+        MobilePowerInput.Text = tostring(clampedValue)
+    else
+        Config.MobilePower = 72000
+        MobilePowerInput.Text = "72000"
+    end
+    MobileFooter.Text = "v2 - " .. tostring(Config.MobilePower) .. " power"
+    SaveConfig()
+    if running and currentMode == "Mobile" then restartSpamLoop() end
+end)
+
+SizeBox.FocusLost:Connect(function()
+    local v = tonumber(SizeBox.Text)
+    if v then
+        v = math.clamp(v, 0.7, 1.6)
+        Config.MobileScale = v
+    else
+        Config.MobileScale = 1.0
+    end
+    SizeBox.Text = tostring(Config.MobileScale)
+    SaveConfig()
+    applyFrameSize()
+end)
+
+-- Keybind rebind
+local listeningForKey = false
+PCKeybindBtn.MouseButton1Click:Connect(function()
+    listeningForKey = true
+    PCKeybindBtn.Text = "..."
+    PCKeybindBtn.TextColor3 = Color3.fromRGB(255, 200, 100)
+end)
+
+local listeningForPad = false
+local function startPadListen(btn)
+    listeningForPad = true
+    btn.Text = "..."
+    btn.TextColor3 = Color3.fromRGB(255, 200, 100)
+end
+PCPadBtn.MouseButton1Click:Connect(function() startPadListen(PCPadBtn) end)
+MobilePadBtn.MouseButton1Click:Connect(function() startPadListen(MobilePadBtn) end)
+
+local function refreshPadButtons()
+    PCPadBtn.Text = Config.GamepadKey
+    PCPadBtn.TextColor3 = Color3.fromRGB(155, 89, 182)
+    MobilePadBtn.Text = Config.GamepadKey
+    MobilePadBtn.TextColor3 = Color3.fromRGB(155, 89, 182)
+end
+
+UserInputService.InputBegan:Connect(function(input, processed)
+    if processed then return end
+    if listeningForPad then
+        if input.UserInputType == Enum.UserInputType.Gamepad1
+        or input.UserInputType == Enum.UserInputType.Gamepad2 then
+            if isGamepadKeyName(input.KeyCode.Name) then
+                Config.GamepadKey = input.KeyCode.Name
+                listeningForPad = false
+                refreshPadButtons()
+                SaveConfig()
+            end
         end
+        return
+    end
+    if listeningForKey then
+        if input.UserInputType == Enum.UserInputType.Keyboard then
+            Config.Keybind = input.KeyCode.Name
+            PCKeybindBtn.Text = Config.Keybind
+            PCKeybindBtn.TextColor3 = Color3.fromRGB(155, 89, 182)
+            listeningForKey = false
+            SaveConfig()
+        end
+        return
+    end
+    -- Keyboard toggle (PC only)
+    if input.UserInputType == Enum.UserInputType.Keyboard
+    and input.KeyCode.Name == Config.Keybind then
+        if currentMode == "PC" then ToggleBypass() end
+        return
+    end
+    -- Controller toggle (both modes)
+    if (input.UserInputType == Enum.UserInputType.Gamepad1
+        or input.UserInputType == Enum.UserInputType.Gamepad2)
+    and input.KeyCode.Name == Config.GamepadKey then
+        ToggleBypass()
+        return
     end
 end)
 
--- KEYBOARD INPUT HANDLER - FIXED
-UIS.InputBegan:Connect(function(inp, gp)
-    if gp then return end
-    if inp.UserInputType == Enum.UserInputType.Keyboard then
-        if inp.KeyCode == Keys.autoBat then
-            if kListening then return end -- NU activa toggle-ul când schimbi tasta
-            State.autoBatToggled = not State.autoBatToggled
-            updateView()
-        elseif inp.KeyCode == Keys.guiHide then
-            State.guiVisible = not State.guiVisible
-            main.Visible = State.guiVisible
-        end
+-- Draggable (respects lock)
+local dragging, dragStart, startPos
+Header.InputBegan:Connect(function(input)
+    if Config.Locked then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
     end
 end)
+UserInputService.InputChanged:Connect(function(input)
+    if Config.Locked then return end
+    if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and dragging then
+        local delta = input.Position - dragStart
+        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end
+end)
 
-print("[ETHERNAL HUB] Auto Bat Fixed - Keybind change works without toggling auto bat!")
+-- Initialization
+PCKeybindBtn.Text = Config.Keybind
+PCPadBtn.Text = Config.GamepadKey
+MobilePadBtn.Text = Config.GamepadKey
+PCPowerInput.Text = tostring(Config.PCPower)
+MobilePowerInput.Text = tostring(Config.MobilePower)
+SizeBox.Text = tostring(Config.MobileScale)
+PCFooter.Text = "v2 - " .. tostring(Config.PCPower) .. " power"
+MobileFooter.Text = "v2 - " .. tostring(Config.MobilePower) .. " power"
+PCElements.Visible = Config.Mode == "PC"
+MobileElements.Visible = Config.Mode == "Mobile"
+ModeSwitchBtn.Text = Config.Mode == "PC" and "PC" or "MOBILE"
+applyFrameSize()
+updateCanvas()
+print("SPECTRUM SPEED BYPASS")
+print("LEKAD BY FRNK33.") 
+print("discord.gg/kastorhub")
