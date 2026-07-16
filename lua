@@ -143,6 +143,15 @@ mainCorner.Parent = main
 
 createAnimatedStroke(main, 2, 0.8)
 
+-- // Sadece bu görünmez "dragArea" alanından sürükleme yapılabilecek //
+local dragArea = Instance.new("Frame")
+dragArea.Name = "DragArea"
+dragArea.Size = UDim2.new(1, 0, 0, 42)
+dragArea.Position = UDim2.new(0, 0, 0, 0)
+dragArea.BackgroundTransparency = 1
+dragArea.ZIndex = 10
+dragArea.Parent = main
+
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -20, 0, 20)
 title.Position = UDim2.new(0, 10, 0, 5)
@@ -152,6 +161,7 @@ title.Font = Enum.Font.GothamBlack
 title.TextSize = 16
 title.TextColor3 = Color3.new(1, 1, 1)
 title.TextXAlignment = Enum.TextXAlignment.Left
+title.ZIndex = 9
 title.Parent = main
 
 local titleGrad = Instance.new("UIGradient")
@@ -179,12 +189,14 @@ subtitle.TextSize = 11
 subtitle.TextColor3 = Color3.new(1, 1, 1)
 subtitle.TextTransparency = 0.3
 subtitle.TextXAlignment = Enum.TextXAlignment.Left
+subtitle.ZIndex = 9
 subtitle.Parent = main
 
 local toggleRow = Instance.new("Frame")
 toggleRow.Size = UDim2.new(1, -20, 0, 34)
 toggleRow.Position = UDim2.new(0, 10, 0, 48)
 toggleRow.BackgroundColor3 = Color3.fromRGB(15, 25, 55)
+toggleRow.ZIndex = 2
 toggleRow.Parent = main
 
 Instance.new("UICorner", toggleRow)
@@ -199,12 +211,14 @@ toggleLabel.Font = Enum.Font.GothamBlack
 toggleLabel.TextSize = 13
 toggleLabel.TextColor3 = Color3.new(1, 1, 1)
 toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+toggleLabel.ZIndex = 3
 toggleLabel.Parent = toggleRow
 
 local switchBg = Instance.new("Frame")
 switchBg.Size = UDim2.new(0, 36, 0, 18)
 switchBg.Position = UDim2.new(1, -46, 0.5, -9)
 switchBg.BackgroundTransparency = 1
+switchBg.ZIndex = 3
 switchBg.Parent = toggleRow
 
 Instance.new("UICorner", switchBg).CornerRadius = UDim.new(0, 9)
@@ -214,6 +228,7 @@ local switchKnob = Instance.new("Frame")
 switchKnob.Size = UDim2.new(0, 14, 0, 14)
 switchKnob.Position = UDim2.new(0, 2, 0.5, -7)
 switchKnob.BackgroundColor3 = Color3.new(1, 1, 1)
+switchKnob.ZIndex = 4
 switchKnob.Parent = switchBg
 
 Instance.new("UICorner", switchKnob).CornerRadius = UDim.new(0, 7)
@@ -222,12 +237,14 @@ local toggleBtn = Instance.new("TextButton")
 toggleBtn.Size = UDim2.new(1, 0, 1, 0)
 toggleBtn.BackgroundTransparency = 1
 toggleBtn.Text = ""
+toggleBtn.ZIndex = 5
 toggleBtn.Parent = toggleRow
 
 local kbRow = Instance.new("Frame")
 kbRow.Size = UDim2.new(1, -20, 0, 34)
 kbRow.Position = UDim2.new(0, 10, 0, 88)
 kbRow.BackgroundColor3 = Color3.fromRGB(15, 25, 55)
+kbRow.ZIndex = 2
 kbRow.Parent = main
 
 Instance.new("UICorner", kbRow)
@@ -242,6 +259,7 @@ kbLabel.Font = Enum.Font.GothamBlack
 kbLabel.TextSize = 13
 kbLabel.TextColor3 = Color3.new(1, 1, 1)
 kbLabel.TextXAlignment = Enum.TextXAlignment.Left
+kbLabel.ZIndex = 3
 kbLabel.Parent = kbRow
 
 local kbBtn = Instance.new("TextButton")
@@ -251,6 +269,7 @@ kbBtn.BackgroundColor3 = Color3.fromRGB(25, 45, 95)
 kbBtn.BackgroundTransparency = 0.3
 kbBtn.AutoButtonColor = false
 kbBtn.Font = Enum.Font.GothamBlack
+kbBtn.ZIndex = 4
 
 if CONFIG.TpBatKey then
     kbBtn.Text = "[ " .. CONFIG.TpBatKey.Name .. " ]"
@@ -299,6 +318,7 @@ UserInputService.InputBegan:Connect(function(input, gpe)
     end
 end)
 
+-- // Gelişmiş ve Sadece Başlık Alanından (dragArea) Sürüklenebilir Sistem //
 do
     local dragging = false
     local dragInput
@@ -313,13 +333,15 @@ do
         local targetX = startPos.X.Offset + delta.X
         local targetY = startPos.Y.Offset + delta.Y
         
+        -- Ekran sınırları dışına kaçmayı önler
         targetX = math.clamp(targetX, 0, viewportSize.X - main.AbsoluteSize.X)
         targetY = math.clamp(targetY, 0, viewportSize.Y - main.AbsoluteSize.Y)
         
         main.Position = UDim2.new(startPos.X.Scale, targetX, startPos.Y.Scale, targetY)
     end
 
-    main.InputBegan:Connect(function(input)
+    -- Sürükleme tetikleyicisi sadece en üstteki dragArea alanına bağlandı
+    dragArea.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
@@ -337,7 +359,7 @@ do
         end
     end)
 
-    main.InputChanged:Connect(function(input)
+    dragArea.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             dragInput = input
         end
