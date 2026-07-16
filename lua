@@ -4,19 +4,45 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players.LocalPlayer
 
 local CONFIG = {
     Draggable = true,
-    TpBatKey = Enum.KeyCode.T,
+    TpBatKey = nil,
 }
 
 local tpBatToggled = false
 local tpBatCooldown = false
-local tpTogglePressed = false
 
--- // Fonksiyonlar (Orijinal Mekanikler) //
+local FILE_NAME = "moonhubtpbat.json"
+
+local function saveConfig()
+    local success, err = pcall(function()
+        if writefile then
+            local data = {
+                TpBatKey = CONFIG.TpBatKey and CONFIG.TpBatKey.Name or nil
+            }
+            writefile(FILE_NAME, HttpService:JSONEncode(data))
+        end
+    end)
+end
+
+local function loadConfig()
+    local success, err = pcall(function()
+        if readfile and isfile and isfile(FILE_NAME) then
+            local content = readfile(FILE_NAME)
+            local data = HttpService:JSONDecode(content)
+            if data and data.TpBatKey then
+                CONFIG.TpBatKey = Enum.KeyCode[data.TpBatKey]
+            end
+        end
+    end)
+end
+
+loadConfig()
+
 local function getHRP()
     local character = LocalPlayer.Character
     if not character then return nil end
@@ -69,13 +95,11 @@ local function getClosestPlayer()
     return cp, cd
 end
 
--- // ScreenGui Kurulumu //
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "MoonHub_New"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
--- // Animated gradient stroke helper (Maviye uyarlandı) //
 local function createAnimatedStroke(parent, thickness, speed)
     local s = Instance.new("UIStroke")
     s.Thickness = thickness or 1.5
@@ -105,7 +129,6 @@ local function createAnimatedStroke(parent, thickness, speed)
     return s, g
 end
 
--- // Ana Panel (Mavi / Lacivert) //
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 200, 0, 130)
 main.Position = UDim2.new(0.5, -100, 0.5, -65)
@@ -121,9 +144,8 @@ mainCorner.Parent = main
 
 createAnimatedStroke(main, 2, 0.8)
 
--- // Başlık (Mavi Gradientli) //
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -40, 0, 20)
+title.Size = UDim2.new(1, -20, 0, 20)
 title.Position = UDim2.new(0, 10, 0, 5)
 title.BackgroundTransparency = 1
 title.Text = "MoonHub - V2"
@@ -148,9 +170,8 @@ task.spawn(function()
     end
 end)
 
--- // Alt Başlık //
 local subtitle = Instance.new("TextLabel")
-subtitle.Size = UDim2.new(1, -40, 0, 15)
+subtitle.Size = UDim2.new(1, -20, 0, 15)
 subtitle.Position = UDim2.new(0, 10, 0, 23)
 subtitle.BackgroundTransparency = 1
 subtitle.Text = "Teleport Bat"
@@ -161,30 +182,6 @@ subtitle.TextTransparency = 0.3
 subtitle.TextXAlignment = Enum.TextXAlignment.Left
 subtitle.Parent = main
 
--- // Minimize Butonu //
-local minBtn = Instance.new("TextButton")
-minBtn.Size = UDim2.new(0, 24, 0, 24)
-minBtn.Position = UDim2.new(1, -32, 0, 8)
-minBtn.BackgroundColor3 = Color3.fromRGB(15, 25, 55)
-minBtn.AutoButtonColor = false
-minBtn.Font = Enum.Font.GothamBlack
-minBtn.Text = "-"
-minBtn.TextSize = 14
-minBtn.TextColor3 = Color3.new(1, 1, 1)
-minBtn.Parent = main
-
-Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 6)
-
-local minimized = false
-minBtn.MouseButton1Click:Connect(function()
-    minimized = not minimized
-    TweenService:Create(main, TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
-        Size = minimized and UDim2.new(0, 200, 0, 40) or UDim2.new(0, 200, 0, 130)
-    }):Play()
-    minBtn.Text = minimized and "+" or "-"
-end)
-
--- // Aktif Etme Satırı (Toggle Row) //
 local toggleRow = Instance.new("Frame")
 toggleRow.Size = UDim2.new(1, -20, 0, 34)
 toggleRow.Position = UDim2.new(0, 10, 0, 48)
@@ -198,14 +195,13 @@ local toggleLabel = Instance.new("TextLabel")
 toggleLabel.Size = UDim2.new(1, -60, 1, 0)
 toggleLabel.Position = UDim2.new(0, 10, 0, 0)
 toggleLabel.BackgroundTransparency = 1
-toggleLabel.Text = "Enable TP Bat"
+toggleLabel.Text = "TP Bat"
 toggleLabel.Font = Enum.Font.GothamBlack
 toggleLabel.TextSize = 13
 toggleLabel.TextColor3 = Color3.new(1, 1, 1)
 toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
 toggleLabel.Parent = toggleRow
 
--- // Toggle Anahtarı (Pill) //
 local switchBg = Instance.new("Frame")
 switchBg.Size = UDim2.new(0, 36, 0, 18)
 switchBg.Position = UDim2.new(1, -46, 0.5, -9)
@@ -229,7 +225,6 @@ toggleBtn.BackgroundTransparency = 1
 toggleBtn.Text = ""
 toggleBtn.Parent = toggleRow
 
--- // Tuş Atama Satırı (Keybind Row) //
 local kbRow = Instance.new("Frame")
 kbRow.Size = UDim2.new(1, -20, 0, 34)
 kbRow.Position = UDim2.new(0, 10, 0, 88)
@@ -257,14 +252,19 @@ kbBtn.BackgroundColor3 = Color3.fromRGB(25, 45, 95)
 kbBtn.BackgroundTransparency = 0.3
 kbBtn.AutoButtonColor = false
 kbBtn.Font = Enum.Font.GothamBlack
-kbBtn.Text = "[ " .. CONFIG.TpBatKey.Name .. " ]"
+
+if CONFIG.TpBatKey then
+    kbBtn.Text = "[ " .. CONFIG.TpBatKey.Name .. " ]"
+else
+    kbBtn.Text = "[ ... ]"
+end
+
 kbBtn.TextSize = 10
 kbBtn.TextColor3 = Color3.new(1, 1, 1)
 kbBtn.Parent = kbRow
 
 Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 5)
 
--- // Toggle Görsel Güncelleme Fonksiyonu //
 local function setToggle(newState)
     tpBatToggled = newState
     local goal = newState and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
@@ -277,7 +277,6 @@ toggleBtn.MouseButton1Click:Connect(function()
     setToggle(not tpBatToggled)
 end)
 
--- // Keybind Dinleyici (Sadece Tuş Algılar) //
 local listeningForKey = false
 
 kbBtn.MouseButton1Click:Connect(function()
@@ -291,49 +290,59 @@ UserInputService.InputBegan:Connect(function(input, gpe)
         if input.UserInputType == Enum.UserInputType.Keyboard then
             CONFIG.TpBatKey = input.KeyCode
             kbBtn.Text = "[ " .. input.KeyCode.Name .. " ]"
+            saveConfig()
             listeningForKey = false
         end
         return
     end
-    if input.KeyCode == CONFIG.TpBatKey then
+    if CONFIG.TpBatKey and input.KeyCode == CONFIG.TpBatKey then
         setToggle(not tpBatToggled)
     end
 end)
 
--- // Draggable (Sürükleme Mekanizması) //
 do
-    local dg, ds, sp = false, nil, nil
+    local dragInput, dragStart, startPos
+    local dragging = false
 
-    local function clampPosition(pos)
-        local ss = workspace.CurrentCamera.ViewportSize
-        local gs = main.AbsoluteSize
-        local x = math.clamp(pos.X.Offset, 0, math.max(0, ss.X - gs.X))
-        local y = math.clamp(pos.Y.Offset, 0, math.max(0, ss.Y - gs.Y))
-        return UDim2.new(0, x, 0, y)
+    local function update(input)
+        local delta = input.Position - dragStart
+        local viewportSize = workspace.CurrentCamera.ViewportSize
+        local targetX = startPos.X.Offset + delta.X
+        local targetY = startPos.Y.Offset + delta.Y
+        
+        targetX = math.clamp(targetX, 0, viewportSize.X - main.AbsoluteSize.X)
+        targetY = math.clamp(targetY, 0, viewportSize.Y - main.AbsoluteSize.Y)
+        
+        main.Position = UDim2.new(startPos.X.Scale, targetX, startPos.Y.Scale, targetY)
     end
 
     main.InputBegan:Connect(function(input)
-        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not minimized then
-            dg = true
-            ds = input.Position
-            sp = main.Position
-        end
-    end)
-    UserInputService.InputChanged:Connect(function(input)
-        if dg and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            if minimized then dg = false return end
-            local delta = input.Position - ds
-            main.Position = clampPosition(UDim2.new(sp.X.Scale, sp.X.Offset + delta.X, sp.Y.Scale, sp.Y.Offset + delta.Y))
-        end
-    end)
-    UserInputService.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dg = false
+            dragging = true
+            dragStart = input.Position
+            startPos = main.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    main.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            update(input)
         end
     end)
 end
 
--- // Döngüsel TP ve Vuruş İşlemleri (Orijinal Heartbeat) //
 RunService.Heartbeat:Connect(function()
     if not tpBatToggled then return end
     local hrp = getHRP()
@@ -357,5 +366,4 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- Varsayılan görsel durumu ayarla
 setToggle(false)
