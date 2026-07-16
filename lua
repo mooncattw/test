@@ -7,7 +7,6 @@ local CoreGui = game:GetService("CoreGui")
 local player = Players.LocalPlayer
 local NEON_COLOR = Color3.fromRGB(0, 170, 255)
 
--- Draggable (Sadece TitleBar'dan)
 local function makeDraggable(frame)
     local dragging = false
     local dragInput, dragStart, startPos
@@ -40,7 +39,6 @@ local function makeDraggable(frame)
     end)
 end
 
--- Animated Stroke
 local function createAnimatedStroke(parent, thickness, speed)
     local stroke = Instance.new("UIStroke")
     stroke.Thickness = thickness or 2
@@ -64,7 +62,6 @@ local function createAnimatedStroke(parent, thickness, speed)
     end)
 end
 
--- GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "MoonHub"
 gui.ResetOnSpawn = false
@@ -90,7 +87,7 @@ titleBar.Parent = main
 
 Instance.new("UICorner", titleBar).CornerRadius = UDim.new(0, 16)
 
--- Title
+-- Moon Hub Yazısı (Sabit)
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 1, 0)
 title.BackgroundTransparency = 1
@@ -101,22 +98,17 @@ title.TextColor3 = NEON_COLOR
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.Parent = titleBar
 
--- Divider Line (Moon Hub yazısının altında)
+-- Yazı Altı Çizgi
 local divider = Instance.new("Frame")
-divider.Size = UDim2.new(0.9, 0, 0, 2)
-divider.Position = UDim2.new(0.05, 0, 1, -2)
+divider.Size = UDim2.new(0.88, 0, 0, 2)
+divider.Position = UDim2.new(0.06, 0, 1, -3)
 divider.BackgroundColor3 = NEON_COLOR
-divider.BackgroundTransparency = 0.3
 divider.Parent = titleBar
 
 local dividerGradient = Instance.new("UIGradient")
 dividerGradient.Color = ColorSequence.new{
     ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 120, 255)),
     ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 220, 255))
-}
-dividerGradient.Transparency = NumberSequence.new{
-    NumberSequenceKeypoint.new(0, 0.4),
-    NumberSequenceKeypoint.new(1, 0.4)
 }
 dividerGradient.Parent = divider
 
@@ -127,6 +119,7 @@ local function createToggle(text, yOffset, callback)
     row.Position = UDim2.new(0, 15, 0, yOffset)
     row.BackgroundColor3 = Color3.fromRGB(20, 25, 45)
     row.Parent = main
+    
     Instance.new("UICorner", row).CornerRadius = UDim.new(0, 12)
     createAnimatedStroke(row, 1.4, 1)
     
@@ -175,7 +168,7 @@ local function createToggle(text, yOffset, callback)
     return update
 end
 
--- Anti-Bat & Inf Jump Fonksiyonları
+-- Fonksiyonlar
 local antiBatConn, antiRagdollConn, infJumpConn = nil, nil, nil
 local infJumpPlatform = nil
 
@@ -187,19 +180,17 @@ local function startAntiBat()
     
     antiBatConn = RunService.Heartbeat:Connect(function()
         if root and root.Parent then
-            local orig = Vector3.new(root.Velocity.X, 0, root.Velocity.Z)
+            local origX = root.Velocity.X
+            local origZ = root.Velocity.Z
             root.Velocity = Vector3.new(4000, root.Velocity.Y, 4000)
             RunService.RenderStepped:Wait()
-            root.Velocity = Vector3.new(orig.X, root.Velocity.Y, orig.Z)
+            root.Velocity = Vector3.new(origX, root.Velocity.Y, origZ)
         end
     end)
 end
 
 local function stopAntiBat()
-    if antiBatConn then 
-        antiBatConn:Disconnect() 
-        antiBatConn = nil 
-    end
+    if antiBatConn then antiBatConn:Disconnect() antiBatConn = nil end
 end
 
 local function startAntiRagdoll()
@@ -212,22 +203,19 @@ local function startAntiRagdoll()
             local st = hum:GetState()
             if st == Enum.HumanoidStateType.Ragdoll or st == Enum.HumanoidStateType.Physics or st == Enum.HumanoidStateType.FallingDown then
                 hum:ChangeState(Enum.HumanoidStateType.Running)
-                root.Velocity = Vector3.new(0,0,0)
+                root.Velocity = Vector3.new(0, 0, 0)
             end
         end
     end)
 end
 
 local function stopAntiRagdoll()
-    if antiRagdollConn then 
-        antiRagdollConn:Disconnect() 
-        antiRagdollConn = nil 
-    end
+    if antiRagdollConn then antiRagdollConn:Disconnect() antiRagdollConn = nil end
 end
 
 local function startInfJump()
     if infJumpConn then infJumpConn:Disconnect() end
-   
+    
     if not infJumpPlatform then
         infJumpPlatform = Instance.new("Part")
         infJumpPlatform.Size = Vector3.new(8, 0.5, 8)
@@ -255,17 +243,12 @@ local function startInfJump()
 end
 
 local function stopInfJump()
-    if infJumpConn then 
-        infJumpConn:Disconnect() 
-        infJumpConn = nil 
-    end
-    if infJumpPlatform then 
-        infJumpPlatform.Position = Vector3.new(0, -1000, 0) 
-    end
+    if infJumpConn then infJumpConn:Disconnect() infJumpConn = nil end
+    if infJumpPlatform then infJumpPlatform.Position = Vector3.new(0, -1000, 0) end
 end
 
--- Toggle Butonları
-local toggleAntiBat = createToggle("Anti-Bat", 55, function(state)
+-- Toggles
+createToggle("Anti-Bat", 55, function(state)
     if state then
         startAntiBat()
         startAntiRagdoll()
@@ -275,7 +258,7 @@ local toggleAntiBat = createToggle("Anti-Bat", 55, function(state)
     end
 end)
 
-local toggleInfJump = createToggle("Inf Jump", 115, function(state)
+createToggle("Inf Jump", 115, function(state)
     if state then
         startInfJump()
     else
@@ -283,5 +266,4 @@ local toggleInfJump = createToggle("Inf Jump", 115, function(state)
     end
 end)
 
--- Draggable
 makeDraggable(titleBar)
