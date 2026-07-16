@@ -9,7 +9,7 @@ local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 
 local CONFIG = {
-    Draggable = true,
+    Draggable = true, -- Sürükleme varsayılan olarak açık
     TpBatKey = nil,
 }
 
@@ -97,8 +97,6 @@ end
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "MoonHub_New"
 ScreenGui.ResetOnSpawn = false
-ScreenGui.ClipToDeviceSafeArea = false
-ScreenGui.ScreenInsets = Enum.ViewportInsets.None
 ScreenGui.Parent = CoreGui
 
 local function createAnimatedStroke(parent, thickness, speed)
@@ -138,6 +136,44 @@ main.BackgroundTransparency = 0.25
 main.ClipsDescendants = true
 main.Active = true
 main.Parent = ScreenGui
+
+-- === SÜRÜKLEME SİSTEMİ (DRAGGING) ===
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+main.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = main.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+main.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+-- ===================================
 
 local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 10)
@@ -310,50 +346,6 @@ UserInputService.InputBegan:Connect(function(input, gpe)
         setToggle(not tpBatToggled)
     end
 end)
-
--- // Tamamen Sınırsız, Sıkışmayan Serbest Sürükleme Sistemi //
-do
-    local dragging = false
-    local dragInput
-    local dragStart
-    local startPos
-
-    local function updateDrag(input)
-        local delta = input.Position - dragStart
-        -- Hiçbir limit/clamp koymadan doğrudan serbestçe her yere kaydır
-        main.Position = UDim2.new(0, startPos.X + delta.X, 0, startPos.Y + delta.Y)
-    end
-
-    main.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = main.AbsolutePosition
-            
-            local endedConnection
-            endedConnection = input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                    if endedConnection then
-                        endedConnection:Disconnect()
-                    end
-                end
-            end)
-        end
-    end)
-
-    main.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-
-    UserInputService.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            updateDrag(input)
-        end
-    end)
-end
 
 RunService.Heartbeat:Connect(function()
     if not tpBatToggled then return end
