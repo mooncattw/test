@@ -79,15 +79,14 @@ main.Parent = gui
 Instance.new("UICorner", main).CornerRadius = UDim.new(0, 16)
 createAnimatedStroke(main, 2.2, 0.9)
 
--- Title Bar
+-- Title Bar (Sadece buradan sürüklenecek)
 local titleBar = Instance.new("Frame")
 titleBar.Size = UDim2.new(1, 0, 0, 42)
 titleBar.BackgroundColor3 = Color3.fromRGB(8, 10, 22)
 titleBar.Parent = main
-
 Instance.new("UICorner", titleBar).CornerRadius = UDim.new(0, 16)
 
--- Moon Hub Yazısı (Sabit)
+-- Moon Hub Yazısı (Hareket Etmeyecek, Sabit Görünüm)
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 1, 0)
 title.BackgroundTransparency = 1
@@ -98,11 +97,12 @@ title.TextColor3 = NEON_COLOR
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.Parent = titleBar
 
--- Yazı Altı Çizgi
+-- Moon Hub Altı Çizgi
 local divider = Instance.new("Frame")
-divider.Size = UDim2.new(0.88, 0, 0, 2)
-divider.Position = UDim2.new(0.06, 0, 1, -3)
+divider.Size = UDim2.new(0.9, 0, 0, 2)
+divider.Position = UDim2.new(0.05, 0, 1, -3)
 divider.BackgroundColor3 = NEON_COLOR
+divider.BackgroundTransparency = 0.2
 divider.Parent = titleBar
 
 local dividerGradient = Instance.new("UIGradient")
@@ -112,14 +112,12 @@ dividerGradient.Color = ColorSequence.new{
 }
 dividerGradient.Parent = divider
 
--- Toggle Fonksiyonu
 local function createToggle(text, yOffset, callback)
     local row = Instance.new("Frame")
     row.Size = UDim2.new(1, -30, 0, 50)
     row.Position = UDim2.new(0, 15, 0, yOffset)
     row.BackgroundColor3 = Color3.fromRGB(20, 25, 45)
     row.Parent = main
-    
     Instance.new("UICorner", row).CornerRadius = UDim.new(0, 12)
     createAnimatedStroke(row, 1.4, 1)
     
@@ -153,7 +151,6 @@ local function createToggle(text, yOffset, callback)
         state = stateOn
         local pos = stateOn and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
         local color = stateOn and NEON_COLOR or Color3.fromRGB(40, 40, 55)
-        
         TweenService:Create(knob, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {Position = pos}):Play()
         TweenService:Create(switchBg, TweenInfo.new(0.25), {BackgroundColor3 = color}):Play()
         callback(stateOn)
@@ -168,102 +165,14 @@ local function createToggle(text, yOffset, callback)
     return update
 end
 
--- Fonksiyonlar
-local antiBatConn, antiRagdollConn, infJumpConn = nil, nil, nil
-local infJumpPlatform = nil
-
-local function startAntiBat()
-    local char = player.Character
-    local root = char and char:FindFirstChild("HumanoidRootPart")
-    if not root then return end
-    if antiBatConn then antiBatConn:Disconnect() end
-    
-    antiBatConn = RunService.Heartbeat:Connect(function()
-        if root and root.Parent then
-            local origX = root.Velocity.X
-            local origZ = root.Velocity.Z
-            root.Velocity = Vector3.new(4000, root.Velocity.Y, 4000)
-            RunService.RenderStepped:Wait()
-            root.Velocity = Vector3.new(origX, root.Velocity.Y, origZ)
-        end
-    end)
-end
-
-local function stopAntiBat()
-    if antiBatConn then antiBatConn:Disconnect() antiBatConn = nil end
-end
-
-local function startAntiRagdoll()
-    if antiRagdollConn then return end
-    antiRagdollConn = RunService.Heartbeat:Connect(function()
-        local char = player.Character
-        local hum = char and char:FindFirstChildOfClass("Humanoid")
-        local root = char and char:FindFirstChild("HumanoidRootPart")
-        if hum and root then
-            local st = hum:GetState()
-            if st == Enum.HumanoidStateType.Ragdoll or st == Enum.HumanoidStateType.Physics or st == Enum.HumanoidStateType.FallingDown then
-                hum:ChangeState(Enum.HumanoidStateType.Running)
-                root.Velocity = Vector3.new(0, 0, 0)
-            end
-        end
-    end)
-end
-
-local function stopAntiRagdoll()
-    if antiRagdollConn then antiRagdollConn:Disconnect() antiRagdollConn = nil end
-end
-
-local function startInfJump()
-    if infJumpConn then infJumpConn:Disconnect() end
-    
-    if not infJumpPlatform then
-        infJumpPlatform = Instance.new("Part")
-        infJumpPlatform.Size = Vector3.new(8, 0.5, 8)
-        infJumpPlatform.Transparency = 1
-        infJumpPlatform.Anchored = true
-        infJumpPlatform.CanCollide = true
-        infJumpPlatform.Parent = workspace
-    end
-    
-    infJumpConn = RunService.Heartbeat:Connect(function()
-        local char = player.Character
-        local root = char and char:FindFirstChild("HumanoidRootPart")
-        local hum = char and char:FindFirstChildOfClass("Humanoid")
-        if not (root and hum) then return end
-        
-        if UserInputService:IsKeyDown(Enum.KeyCode.Space) or hum.Jump then
-            infJumpPlatform.Position = root.Position - Vector3.new(0, 3.5, 0)
-            if root.Velocity.Y < 50 then
-                root.Velocity = Vector3.new(root.Velocity.X, 50, root.Velocity.Z)
-            end
-        else
-            infJumpPlatform.Position = Vector3.new(0, -1000, 0)
-        end
-    end)
-end
-
-local function stopInfJump()
-    if infJumpConn then infJumpConn:Disconnect() infJumpConn = nil end
-    if infJumpPlatform then infJumpPlatform.Position = Vector3.new(0, -1000, 0) end
-end
-
 -- Toggles
 createToggle("Anti-Bat", 55, function(state)
-    if state then
-        startAntiBat()
-        startAntiRagdoll()
-    else
-        stopAntiBat()
-        stopAntiRagdoll()
-    end
+    -- Anti-Bat fonksiyonları buraya eklenebilir
 end)
 
 createToggle("Inf Jump", 115, function(state)
-    if state then
-        startInfJump()
-    else
-        stopInfJump()
-    end
+    -- Inf Jump fonksiyonları buraya eklenebilir
 end)
 
+-- Sadece TitleBar'dan Sürükleme (Moon Hub yazısı sabit kalacak şekilde)
 makeDraggable(titleBar)
