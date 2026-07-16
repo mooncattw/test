@@ -15,7 +15,6 @@ local CONFIG = {
 
 local tpBatToggled = false
 local tpBatCooldown = false
-
 local FILE_NAME = "moonhubtpbat.json"
 
 local function saveConfig()
@@ -148,9 +147,9 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -20, 0, 20)
 title.Position = UDim2.new(0, 10, 0, 5)
 title.BackgroundTransparency = 1
-title.Text = "MoonHub - V2"
+title.Text = "Moon Hub"
 title.Font = Enum.Font.GothamBlack
-title.TextSize = 15
+title.TextSize = 16
 title.TextColor3 = Color3.new(1, 1, 1)
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = main
@@ -174,7 +173,7 @@ local subtitle = Instance.new("TextLabel")
 subtitle.Size = UDim2.new(1, -20, 0, 15)
 subtitle.Position = UDim2.new(0, 10, 0, 23)
 subtitle.BackgroundTransparency = 1
-subtitle.Text = "Teleport Bat"
+subtitle.Text = "Tp Bat/Anti Desync"
 subtitle.Font = Enum.Font.GothamMedium
 subtitle.TextSize = 11
 subtitle.TextColor3 = Color3.new(1, 1, 1)
@@ -301,12 +300,16 @@ UserInputService.InputBegan:Connect(function(input, gpe)
 end)
 
 do
-    local dragInput, dragStart, startPos
     local dragging = false
+    local dragInput
+    local dragStart
+    local startPos
 
-    local function update(input)
+    local function updateDrag(input)
         local delta = input.Position - dragStart
-        local viewportSize = workspace.CurrentCamera.ViewportSize
+        local camera = workspace.CurrentCamera
+        local viewportSize = camera and camera.ViewportSize or Vector2.new(1920, 1080)
+        
         local targetX = startPos.X.Offset + delta.X
         local targetY = startPos.Y.Offset + delta.Y
         
@@ -322,9 +325,13 @@ do
             dragStart = input.Position
             startPos = main.Position
             
-            input.Changed:Connect(function()
+            local endedConnection
+            endedConnection = input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
+                    if endedConnection then
+                        endedConnection:Disconnect()
+                    end
                 end
             end)
         end
@@ -338,7 +345,7 @@ do
 
     UserInputService.InputChanged:Connect(function(input)
         if input == dragInput and dragging then
-            update(input)
+            updateDrag(input)
         end
     end)
 end
