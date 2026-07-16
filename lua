@@ -9,7 +9,7 @@ local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 
 local CONFIG = {
-    Draggable = true,
+    Draggable = false,
     TpBatKey = nil,
 }
 
@@ -142,15 +142,6 @@ mainCorner.CornerRadius = UDim.new(0, 10)
 mainCorner.Parent = main
 
 createAnimatedStroke(main, 2, 0.8)
-
--- // Sadece bu görünmez "dragArea" alanından sürükleme yapılabilecek //
-local dragArea = Instance.new("Frame")
-dragArea.Name = "DragArea"
-dragArea.Size = UDim2.new(1, 0, 0, 42)
-dragArea.Position = UDim2.new(0, 0, 0, 0)
-dragArea.BackgroundTransparency = 1
-dragArea.ZIndex = 10
-dragArea.Parent = main
 
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -20, 0, 20)
@@ -317,60 +308,6 @@ UserInputService.InputBegan:Connect(function(input, gpe)
         setToggle(not tpBatToggled)
     end
 end)
-
--- // Gelişmiş ve Sadece Başlık Alanından (dragArea) Sürüklenebilir Sistem //
-do
-    local dragging = false
-    local dragInput
-    local dragStart
-    local startPos
-
-    local function updateDrag(input)
-        local delta = input.Position - dragStart
-        local camera = workspace.CurrentCamera
-        local viewportSize = camera and camera.ViewportSize or Vector2.new(1920, 1080)
-        
-        local targetX = startPos.X.Offset + delta.X
-        local targetY = startPos.Y.Offset + delta.Y
-        
-        -- Ekran sınırları dışına kaçmayı önler
-        targetX = math.clamp(targetX, 0, viewportSize.X - main.AbsoluteSize.X)
-        targetY = math.clamp(targetY, 0, viewportSize.Y - main.AbsoluteSize.Y)
-        
-        main.Position = UDim2.new(startPos.X.Scale, targetX, startPos.Y.Scale, targetY)
-    end
-
-    -- Sürükleme tetikleyicisi sadece en üstteki dragArea alanına bağlandı
-    dragArea.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = main.Position
-            
-            local endedConnection
-            endedConnection = input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                    if endedConnection then
-                        endedConnection:Disconnect()
-                    end
-                end
-            end)
-        end
-    end)
-
-    dragArea.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-
-    UserInputService.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            updateDrag(input)
-        end
-    end)
-end
 
 RunService.Heartbeat:Connect(function()
     if not tpBatToggled then return end
