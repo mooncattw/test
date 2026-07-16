@@ -5,13 +5,13 @@ local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 
 local player = Players.LocalPlayer
-local NEON_COLOR = Color3.fromRGB(0, 180, 255)
+local NEON_COLOR = Color3.fromRGB(0, 170, 255)
 
--- Draggable (Üst bardan)
+-- Draggable (Sadece TitleBar'dan)
 local function makeDraggable(frame)
     local dragging = false
     local dragInput, dragStart, startPos
-
+    
     frame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
@@ -19,23 +19,47 @@ local function makeDraggable(frame)
             startPos = frame.Position
         end
     end)
-
+    
     frame.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             dragInput = input
         end
     end)
-
+    
     UserInputService.InputChanged:Connect(function(input)
         if dragging and dragInput == input then
             local delta = input.Position - dragStart
             frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
     end)
-
+    
     UserInputService.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = false
+        end
+    end)
+end
+
+-- Animated Stroke
+local function createAnimatedStroke(parent, thickness, speed)
+    local stroke = Instance.new("UIStroke")
+    stroke.Thickness = thickness or 2
+    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    stroke.Color = NEON_COLOR
+    stroke.Parent = parent
+    
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 120, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 220, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 120, 255))
+    }
+    gradient.Parent = stroke
+    
+    task.spawn(function()
+        while parent.Parent do
+            gradient.Rotation = (gradient.Rotation + (speed or 1)) % 360
+            task.wait()
         end
     end)
 end
@@ -47,99 +71,111 @@ gui.ResetOnSpawn = false
 gui.Parent = CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 280, 0, 160)
-main.Position = UDim2.new(0.5, -140, 0.5, -80)
-main.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
-main.BorderSizePixel = 0
+main.Size = UDim2.new(0, 260, 0, 190)
+main.Position = UDim2.new(0.5, -130, 0.5, -95)
+main.BackgroundColor3 = Color3.fromRGB(10, 12, 28)
+main.BackgroundTransparency = 0.35
+main.ClipsDescendants = true
+main.Active = true
 main.Parent = gui
 
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 12)
-corner.Parent = main
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 16)
+createAnimatedStroke(main, 2.2, 0.9)
 
-local stroke = Instance.new("UIStroke")
-stroke.Color = NEON_COLOR
-stroke.Thickness = 1.8
-stroke.Parent = main
-
--- Title
+-- Title Bar
 local titleBar = Instance.new("Frame")
-titleBar.Size = UDim2.new(1, 0, 0, 40)
-titleBar.BackgroundColor3 = Color3.fromRGB(8, 8, 14)
-titleBar.BorderSizePixel = 0
+titleBar.Size = UDim2.new(1, 0, 0, 42)
+titleBar.BackgroundColor3 = Color3.fromRGB(8, 10, 22)
 titleBar.Parent = main
 
-local titleCorner = Instance.new("UICorner")
-titleCorner.CornerRadius = UDim.new(0, 12)
-titleCorner.Parent = titleBar
+Instance.new("UICorner", titleBar).CornerRadius = UDim.new(0, 16)
 
+-- Title
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 1, 0)
 title.BackgroundTransparency = 1
 title.Text = "Moon Hub"
-title.Font = Enum.Font.GothamBold
+title.Font = Enum.Font.GothamBlack
 title.TextSize = 18
 title.TextColor3 = NEON_COLOR
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.Parent = titleBar
 
+-- Divider Line (Moon Hub yazısının altında)
+local divider = Instance.new("Frame")
+divider.Size = UDim2.new(0.9, 0, 0, 2)
+divider.Position = UDim2.new(0.05, 0, 1, -2)
+divider.BackgroundColor3 = NEON_COLOR
+divider.BackgroundTransparency = 0.3
+divider.Parent = titleBar
+
+local dividerGradient = Instance.new("UIGradient")
+dividerGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 120, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 220, 255))
+}
+dividerGradient.Transparency = NumberSequence.new{
+    NumberSequenceKeypoint.new(0, 0.4),
+    NumberSequenceKeypoint.new(1, 0.4)
+}
+dividerGradient.Parent = divider
+
 -- Toggle Fonksiyonu
 local function createToggle(text, yOffset, callback)
     local row = Instance.new("Frame")
-    row.Size = UDim2.new(1, -30, 0, 42)
+    row.Size = UDim2.new(1, -30, 0, 50)
     row.Position = UDim2.new(0, 15, 0, yOffset)
-    row.BackgroundTransparency = 1
+    row.BackgroundColor3 = Color3.fromRGB(20, 25, 45)
     row.Parent = main
-
+    Instance.new("UICorner", row).CornerRadius = UDim.new(0, 12)
+    createAnimatedStroke(row, 1.4, 1)
+    
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(0.6, 0, 1, 0)
     label.BackgroundTransparency = 1
     label.Text = text
     label.Font = Enum.Font.GothamSemibold
     label.TextSize = 15
-    label.TextColor3 = Color3.fromRGB(240, 240, 240)
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
     label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Position = UDim2.new(0, 16, 0, 0)
     label.Parent = row
-
+    
     local switchBg = Instance.new("Frame")
-    switchBg.Size = UDim2.new(0, 48, 0, 26)
-    switchBg.Position = UDim2.new(1, -65, 0.5, -13)
-    switchBg.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+    switchBg.Size = UDim2.new(0, 46, 0, 24)
+    switchBg.Position = UDim2.new(1, -60, 0.5, -12)
+    switchBg.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
     switchBg.Parent = row
-
-    local sCorner = Instance.new("UICorner")
-    sCorner.CornerRadius = UDim.new(0, 13)
-    sCorner.Parent = switchBg
-
+    Instance.new("UICorner", switchBg).CornerRadius = UDim.new(0, 12)
+    
     local knob = Instance.new("Frame")
-    knob.Size = UDim2.new(0, 22, 0, 22)
-    knob.Position = UDim2.new(0, 2, 0.5, -11)
-    knob.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+    knob.Size = UDim2.new(0, 20, 0, 20)
+    knob.Position = UDim2.new(0, 2, 0.5, -10)
+    knob.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
     knob.Parent = switchBg
-
-    local kCorner = Instance.new("UICorner")
-    kCorner.CornerRadius = UDim.new(0, 11)
-    kCorner.Parent = knob
-
+    Instance.new("UICorner", knob).CornerRadius = UDim.new(0, 10)
+    
     local state = false
-
-    local function update(on)
-        state = on
-        local goal = on and UDim2.new(1, -24, 0.5, -11) or UDim2.new(0, 2, 0.5, -11)
-        local color = on and NEON_COLOR or Color3.fromRGB(35, 35, 45)
-        TweenService:Create(knob, TweenInfo.new(0.2), {Position = goal}):Play()
-        TweenService:Create(switchBg, TweenInfo.new(0.2), {BackgroundColor3 = color}):Play()
-        callback(on)
+    local function update(stateOn)
+        state = stateOn
+        local pos = stateOn and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
+        local color = stateOn and NEON_COLOR or Color3.fromRGB(40, 40, 55)
+        
+        TweenService:Create(knob, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {Position = pos}):Play()
+        TweenService:Create(switchBg, TweenInfo.new(0.25), {BackgroundColor3 = color}):Play()
+        callback(stateOn)
     end
-
+    
     row.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             update(not state)
         end
     end)
+    
+    return update
 end
 
--- Anti-Bat & Inf Jump Logic (tam)
+-- Anti-Bat & Inf Jump Fonksiyonları
 local antiBatConn, antiRagdollConn, infJumpConn = nil, nil, nil
 local infJumpPlatform = nil
 
@@ -148,6 +184,7 @@ local function startAntiBat()
     local root = char and char:FindFirstChild("HumanoidRootPart")
     if not root then return end
     if antiBatConn then antiBatConn:Disconnect() end
+    
     antiBatConn = RunService.Heartbeat:Connect(function()
         if root and root.Parent then
             local orig = Vector3.new(root.Velocity.X, 0, root.Velocity.Z)
@@ -159,7 +196,10 @@ local function startAntiBat()
 end
 
 local function stopAntiBat()
-    if antiBatConn then antiBatConn:Disconnect() antiBatConn = nil end
+    if antiBatConn then 
+        antiBatConn:Disconnect() 
+        antiBatConn = nil 
+    end
 end
 
 local function startAntiRagdoll()
@@ -179,43 +219,53 @@ local function startAntiRagdoll()
 end
 
 local function stopAntiRagdoll()
-    if antiRagdollConn then antiRagdollConn:Disconnect() antiRagdollConn = nil end
+    if antiRagdollConn then 
+        antiRagdollConn:Disconnect() 
+        antiRagdollConn = nil 
+    end
 end
 
 local function startInfJump()
     if infJumpConn then infJumpConn:Disconnect() end
+   
     if not infJumpPlatform then
         infJumpPlatform = Instance.new("Part")
-        infJumpPlatform.Size = Vector3.new(8,0.5,8)
+        infJumpPlatform.Size = Vector3.new(8, 0.5, 8)
         infJumpPlatform.Transparency = 1
         infJumpPlatform.Anchored = true
         infJumpPlatform.CanCollide = true
         infJumpPlatform.Parent = workspace
     end
+    
     infJumpConn = RunService.Heartbeat:Connect(function()
         local char = player.Character
         local root = char and char:FindFirstChild("HumanoidRootPart")
         local hum = char and char:FindFirstChildOfClass("Humanoid")
-        if root and hum then
-            if UserInputService:IsKeyDown(Enum.KeyCode.Space) or hum.Jump then
-                infJumpPlatform.Position = root.Position - Vector3.new(0, 3.5, 0)
-                if root.Velocity.Y < 50 then
-                    root.Velocity = Vector3.new(root.Velocity.X, 50, root.Velocity.Z)
-                end
-            else
-                infJumpPlatform.Position = Vector3.new(0, -1000, 0)
+        if not (root and hum) then return end
+        
+        if UserInputService:IsKeyDown(Enum.KeyCode.Space) or hum.Jump then
+            infJumpPlatform.Position = root.Position - Vector3.new(0, 3.5, 0)
+            if root.Velocity.Y < 50 then
+                root.Velocity = Vector3.new(root.Velocity.X, 50, root.Velocity.Z)
             end
+        else
+            infJumpPlatform.Position = Vector3.new(0, -1000, 0)
         end
     end)
 end
 
 local function stopInfJump()
-    if infJumpConn then infJumpConn:Disconnect() infJumpConn = nil end
-    if infJumpPlatform then infJumpPlatform.Position = Vector3.new(0, -1000, 0) end
+    if infJumpConn then 
+        infJumpConn:Disconnect() 
+        infJumpConn = nil 
+    end
+    if infJumpPlatform then 
+        infJumpPlatform.Position = Vector3.new(0, -1000, 0) 
+    end
 end
 
--- Toggle'lar
-createToggle("Anti Bat", 50, function(state)
+-- Toggle Butonları
+local toggleAntiBat = createToggle("Anti-Bat", 55, function(state)
     if state then
         startAntiBat()
         startAntiRagdoll()
@@ -225,7 +275,7 @@ createToggle("Anti Bat", 50, function(state)
     end
 end)
 
-createToggle("Inf Jump", 100, function(state)
+local toggleInfJump = createToggle("Inf Jump", 115, function(state)
     if state then
         startInfJump()
     else
@@ -235,5 +285,3 @@ end)
 
 -- Draggable
 makeDraggable(titleBar)
-
-print("Moon Hub Yüklendi")
