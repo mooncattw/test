@@ -65,13 +65,13 @@ end
 
 -- GUI Oluşturma
 local gui = Instance.new("ScreenGui")
-gui.Name = "MoonHub_Fixed"
+gui.Name = "MoonHub_Ultimate"
 gui.ResetOnSpawn = false
 gui.Parent = CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 260, 0, 190)
-main.Position = UDim2.new(0.5, -130, 0.5, -95)
+main.Size = UDim2.new(0, 260, 0, 200)
+main.Position = UDim2.new(0.5, -130, 0.5, -100)
 main.BackgroundColor3 = Color3.fromRGB(10, 12, 28)
 main.BackgroundTransparency = 0.15
 main.BorderSizePixel = 0
@@ -79,66 +79,68 @@ main.Active = true
 main.Parent = gui
 
 Instance.new("UICorner", main).CornerRadius = UDim.new(0, 16)
-createAnimatedStroke(main, 2.5, 0.9)
+createAnimatedStroke(main, 2.5, 1)
 makeDraggable(main)
 
--- Moon Hub Başlığı (Neonlu)
+-- MOON HUB YAZI ŞERİDİ (EFEKTLİ)
+local titleContainer = Instance.new("Frame")
+titleContainer.Size = UDim2.new(0, 150, 0, 35)
+titleContainer.Position = UDim2.new(0.5, -75, 0, 12)
+titleContainer.BackgroundColor3 = Color3.fromRGB(20, 25, 45)
+titleContainer.Parent = main
+Instance.new("UICorner", titleContainer).CornerRadius = UDim.new(0, 8)
+createAnimatedStroke(titleContainer, 2, 1.5) -- Yazı etrafındaki şerit
+
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 50)
+title.Size = UDim2.new(1, 0, 1, 0)
 title.BackgroundTransparency = 1
 title.Text = "Moon Hub"
 title.Font = Enum.Font.GothamBlack
-title.TextSize = 22
-title.TextColor3 = NEON_COLOR
-title.Parent = main
-
--- Yazı etrafına neon efekti (Stroke)
-local titleStroke = Instance.new("UIStroke")
-titleStroke.Thickness = 1.5
-titleStroke.Color = NEON_COLOR
-titleStroke.Transparency = 0.2
-titleStroke.Parent = title
+title.TextSize = 18
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Parent = titleContainer
 
 -- ÖZELLİK KODLARI
 
--- 1. Anti Bat Sistemi
+-- 1. Anti Bat (Stun Boşaltma ve Ragdoll Engelleme)
 RunService.Heartbeat:Connect(function()
     if getgenv().AntiBat then
-        local char = player.Character
-        local root = char and char:FindFirstChild("HumanoidRootPart")
-        local hum = char and char:FindFirstChildOfClass("Humanoid")
-        
-        if root and hum then
-            -- Bayılmayı engellemek için velocity flicker
-            local oldVel = root.Velocity
-            root.Velocity = Vector3.new(4000, oldVel.Y, 4000)
-            RunService.RenderStepped:Wait()
-            root.Velocity = oldVel
-
-            -- Ragdoll halinden çıkarma
-            if hum:GetState() == Enum.HumanoidStateType.Physics or hum:GetState() == Enum.HumanoidStateType.Ragdoll or hum:GetState() == Enum.HumanoidStateType.FallingDown then
-                hum:ChangeState(Enum.HumanoidStateType.Running)
+        pcall(function()
+            local char = player.Character
+            local root = char and char:FindFirstChild("HumanoidRootPart")
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            if root and hum then
+                -- Titreşimli Velocity (Bayılmayı önler)
+                local oldV = root.Velocity
+                root.Velocity = Vector3.new(4000, oldV.Y, 4000)
+                RunService.RenderStepped:Wait()
+                root.Velocity = oldV
+                
+                -- Durum Kontrolü
+                local s = hum:GetState()
+                if s == Enum.HumanoidStateType.Physics or s == Enum.HumanoidStateType.Ragdoll or s == Enum.HumanoidStateType.FallingDown then
+                    hum:ChangeState(Enum.HumanoidStateType.Running)
+                end
             end
-        end
+        end)
     end
 end)
 
--- 2. Infinite Jump Sistemi (Fixlendi: Hareket ederken havada durmaz)
+-- 2. Infinite Jump (FIXED: Hareket Kesilmez)
 UserInputService.JumpRequest:Connect(function()
     if getgenv().InfJump then
-        local char = player.Character
-        local hum = char and char:FindFirstChildOfClass("Humanoid")
-        local root = char and char:FindFirstChild("HumanoidRootPart")
-        
-        if hum and root then
-            hum:ChangeState(Enum.HumanoidStateType.Jumping)
-            -- Momentum koruması için X ve Z eksenine dokunmadan sadece Y (yukarı) hızı verilir
-            root.Velocity = Vector3.new(root.Velocity.X, 50, root.Velocity.Z)
-        end
+        pcall(function()
+            local hum = player.Character:FindFirstChildOfClass("Humanoid")
+            if hum then
+                -- Sadece durumu değiştirir, fiziksel hızlara dokunmaz
+                -- Böylece Roblox'un kendi hareket sistemi (WASD) bozulmaz.
+                hum:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end)
     end
 end)
 
--- Toggle UI Oluşturucu
+-- Toggle UI Fonksiyonu
 local function createToggle(text, yOffset, callback)
     local row = Instance.new("Frame")
     row.Size = UDim2.new(1, -30, 0, 48)
@@ -187,13 +189,13 @@ local function createToggle(text, yOffset, callback)
     end)
 end
 
--- Butonları Yerleştir
-createToggle("Anti Bat", 60, function(state)
+-- Butonlar
+createToggle("Anti Bat", 65, function(state)
     getgenv().AntiBat = state
 end)
 
-createToggle("Inf Jump", 120, function(state)
+createToggle("Inf Jump", 125, function(state)
     getgenv().InfJump = state
 end)
 
-print("Moon Hub v4 Yüklendi. İyi eğlenceler!")
+print("Moon Hub Başlatıldı. Infinite Jump Fixlendi.")
