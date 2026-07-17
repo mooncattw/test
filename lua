@@ -1,4 +1,3 @@
--- // 1 (Services) //
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -6,28 +5,22 @@ local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
 
--- // 2 (Player + Config) //
 local player = Players.LocalPlayer
 local ConfigFile = "moonhublagger.json"
 
--- Güç Ayarları (Ruby Hub Versiyonu)
 local NIVELES = {
 	LOW  = { poder = 25 },
 	MID  = { poder = 32 },
 	HIGH = { poder = 70 }
 }
 
--- Varsayılan Değerler
 local boundKey = Enum.KeyCode.M
 local nivelActual = "LOW"
-local ventanaBloqueada = false
 
--- Config Yönetimi
 local function SaveConfig()
 	local data = {
 		Keybind = boundKey and boundKey.Name or "...",
-		Nivel = nivelActual,
-		Bloqueado = ventanaBloqueada
+		Nivel = nivelActual
 	}
 	pcall(function() writefile(ConfigFile, HttpService:JSONEncode(data)) end)
 end
@@ -42,13 +35,11 @@ local function LoadConfig()
 				boundKey = nil
 			end
 			nivelActual = data.Nivel or "LOW"
-			ventanaBloqueada = data.Bloqueado or false
 		end)
 	end
 end
 LoadConfig()
 
--- // 3 (Lagger / Bomb Motoru) //
 local function bomb(poder)
 	local main, spam = {}, {{}}
 	local z = spam[1]
@@ -66,7 +57,6 @@ local function bomb(poder)
 	end)
 end
 
--- // 4 (Lagger Durum Kontrolü) //
 local laggerEnabled = false
 local laggerThread = nil
 
@@ -86,8 +76,7 @@ local function stopLaggerLoop()
 	end
 end
 
--- Forward declarations for UI elements
-local switchKnob, switchBg, toggleBtn, lockBtn, buttons
+local switchKnob, switchBg, toggleBtn, buttons
 
 local function setToggle(newState)
 	laggerEnabled = newState
@@ -108,7 +97,6 @@ local function setToggle(newState)
 	end
 end
 
--- // 5 (Performance Optimizer) //
 for _, v in pairs(workspace:GetDescendants()) do
 	if v:IsA("Texture") or v:IsA("Decal") then
 		v:Destroy()
@@ -117,7 +105,6 @@ for _, v in pairs(workspace:GetDescendants()) do
 	end
 end
 
--- // 6 (HiddenUI Sürdürme) //
 if not CoreGui:FindFirstChild("HiddenUI") then
 	local f = Instance.new("Folder")
 	f.Name = "HiddenUI"
@@ -127,13 +114,11 @@ if CoreGui.HiddenUI:FindFirstChild("CrasherUI_Toggle") then
 	CoreGui.HiddenUI.CrasherUI_Toggle:Destroy()
 end
 
--- // 7 (ScreenGui) //
 local gui = Instance.new("ScreenGui")
 gui.Name = "CrasherUI_Toggle"
 gui.ResetOnSpawn = false
 gui.Parent = CoreGui.HiddenUI
 
--- // 8 (Dönen Neon Çizgi Efekti) //
 local function createAnimatedStroke(parent, thickness, speed)
 	local s = Instance.new("UIStroke")
 	s.Thickness = thickness or 1.5
@@ -163,7 +148,6 @@ local function createAnimatedStroke(parent, thickness, speed)
 	return s, g
 end
 
--- // 9 (Senin Orijinal Ana Panel Tasarımın - Gece Mavisi) //
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 220, 0, 175)
 main.Position = UDim2.new(0.5, -110, 0.5, -87)
@@ -179,9 +163,8 @@ mainCorner.Parent = main
 
 createAnimatedStroke(main, 2, 0.8)
 
--- // Başlık — Moon Hub //
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -70, 0, 30)
+title.Size = UDim2.new(1, -24, 0, 30)
 title.Position = UDim2.new(0, 12, 0, 6)
 title.BackgroundTransparency = 1
 title.Text = "Moon Hub"
@@ -206,28 +189,6 @@ task.spawn(function()
 	end
 end)
 
--- // KİLİTLEME (LOCK/UNLOCK) BUTONU //
-lockBtn = Instance.new("TextButton", main)
-lockBtn.Size = UDim2.new(0, 50, 0, 20)
-lockBtn.Position = UDim2.new(1, -60, 0, 11)
-lockBtn.BackgroundTransparency = 1
-lockBtn.Font = Enum.Font.GothamBold
-lockBtn.TextSize = 10
-lockBtn.TextColor3 = Color3.fromRGB(200, 220, 255)
-lockBtn.AutoButtonColor = false
-
-local function actualizarCandado()
-	lockBtn.Text = ventanaBloqueada and "[ Lock ]" or "[ Unlock ]"
-end
-
-lockBtn.MouseButton1Click:Connect(function()
-	ventanaBloqueada = not ventanaBloqueada
-	actualizarCandado()
-	SaveConfig()
-end)
-actualizarCandado()
-
--- // Lagger Satırı //
 local toggleRow = Instance.new("Frame")
 toggleRow.Size = UDim2.new(1, -20, 0, 34)
 toggleRow.Position = UDim2.new(0, 10, 0, 42)
@@ -248,7 +209,6 @@ toggleLabel.TextColor3 = Color3.new(1, 1, 1)
 toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
 toggleLabel.Parent = toggleRow
 
--- // Switch Görsel Elemanları //
 switchBg = Instance.new("Frame")
 switchBg.Size = UDim2.new(0, 36, 0, 18)
 switchBg.Position = UDim2.new(1, -46, 0.5, -9)
@@ -276,7 +236,6 @@ toggleBtn.MouseButton1Click:Connect(function()
 	setToggle(not laggerEnabled)
 end)
 
--- // Keybind Satırı //
 local kbRow = Instance.new("Frame")
 kbRow.Size = UDim2.new(1, -20, 0, 34)
 kbRow.Position = UDim2.new(0, 10, 0, 82)
@@ -297,7 +256,6 @@ kbLabel.TextColor3 = Color3.new(1, 1, 1)
 kbLabel.TextXAlignment = Enum.TextXAlignment.Left
 kbLabel.Parent = kbRow
 
--- // Keybind Seçim Butonu //
 local kbBtn = Instance.new("TextButton")
 kbBtn.Size = UDim2.new(0, 65, 0, 22)
 kbBtn.Position = UDim2.new(1, -73, 0.5, -11)
@@ -316,7 +274,6 @@ local function actualizarKeybindButton()
 end
 actualizarKeybindButton()
 
--- // Keybind Dinleme Mantığı //
 local listeningForKey = false
 
 kbBtn.MouseButton1Click:Connect(function()
@@ -340,7 +297,6 @@ UserInputService.InputBegan:Connect(function(input, gpe)
 	end
 end)
 
--- // Mod Seçim Butonları (LOW, MID, HIGH) //
 local modeRow = Instance.new("Frame")
 modeRow.Size = UDim2.new(1, -20, 0, 34)
 modeRow.Position = UDim2.new(0, 10, 0, 124)
@@ -393,17 +349,14 @@ createModeButton("MID", 2)
 createModeButton("HIGH", 3)
 updateModeButtons()
 
--- // 10 (Sürükleme Sistemi - Kilit Kontrollü) //
 local dragging, dragInput, dragStart, startPos
 
 local function update(input)
-	if ventanaBloqueada then return end
 	local delta = input.Position - dragStart
 	main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 
 main.InputBegan:Connect(function(input)
-	if ventanaBloqueada then return end
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		dragging = true
 		dragStart = input.Position
@@ -418,14 +371,13 @@ main.InputBegan:Connect(function(input)
 end)
 
 main.InputChanged:Connect(function(input)
-	if ventanaBloqueada then return end
 	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 		dragInput = input
 	end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-	if input == dragInput and dragging and not ventanaBloqueada then
+	if input == dragInput and dragging then
 		update(input)
 	end
 end)
