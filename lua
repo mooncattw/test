@@ -1,3 +1,4 @@
+-- // 1 (Services) //
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -5,19 +6,23 @@ local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
 
+-- // 2 (Player + Config) //
 local player = Players.LocalPlayer
 local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
 local ConfigFile = "moonhublagger.json"
 
+-- Varsayılan Ayarlar (İlk açılışta tuş yok ve MID seçili)
 local boundKey = nil
 local nivelActual = "MID"
 
+-- // 3 (Lagger Güç Ayarları — Mobil ve PC için optimize edildi) //
 local NIVELES = {
 	LOW  = { TableIncrease = isMobile and 150 or 200, LoopWaitTime = 0.4 },
 	MID  = { TableIncrease = isMobile and 240 or 265, LoopWaitTime = 0.15 },
 	HIGH = { TableIncrease = isMobile and 290 or 320, LoopWaitTime = 0.05 }
 }
 
+-- Config Kaydetme ve Yükleme fonksiyonları
 local function SaveConfig()
 	local data = {
 		Keybind = boundKey and boundKey.Name or "...",
@@ -32,6 +37,8 @@ local function LoadConfig()
 			local data = HttpService:JSONDecode(readfile(ConfigFile))
 			if data.Keybind and data.Keybind ~= "..." then
 				boundKey = Enum.KeyCode[data.Keybind]
+			else
+				boundKey = nil
 			end
 			nivelActual = data.Nivel or "MID"
 		end)
@@ -41,6 +48,7 @@ LoadConfig()
 
 local CUSTOM_REMOTE_PATH = "RobloxReplicatedStorage.SetPlayerBlockList"
 
+-- // 4 (Remote resolver) //
 local function resolveRemote(path)
 	if not path or path == "" then return nil end
 	local obj = game
@@ -55,6 +63,7 @@ local function resolveRemote(path)
 	return obj
 end
 
+-- // 5 (Bomb builder) //
 local function getmaxvalue(val)
 	local mainvalueifonetable = 499999
 	if type(val) ~= "number" then return nil end
@@ -88,6 +97,7 @@ local function bomb(tableincrease)
 	end
 end
 
+-- // 6 (Lagger state + control) //
 local laggerEnabled = false
 local laggerThread = nil
 
@@ -118,6 +128,7 @@ local function startLagger()
 	coroutine.resume(laggerThread)
 end
 
+-- // 7 (Performance Strip) //
 for _, v in pairs(workspace:GetDescendants()) do
 	if v:IsA("Texture") or v:IsA("Decal") then
 		v:Destroy()
@@ -126,6 +137,7 @@ for _, v in pairs(workspace:GetDescendants()) do
 	end
 end
 
+-- // 8 (HiddenUI management) //
 if not CoreGui:FindFirstChild("HiddenUI") then
 	local f = Instance.new("Folder")
 	f.Name = "HiddenUI"
@@ -135,11 +147,13 @@ if CoreGui.HiddenUI:FindFirstChild("CrasherUI_Toggle") then
 	CoreGui.HiddenUI.CrasherUI_Toggle:Destroy()
 end
 
+-- // 9 (ScreenGui) //
 local gui = Instance.new("ScreenGui")
 gui.Name = "CrasherUI_Toggle"
 gui.ResetOnSpawn = false
 gui.Parent = CoreGui.HiddenUI
 
+-- // 10 (Mavi/Beyaz Animasyonlu Çizgi Efekti Fonksiyonu) //
 local function createAnimatedStroke(parent, thickness, speed)
 	local s = Instance.new("UIStroke")
 	s.Thickness = thickness or 1.5
@@ -169,6 +183,7 @@ local function createAnimatedStroke(parent, thickness, speed)
 	return s, g
 end
 
+-- // 11 (Main Frame — Koyu Gece Mavisi Tema) //
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 220, 0, 175)
 main.Position = UDim2.new(0.5, -110, 0.5, -87)
@@ -184,6 +199,7 @@ mainCorner.Parent = main
 
 createAnimatedStroke(main, 2, 0.8)
 
+-- // 13 (Başlık — Moon Hub) //
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -20, 0, 30)
 title.Position = UDim2.new(0, 12, 0, 6)
@@ -210,6 +226,7 @@ task.spawn(function()
 	end
 end)
 
+-- // 16 (Lagger Satırı) //
 local toggleRow = Instance.new("Frame")
 toggleRow.Size = UDim2.new(1, -20, 0, 34)
 toggleRow.Position = UDim2.new(0, 10, 0, 42)
@@ -230,6 +247,7 @@ toggleLabel.TextColor3 = Color3.new(1, 1, 1)
 toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
 toggleLabel.Parent = toggleRow
 
+-- // 17 (Açma/Kapama Switch) //
 local switchBg = Instance.new("Frame")
 switchBg.Size = UDim2.new(0, 36, 0, 18)
 switchBg.Position = UDim2.new(1, -46, 0.5, -9)
@@ -271,6 +289,7 @@ toggleBtn.MouseButton1Click:Connect(function()
 	setToggle(not laggerEnabled)
 end)
 
+-- // 19 (Keybind Satırı) //
 local kbRow = Instance.new("Frame")
 kbRow.Size = UDim2.new(1, -20, 0, 34)
 kbRow.Position = UDim2.new(0, 10, 0, 82)
@@ -291,24 +310,27 @@ kbLabel.TextColor3 = Color3.new(1, 1, 1)
 kbLabel.TextXAlignment = Enum.TextXAlignment.Left
 kbLabel.Parent = kbRow
 
+-- // 20 (Keybind Butonu — Animasyonlu Çizgi Eklendi) //
 local kbBtn = Instance.new("TextButton")
 kbBtn.Size = UDim2.new(0, 65, 0, 22)
 kbBtn.Position = UDim2.new(1, -73, 0.5, -11)
 kbBtn.BackgroundColor3 = Color3.fromRGB(30, 42, 75)
 kbBtn.AutoButtonColor = false
 kbBtn.Font = Enum.Font.GothamBlack
-kbBtn.Text = boundKey and ("[ " .. boundKey.Name .. " ]") or "..."
+kbBtn.Text = boundKey and ("[ " .. boundKey.Name .. " ]") or "[ ... ]"
 kbBtn.TextSize = 10
 kbBtn.TextColor3 = Color3.new(1, 1, 1)
 kbBtn.Parent = kbRow
 
 Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 5)
+createAnimatedStroke(kbBtn, 1.2, 1.2) -- İsteğin üzerine animasyonlu neon çizgi eklendi
 
+-- // 21 (Keybind Dinleyici) //
 local listeningForKey = false
 
 kbBtn.MouseButton1Click:Connect(function()
 	listeningForKey = true
-	kbBtn.Text = "..."
+	kbBtn.Text = "[ ... ]"
 end)
 
 UserInputService.InputBegan:Connect(function(input, gpe)
@@ -327,6 +349,7 @@ UserInputService.InputBegan:Connect(function(input, gpe)
 	end
 end)
 
+-- // 22 (Keybind Altındaki Mod Butonları: LOW, MID, HIGH — Animasyonlu Çizgiler Eklendi) //
 local modeRow = Instance.new("Frame")
 modeRow.Size = UDim2.new(1, -20, 0, 34)
 modeRow.Position = UDim2.new(0, 10, 0, 124)
@@ -340,16 +363,12 @@ UIListLayout.Padding = UDim.new(0, 7)
 UIListLayout.Parent = modeRow
 
 local buttons = {}
-local strokes = {}
-
 local function updateModeButtons()
-	for name, btn in pairs(buttons) do
+	for name, btn do
 		if nivelActual == name then
 			TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(0, 130, 255)}):Play()
-			if strokes[name] then strokes[name].Enabled = true end
 		else
 			TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(18, 26, 48)}):Play()
-			if strokes[name] then strokes[name].Enabled = false end
 		end
 	end
 end
@@ -357,7 +376,7 @@ end
 local function createModeButton(name, order)
 	local btn = Instance.new("TextButton")
 	btn.Size = UDim2.new(0, 62, 1, 0)
-	btn.Order = order
+	btn.LayoutOrder = order
 	btn.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
 	btn.Font = Enum.Font.GothamBlack
 	btn.Text = name
@@ -367,10 +386,9 @@ local function createModeButton(name, order)
 	btn.Parent = modeRow
 
 	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
-	local stroke = createAnimatedStroke(btn, 1.2, 1.5)
+	createAnimatedStroke(btn, 1.2, 1.2) -- İsteğin üzerine mod butonlarına da neon çizgi eklendi
 	
 	buttons[name] = btn
-	strokes[name] = stroke
 
 	btn.MouseButton1Click:Connect(function()
 		nivelActual = name
@@ -384,46 +402,37 @@ createModeButton("MID", 2)
 createModeButton("HIGH", 3)
 updateModeButtons()
 
-do
-	local dragging = false
-	local dragInput = nil
-	local dragStart = nil
-	local startPos = nil
+-- // 23 (Geliştirilmiş Akıcı ve Bugsuz Sürükleme Sistemi) //
+local dragging = false
+local dragInput, dragStart, startPos
 
-	main.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			dragging = true
-			dragStart = input.Position
-			startPos = main.Position
-			
-			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then
-					dragging = false
-				end
-			end)
-		end
-	end)
-
-	main.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-			dragInput = input
-		end
-	end)
-
-	RunService.RenderStepped:Connect(function()
-		if dragging and dragInput then
-			local delta = dragInput.Position - dragStart
-			local camera = workspace.CurrentCamera
-			if camera then
-				local screenSize = camera.ViewportSize
-				local targetX = startPos.X.Offset + delta.X
-				local targetY = startPos.Y.Offset + delta.Y
-				
-				targetX = math.clamp(targetX, 0, screenSize.X - main.AbsoluteSize.X)
-				targetY = math.clamp(targetY, 0, screenSize.Y - main.AbsoluteSize.Y)
-				
-				main.Position = UDim2.new(startPos.X.Scale, targetX, startPos.Y.Scale, targetY)
-			end
-		end
-	end)
+local function update(input)
+	local delta = input.Position - dragStart
+	main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
+
+main.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = main.Position
+		
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+main.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		update(input)
+	end
+end)
