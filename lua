@@ -148,10 +148,11 @@ local function createAnimatedStroke(parent, thickness, speed)
     return s, g
 end
 
+-- ANA PANEL (Arka plan rengi tamamen kaldırıldı, şeffaf yapıldı)
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 220, 0, 175)
 main.Position = UDim2.new(0.5, -110, 0.5, -87)
-main.BackgroundTransparency = 1 -- Tam şeffaf yapıldı, böylece gri arka plan kalktı
+main.BackgroundTransparency = 1 -- Tamamen şeffaf, renk basmıyor
 main.ClipsDescendants = true
 main.Active = true
 main.Parent = gui
@@ -160,15 +161,16 @@ local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 10)
 mainCorner.Parent = main
 
--- Yenilenen Arka Plan Resim Ayarı
+-- GÖRSEL (Arka plan olarak direkt bu çalışacak)
 local backgroundImage = Instance.new("ImageLabel")
 backgroundImage.Name = "BackgroundImage"
 backgroundImage.Size = UDim2.new(1, 0, 1, 0)
 backgroundImage.Position = UDim2.new(0, 0, 0, 0)
--- Alternatif asset url formatı kullanıldı (ID yüklenme hatasını önlemek için)
-backgroundImage.Image = "http://www.roblox.com/asset/?id=98743977301180" 
+backgroundImage.Image = "rbxassetid://98743977161676" -- Kesinleşen Image ID
+backgroundImage.ImageColor3 = Color3.fromRGB(255, 255, 255) -- Beyaz filtreyi kaldırır, orijinal rengi verir
+backgroundImage.BackgroundTransparency = 1 -- Kendi panel rengini kapatır
 backgroundImage.ScaleType = Enum.ScaleType.Crop
-backgroundImage.ZIndex = 0
+backgroundImage.ZIndex = 1 -- En arkada durması için
 backgroundImage.Parent = main
 
 local bgCorner = Instance.new("UICorner")
