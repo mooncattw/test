@@ -151,8 +151,7 @@ end
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 220, 0, 175)
 main.Position = UDim2.new(0.5, -110, 0.5, -87)
-main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-main.BackgroundTransparency = 1
+main.BackgroundTransparency = 1 -- Tam şeffaf yapıldı, böylece gri arka plan kalktı
 main.ClipsDescendants = true
 main.Active = true
 main.Parent = gui
@@ -161,12 +160,13 @@ local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 10)
 mainCorner.Parent = main
 
--- Arka plan su resmi
+-- Yenilenen Arka Plan Resim Ayarı
 local backgroundImage = Instance.new("ImageLabel")
 backgroundImage.Name = "BackgroundImage"
 backgroundImage.Size = UDim2.new(1, 0, 1, 0)
 backgroundImage.Position = UDim2.new(0, 0, 0, 0)
-backgroundImage.Image = "rbxassetid://98743977301180"
+-- Alternatif asset url formatı kullanıldı (ID yüklenme hatasını önlemek için)
+backgroundImage.Image = "http://www.roblox.com/asset/?id=98743977301180" 
 backgroundImage.ScaleType = Enum.ScaleType.Crop
 backgroundImage.ZIndex = 0
 backgroundImage.Parent = main
