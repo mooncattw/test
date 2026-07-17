@@ -174,7 +174,7 @@ local function createAnimatedStroke(parent, thickness, speed)
 
 	task.spawn(function()
 		local spd = speed or 1.2
-		while parent.Parent do
+		while parent and parent.Parent and gui.Parent do
 			g.Rotation = (g.Rotation + spd) % 360
 			task.wait()
 		end
@@ -220,7 +220,7 @@ titleGrad.Color = ColorSequence.new({
 titleGrad.Parent = title
 
 task.spawn(function()
-	while main.Parent do
+	while main.Parent and gui.Parent do
 		titleGrad.Rotation = (titleGrad.Rotation + 1.2) % 360
 		task.wait()
 	end
@@ -310,7 +310,7 @@ kbLabel.TextColor3 = Color3.new(1, 1, 1)
 kbLabel.TextXAlignment = Enum.TextXAlignment.Left
 kbLabel.Parent = kbRow
 
--- // 20 (Keybind Butonu — Animasyonlu Çizgi Eklendi) //
+-- // 20 (Keybind Butonu) //
 local kbBtn = Instance.new("TextButton")
 kbBtn.Size = UDim2.new(0, 65, 0, 22)
 kbBtn.Position = UDim2.new(1, -73, 0.5, -11)
@@ -323,7 +323,7 @@ kbBtn.TextColor3 = Color3.new(1, 1, 1)
 kbBtn.Parent = kbRow
 
 Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 5)
-createAnimatedStroke(kbBtn, 1.2, 1.2) -- İsteğin üzerine animasyonlu neon çizgi eklendi
+createAnimatedStroke(kbBtn, 1.2, 1.2)
 
 -- // 21 (Keybind Dinleyici) //
 local listeningForKey = false
@@ -349,7 +349,7 @@ UserInputService.InputBegan:Connect(function(input, gpe)
 	end
 end)
 
--- // 22 (Keybind Altındaki Mod Butonları: LOW, MID, HIGH — Animasyonlu Çizgiler Eklendi) //
+-- // 22 (Keybind Altındaki Mod Butonları: LOW, MID, HIGH) //
 local modeRow = Instance.new("Frame")
 modeRow.Size = UDim2.new(1, -20, 0, 34)
 modeRow.Position = UDim2.new(0, 10, 0, 124)
@@ -364,7 +364,7 @@ UIListLayout.Parent = modeRow
 
 local buttons = {}
 local function updateModeButtons()
-	for name, btn do
+	for name, btn in pairs(buttons) do
 		if nivelActual == name then
 			TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(0, 130, 255)}):Play()
 		else
@@ -386,7 +386,7 @@ local function createModeButton(name, order)
 	btn.Parent = modeRow
 
 	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
-	createAnimatedStroke(btn, 1.2, 1.2) -- İsteğin üzerine mod butonlarına da neon çizgi eklendi
+	createAnimatedStroke(btn, 1.2, 1.2)
 	
 	buttons[name] = btn
 
@@ -402,9 +402,9 @@ createModeButton("MID", 2)
 createModeButton("HIGH", 3)
 updateModeButtons()
 
--- // 23 (Geliştirilmiş Akıcı ve Bugsuz Sürükleme Sistemi) //
-local dragging = false
-local dragInput, dragStart, startPos
+-- // 23 (Tamamen Güvenli ve Akıcı Sürükleme Sistemi) //
+local UserInputService = game:GetService("UserInputService")
+local dragging, dragInput, dragStart, startPos
 
 local function update(input)
 	local delta = input.Position - dragStart
