@@ -1,3 +1,4 @@
+-- // Moon Hub - Grow A Garden 2 Visuals //
 local TweenService     = game:GetService("TweenService")
 local Players          = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -10,7 +11,7 @@ local LocalPlayer = Players.LocalPlayer
 local playerGui   = LocalPlayer:WaitForChild("PlayerGui")
 
 local DISCORD_LINK = "discord.gg/Z7vPrxecnJ"
-local CONFIG_FILE  = "GAG_FakePrompt.json"
+local CONFIG_FILE  = "MoonHubGag2.json"
 
 local Config = {
 	Robux           = 456000,
@@ -81,7 +82,7 @@ end
 
 local function makeStroke(col, thick)
 	return create("UIStroke", {
-		Color     = col   or Color3.fromRGB(180, 0, 0),
+		Color     = col   or Color3.fromRGB(80, 120, 255),
 		Thickness = thick or 1,
 	})
 end
@@ -127,14 +128,9 @@ local function notify(msg)
 	end
 end
 
-local BG_COLOR       = Color3.fromRGB(0, 0, 0)
-local BTN_DARK       = Color3.fromRGB(100, 0, 0)
-local BTN_LIGHT      = Color3.fromRGB(180, 0, 0)
-local BTN_HOVER      = Color3.fromRGB(220, 30, 30)
-local BORDER_COLOR   = Color3.fromRGB(200, 0, 0)
+local BG_COLOR       = Color3.fromRGB(12, 16, 35)
 local TEXT_WHITE     = Color3.fromRGB(255, 255, 255)
-local TEXT_BLUE_SOFT = Color3.fromRGB(255, 80, 80)
-local X_HOVER_BG     = Color3.fromRGB(25, 0, 0)
+local TEXT_BLUE      = Color3.fromRGB(100, 180, 255)
 local ROBUX_ICON_ID  = "rbxasset://textures/ui/common/robux@3x.png"
 local ROBUX_RICH     = '<font family="rbxasset://LuaPackages/Packages/_Index/BuilderIcons/BuilderIcons/BuilderIcons.json" weight="400">robux</font> %s'
 
@@ -706,29 +702,13 @@ local function showPrompt(details, onPurchased)
 	local function affordanceHover(aff, entering)
 		aff.BackgroundTransparency = entering and 0.92 or 0
 		aff.BackgroundColor3       = entering
-			and Color3.fromRGB(255, 100, 100)
+			and Color3.fromRGB(100, 150, 255)
 			or  Color3.fromRGB(163, 162, 165)
 	end
 
 	CloseAffordance.MouseEnter:Connect(function() affordanceHover(CloseAffordance, true)  end)
 	CloseAffordance.MouseLeave:Connect(function() affordanceHover(CloseAffordance, false) end)
-	CloseAffordance.MouseButton1Down:Connect(function()
-		CloseAffordance.BackgroundTransparency = 0.88
-		CloseAffordance.BackgroundColor3       = Color3.fromRGB(255, 100, 100)
-	end)
 
-	BuyButton.MouseEnter:Connect(function()
-		if canBuy then BuyButton.BackgroundColor3 = Color3.fromRGB(63, 104, 254) end
-	end)
-	BuyButton.MouseLeave:Connect(function()
-		if canBuy then BuyButton.BackgroundColor3 = Color3.fromRGB(51, 95, 255) end
-	end)
-	BuyButton.MouseButton1Down:Connect(function()
-		if canBuy then BuyButton.BackgroundColor3 = Color3.fromRGB(69, 109, 254) end
-	end)
-	BuyButton.MouseButton1Up:Connect(function()
-		if canBuy then BuyButton.BackgroundColor3 = Color3.fromRGB(63, 104, 254) end
-	end)
 	BuyButton.Activated:Connect(function()
 		if not canBuy then return end
 		canBuy = false
@@ -747,9 +727,6 @@ local function showPrompt(details, onPurchased)
 
 		Config.Robux = math.max(0, Config.Robux - (itemPrice or 0))
 		saveConfig()
-		if _G.__GAG_RobuxDisplay then
-			_G.__GAG_RobuxDisplay.Text = formatCommas(Config.Robux)
-		end
 
 		ProductPurchaseModal.Parent = nil
 		showSuccessPrompt()
@@ -767,26 +744,8 @@ local function showPrompt(details, onPurchased)
 	end
 
 	ProductPurchasePrompt.Backdrop.Activated:Connect(destroySuccess)
-	CloseAffordance2.Activated:Connect(function()
-		CloseAffordance2.Active = false
-		destroySuccess()
-	end)
-
-	CloseAffordance2.MouseEnter:Connect(function() affordanceHover(CloseAffordance2, true)  end)
-	CloseAffordance2.MouseLeave:Connect(function() affordanceHover(CloseAffordance2, false) end)
-	CloseAffordance2.MouseButton1Down:Connect(function()
-		CloseAffordance2.BackgroundTransparency = 0.88
-		CloseAffordance2.BackgroundColor3       = Color3.fromRGB(255, 100, 100)
-	end)
-
-	ConfirmButton.MouseEnter:Connect(function() ConfirmButton.BackgroundColor3 = Color3.fromRGB(63, 104, 254) end)
-	ConfirmButton.MouseLeave:Connect(function() ConfirmButton.BackgroundColor3 = Color3.fromRGB(51, 95, 255) end)
-	ConfirmButton.MouseButton1Down:Connect(function() ConfirmButton.BackgroundColor3 = Color3.fromRGB(69, 109, 254) end)
-	ConfirmButton.MouseButton1Up:Connect(function() ConfirmButton.BackgroundColor3 = Color3.fromRGB(63, 104, 254) end)
-	ConfirmButton.Activated:Connect(function()
-		ConfirmButton.Active = false
-		destroySuccess()
-	end)
+	CloseAffordance2.Activated:Connect(destroySuccess)
+	ConfirmButton.Activated:Connect(destroySuccess)
 end
 
 local function showBulkPrompts(details, count, onAllDone)
@@ -825,7 +784,7 @@ local function firePrompt(productString)
 		local ok, err = pcall(function()
 			showPrompt(resolveProduct(key))
 		end)
-		if not ok then warn("[FakePrompt] showPrompt failed:", err) end
+		if not ok then warn("[MoonHub] showPrompt failed:", err) end
 	end)
 end
 
@@ -838,7 +797,7 @@ local function fireGamepassPrompt(key)
 		local ok, err = pcall(function()
 			showPrompt(resolveGamepass(key))
 		end)
-		if not ok then warn("[FakePrompt] gamepass prompt failed:", err) end
+		if not ok then warn("[MoonHub] gamepass prompt failed:", err) end
 	end)
 end
 
@@ -859,668 +818,208 @@ if Config.HookAllShops and type(realPromptPurchaseInternal) == "function" then
 	end
 end
 
-local existing = playerGui:FindFirstChild("GAGFakePanel")
+-- ====================== MOON HUB GUI ======================
+
+local existing = playerGui:FindFirstChild("MoonHubGAG")
 if existing then existing:Destroy() end
 
-local screenGui = create("ScreenGui", {
-	Name           = "GAGFakePanel",
-	IgnoreGuiInset = true,
-	ResetOnSpawn   = false,
-	DisplayOrder   = 100,
-	ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-	Parent         = playerGui,
-})
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "MoonHubGAG"
+screenGui.IgnoreGuiInset = true
+screenGui.ResetOnSpawn = false
+screenGui.DisplayOrder = 100
+screenGui.Parent = playerGui
 
-local PANEL_W, PANEL_H = 196, 144
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 220, 0, 190)
+main.Position = UDim2.new(Config.PanelPosX, Config.PanelPosOffsetX, Config.PanelPosY, Config.PanelPosOffsetY)
+main.BackgroundColor3 = BG_COLOR
+main.BackgroundTransparency = 0.35
+main.Active = true
+main.Parent = screenGui
 
-local panel = create("Frame", {
-	Size             = UDim2.new(0, PANEL_W, 0, PANEL_H),
-	Position         = UDim2.new(Config.PanelPosX, Config.PanelPosOffsetX, Config.PanelPosY, Config.PanelPosOffsetY),
-	AnchorPoint      = Vector2.new(1, 1),
-	BackgroundColor3 = BG_COLOR,
-	Active           = true,
-	Parent           = screenGui,
-}, {
-	makeCorner(8),
-	makeStroke(BORDER_COLOR, 1),
-	create("UIPadding", {
-		PaddingTop    = UDim.new(0, 8),
-		PaddingBottom = UDim.new(0, 8),
-		PaddingLeft   = UDim.new(0, 10),
-		PaddingRight  = UDim.new(0, 10),
-	}),
-	create("UIListLayout", {
-		FillDirection       = Enum.FillDirection.Vertical,
-		HorizontalAlignment = Enum.HorizontalAlignment.Center,
-		VerticalAlignment   = Enum.VerticalAlignment.Top,
-		SortOrder           = Enum.SortOrder.LayoutOrder,
-		Padding             = UDim.new(0, 6),
-	}),
-})
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
+local stroke = Instance.new("UIStroke", main)
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(80, 120, 255)
 
-create("TextLabel", {
-	Size                   = UDim2.new(1, 0, 0, 16),
-	LayoutOrder            = 1,
-	BackgroundTransparency = 1,
-	Text                   = "Sticky's Grow A Garden 2 Visuals",
-	TextColor3             = TEXT_WHITE,
-	Font                   = Enum.Font.GothamBold,
-	TextSize               = 10,
-	TextXAlignment         = Enum.TextXAlignment.Center,
-	Parent                 = panel,
-})
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -50, 0, 28)
+title.Position = UDim2.new(0, 12, 0, 8)
+title.BackgroundTransparency = 1
+title.Text = "Moon Hub"
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 18
+title.TextColor3 = TEXT_WHITE
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = main
 
-local buttonsContainer = create("Frame", {
-	Size                   = UDim2.new(1, 0, 0, 62),
-	LayoutOrder            = 2,
-	BackgroundTransparency = 1,
-	Parent                 = panel,
-}, {
-	create("UIListLayout", {
-		FillDirection       = Enum.FillDirection.Vertical,
-		Padding             = UDim.new(0, 6),
-		HorizontalAlignment = Enum.HorizontalAlignment.Center,
-		SortOrder           = Enum.SortOrder.LayoutOrder,
-	}),
-})
+local titleGrad = Instance.new("UIGradient")
+titleGrad.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(100,200,255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(180,230,255))}
+titleGrad.Parent = title
 
-local row1 = create("Frame", {
-	Size                   = UDim2.new(1, 0, 0, 28),
-	LayoutOrder            = 1,
-	BackgroundTransparency = 1,
-	Parent                 = buttonsContainer,
-}, {
-	create("UIListLayout", {
-		FillDirection       = Enum.FillDirection.Horizontal,
-		HorizontalAlignment = Enum.HorizontalAlignment.Center,
-		VerticalAlignment   = Enum.VerticalAlignment.Center,
-		SortOrder           = Enum.SortOrder.LayoutOrder,
-		Padding             = UDim.new(0, 6),
-	}),
-})
+-- Robux
+local robuxRow = Instance.new("Frame")
+robuxRow.Size = UDim2.new(1, -24, 0, 34)
+robuxRow.Position = UDim2.new(0, 12, 0, 42)
+robuxRow.BackgroundColor3 = Color3.fromRGB(20, 25, 45)
+robuxRow.Parent = main
+Instance.new("UICorner", robuxRow).CornerRadius = UDim.new(0, 8)
 
-local row2 = create("Frame", {
-	Size                   = UDim2.new(1, 0, 0, 28),
-	LayoutOrder            = 2,
-	BackgroundTransparency = 1,
-	Parent                 = buttonsContainer,
-}, {
-	create("UIListLayout", {
-		FillDirection       = Enum.FillDirection.Horizontal,
-		HorizontalAlignment = Enum.HorizontalAlignment.Center,
-		VerticalAlignment   = Enum.VerticalAlignment.Center,
-		SortOrder           = Enum.SortOrder.LayoutOrder,
-		Padding             = UDim.new(0, 6),
-	}),
-})
+Instance.new("TextLabel", robuxRow).Text = "Robux Balance" 
+Instance.new("TextLabel", robuxRow).Size = UDim2.new(0.5,0,1,0)
+Instance.new("TextLabel", robuxRow).BackgroundTransparency = 1
+Instance.new("TextLabel", robuxRow).TextColor3 = TEXT_BLUE
+Instance.new("TextLabel", robuxRow).Font = Enum.Font.GothamSemibold
+Instance.new("TextLabel", robuxRow).TextSize = 13
+Instance.new("TextLabel", robuxRow).Position = UDim2.new(0,10,0,0)
 
-local BTN_W = 85
+local robuxInput = Instance.new("TextBox")
+robuxInput.Size = UDim2.new(0.48,0,0,26)
+robuxInput.Position = UDim2.new(0.5,4,0.5,-13)
+robuxInput.BackgroundColor3 = Color3.fromRGB(10,15,35)
+robuxInput.Text = tostring(Config.Robux)
+robuxInput.PlaceholderText = "Robux"
+robuxInput.TextColor3 = TEXT_WHITE
+robuxInput.Font = Enum.Font.GothamMedium
+robuxInput.TextSize = 13
+robuxInput.Parent = robuxRow
+Instance.new("UICorner", robuxInput).CornerRadius = UDim.new(0,6)
 
-local openBtn = create("TextButton", {
-	Size             = UDim2.new(0, BTN_W, 0, 28),
-	LayoutOrder      = 1,
-	BackgroundColor3 = BTN_LIGHT,
-	Text             = "Open Shop",
-	TextColor3       = TEXT_WHITE,
-	Font             = Enum.Font.GothamBold,
-	TextSize         = 12,
-	AutoButtonColor  = false,
-	Parent           = row1,
-}, { makeCorner(4) })
+-- Sheckles
+local shecklesRow = Instance.new("Frame")
+shecklesRow.Size = UDim2.new(1, -24, 0, 34)
+shecklesRow.Position = UDim2.new(0, 12, 0, 82)
+shecklesRow.BackgroundColor3 = Color3.fromRGB(20, 25, 45)
+shecklesRow.Parent = main
+Instance.new("UICorner", shecklesRow).CornerRadius = UDim.new(0, 8)
 
-local shecklesBtn = create("TextButton", {
-	Size             = UDim2.new(0, BTN_W, 0, 28),
-	LayoutOrder      = 2,
-	BackgroundColor3 = BTN_DARK,
-	Text             = "Sheckles",
-	TextColor3       = TEXT_WHITE,
-	Font             = Enum.Font.GothamBold,
-	TextSize         = 12,
-	AutoButtonColor  = false,
-	Parent           = row1,
-}, { makeCorner(4) })
+Instance.new("TextLabel", shecklesRow).Text = "Sheckles" 
+Instance.new("TextLabel", shecklesRow).Size = UDim2.new(0.5,0,1,0)
+Instance.new("TextLabel", shecklesRow).BackgroundTransparency = 1
+Instance.new("TextLabel", shecklesRow).TextColor3 = TEXT_BLUE
+Instance.new("TextLabel", shecklesRow).Font = Enum.Font.GothamSemibold
+Instance.new("TextLabel", shecklesRow).TextSize = 13
+Instance.new("TextLabel", shecklesRow).Position = UDim2.new(0,10,0,0)
 
-local cfgBtn = create("TextButton", {
-	Size             = UDim2.new(0, BTN_W, 0, 28),
-	LayoutOrder      = 1,
-	BackgroundColor3 = BTN_DARK,
-	Text             = "CFG",
-	TextColor3       = TEXT_WHITE,
-	Font             = Enum.Font.GothamBold,
-	TextSize         = 12,
-	AutoButtonColor  = false,
-	Parent           = row2,
-}, { makeCorner(4) })
+local shecklesInput = Instance.new("TextBox")
+shecklesInput.Size = UDim2.new(0.48,0,0,26)
+shecklesInput.Position = UDim2.new(0.5,4,0.5,-13)
+shecklesInput.BackgroundColor3 = Color3.fromRGB(10,15,35)
+shecklesInput.PlaceholderText = "Sheckles"
+shecklesInput.TextColor3 = TEXT_WHITE
+shecklesInput.Font = Enum.Font.GothamMedium
+shecklesInput.TextSize = 13
+shecklesInput.Parent = shecklesRow
+Instance.new("UICorner", shecklesInput).CornerRadius = UDim.new(0,6)
 
-local keybindBtn = create("TextButton", {
-	Size             = UDim2.new(0, BTN_W, 0, 28),
-	LayoutOrder      = 2,
-	BackgroundColor3 = BTN_DARK,
-	Text             = "Keybind",
-	TextColor3       = TEXT_WHITE,
-	Font             = Enum.Font.GothamBold,
-	TextSize         = 12,
-	AutoButtonColor  = false,
-	Parent           = row2,
-}, { makeCorner(4) })
+-- Keybind
+local kbRow = Instance.new("Frame")
+kbRow.Size = UDim2.new(1, -24, 0, 34)
+kbRow.Position = UDim2.new(0, 12, 0, 122)
+kbRow.BackgroundColor3 = Color3.fromRGB(20, 25, 45)
+kbRow.Parent = main
+Instance.new("UICorner", kbRow).CornerRadius = UDim.new(0, 8)
 
-create("TextLabel", {
-	Size                   = UDim2.new(1, 0, 0, 13),
-	LayoutOrder            = 3,
-	BackgroundTransparency = 1,
-	Text                   = DISCORD_LINK,
-	TextColor3             = TEXT_BLUE_SOFT,
-	Font                   = Enum.Font.GothamMedium,
-	TextSize               = 10,
-	TextXAlignment         = Enum.TextXAlignment.Center,
-	Parent                 = panel,
-})
+Instance.new("TextLabel", kbRow).Text = "Keybind" 
+Instance.new("TextLabel", kbRow).Size = UDim2.new(0.5,0,1,0)
+Instance.new("TextLabel", kbRow).BackgroundTransparency = 1
+Instance.new("TextLabel", kbRow).TextColor3 = TEXT_BLUE
+Instance.new("TextLabel", kbRow).Font = Enum.Font.GothamSemibold
+Instance.new("TextLabel", kbRow).TextSize = 13
+Instance.new("TextLabel", kbRow).Position = UDim2.new(0,10,0,0)
 
-local robuxBalanceDisplay
-do
-	local balRow = create("Frame", {
-		Size                   = UDim2.new(1, 0, 0, 16),
-		LayoutOrder            = 4,
-		BackgroundTransparency = 1,
-		Parent                 = panel,
-	}, {
-		create("UIListLayout", {
-			FillDirection       = Enum.FillDirection.Horizontal,
-			HorizontalAlignment = Enum.HorizontalAlignment.Center,
-			VerticalAlignment   = Enum.VerticalAlignment.Center,
-			SortOrder           = Enum.SortOrder.LayoutOrder,
-			Padding             = UDim.new(0, 4),
-		}),
-		create("ImageLabel", {
-			Size                   = UDim2.new(0, 12, 0, 12),
-			LayoutOrder            = 1,
-			BackgroundTransparency = 1,
-			Image                  = ROBUX_ICON_ID,
-			ImageColor3            = TEXT_BLUE_SOFT,
-			ScaleType              = Enum.ScaleType.Fit,
-		}),
-	})
-	robuxBalanceDisplay = create("TextLabel", {
-		Size                   = UDim2.new(0, 0, 1, 0),
-		LayoutOrder            = 2,
-		AutomaticSize          = Enum.AutomaticSize.X,
-		BackgroundTransparency = 1,
-		Text                   = formatCommas(Config.Robux),
-		TextColor3             = TEXT_BLUE_SOFT,
-		Font                   = Enum.Font.GothamMedium,
-		TextSize               = 11,
-		Parent                 = balRow,
-	})
-	_G.__GAG_RobuxDisplay = robuxBalanceDisplay
-end
+local kbBtn = Instance.new("TextButton")
+kbBtn.Size = UDim2.new(0, 72, 0, 26)
+kbBtn.Position = UDim2.new(1, -80, 0.5, -13)
+kbBtn.BackgroundColor3 = Color3.fromRGB(30, 40, 70)
+kbBtn.Text = "[" .. Config.PanelKey .. "]"
+kbBtn.Font = Enum.Font.GothamBold
+kbBtn.TextSize = 13
+kbBtn.TextColor3 = TEXT_WHITE
+kbBtn.Parent = kbRow
+Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0,6)
 
-openBtn.MouseButton1Click:Connect(function()
-	local opened = pcall(function() GuiController:Open("RobuxShop", nil, { "HUD" }) end)
-	if not opened then
-		showPrompt({ name = "Sheckles", price = Config.Robux, image = Config.DefaultImage })
-	end
-end)
+local discordLabel = Instance.new("TextLabel")
+discordLabel.Size = UDim2.new(1, -20, 0, 14)
+discordLabel.Position = UDim2.new(0, 10, 1, -22)
+discordLabel.BackgroundTransparency = 1
+discordLabel.Text = DISCORD_LINK
+discordLabel.TextColor3 = Color3.fromRGB(80, 140, 255)
+discordLabel.Font = Enum.Font.GothamMedium
+discordLabel.TextSize = 11
+discordLabel.Parent = main
 
-openBtn.MouseEnter:Connect(function() TweenService:Create(openBtn, TweenInfo.new(0.12), { BackgroundColor3 = BTN_HOVER }):Play() end)
-openBtn.MouseLeave:Connect(function() TweenService:Create(openBtn, TweenInfo.new(0.12), { BackgroundColor3 = BTN_LIGHT }):Play() end)
-openBtn.MouseButton1Down:Connect(function() TweenService:Create(openBtn, TweenInfo.new(0.06), { BackgroundColor3 = Color3.fromRGB(80, 0, 0) }):Play() end)
-openBtn.MouseButton1Up:Connect(function()   TweenService:Create(openBtn, TweenInfo.new(0.10), { BackgroundColor3 = BTN_HOVER }):Play() end)
-
-cfgBtn.MouseEnter:Connect(function() TweenService:Create(cfgBtn, TweenInfo.new(0.12), { BackgroundColor3 = BTN_HOVER }):Play() end)
-cfgBtn.MouseLeave:Connect(function() TweenService:Create(cfgBtn, TweenInfo.new(0.12), { BackgroundColor3 = BTN_DARK  }):Play() end)
-
-keybindBtn.MouseEnter:Connect(function() TweenService:Create(keybindBtn, TweenInfo.new(0.12), { BackgroundColor3 = BTN_HOVER }):Play() end)
-keybindBtn.MouseLeave:Connect(function() TweenService:Create(keybindBtn, TweenInfo.new(0.12), { BackgroundColor3 = BTN_DARK  }):Play() end)
-
-local cfgPopover = create("Frame", {
-	Size             = UDim2.new(0, PANEL_W, 0, 0),
-	AutomaticSize    = Enum.AutomaticSize.Y,
-	BackgroundColor3 = BG_COLOR,
-	BorderSizePixel  = 0,
-	Visible          = false,
-	ZIndex           = 200,
-	Parent           = screenGui,
-}, {
-	makeCorner(8),
-	makeStroke(BORDER_COLOR, 1),
-	create("UIPadding", {
-		PaddingTop    = UDim.new(0, 10),
-		PaddingBottom = UDim.new(0, 10),
-		PaddingLeft   = UDim.new(0, 12),
-		PaddingRight  = UDim.new(0, 12),
-	}),
-	create("UIListLayout", {
-		FillDirection       = Enum.FillDirection.Vertical,
-		Padding             = UDim.new(0, 8),
-		HorizontalAlignment = Enum.HorizontalAlignment.Center,
-	}),
-})
-
-create("Frame", {
-	Size                   = UDim2.new(1, 0, 0, 18),
-	BackgroundTransparency = 1,
-	ZIndex                 = 200,
-	Parent                 = cfgPopover,
-}, {
-	create("UIListLayout", {
-		FillDirection     = Enum.FillDirection.Horizontal,
-		VerticalAlignment = Enum.VerticalAlignment.Center,
-		Padding           = UDim.new(0, 4),
-	}),
-	create("ImageLabel", {
-		Size                   = UDim2.new(0, 14, 0, 14),
-		BackgroundTransparency = 1,
-		Image                  = ROBUX_ICON_ID,
-		ImageColor3            = TEXT_WHITE,
-		ScaleType              = Enum.ScaleType.Fit,
-		ZIndex                 = 200,
-	}),
-	create("TextLabel", {
-		Size                   = UDim2.new(0, 0, 0, 18),
-		AutomaticSize          = Enum.AutomaticSize.X,
-		BackgroundTransparency = 1,
-		Text                   = "Set Robux Balance",
-		TextColor3             = TEXT_WHITE,
-		Font                   = Enum.Font.GothamBold,
-		TextSize               = 12,
-		ZIndex                 = 200,
-	}),
-})
-
-local robuxInput = create("TextBox", {
-	Size              = UDim2.new(1, 0, 0, 32),
-	BackgroundColor3  = X_HOVER_BG,
-	PlaceholderText   = "Current: " .. formatCommas(Config.Robux),
-	Text              = "",
-	TextColor3        = TEXT_WHITE,
-	PlaceholderColor3 = Color3.fromRGB(110, 60, 60),
-	Font              = Enum.Font.GothamMedium,
-	TextSize          = 13,
-	ClearTextOnFocus  = true,
-	ZIndex            = 200,
-	Parent            = cfgPopover,
-}, { makeCorner(5), makeStroke(BORDER_COLOR, 1) })
-
-local keybindPopover = create("Frame", {
-	Size             = UDim2.new(0, PANEL_W, 0, 0),
-	AutomaticSize    = Enum.AutomaticSize.Y,
-	BackgroundColor3 = BG_COLOR,
-	BorderSizePixel  = 0,
-	Visible          = false,
-	ZIndex           = 200,
-	Parent           = screenGui,
-}, {
-	makeCorner(8),
-	makeStroke(BORDER_COLOR, 1),
-	create("UIPadding", {
-		PaddingTop    = UDim.new(0, 10),
-		PaddingBottom = UDim.new(0, 10),
-		PaddingLeft   = UDim.new(0, 12),
-		PaddingRight  = UDim.new(0, 12),
-	}),
-	create("UIListLayout", {
-		FillDirection       = Enum.FillDirection.Vertical,
-		Padding             = UDim.new(0, 8),
-		HorizontalAlignment = Enum.HorizontalAlignment.Center,
-	}),
-})
-
-create("TextLabel", {
-	Size                   = UDim2.new(1, 0, 0, 18),
-	BackgroundTransparency = 1,
-	Text                   = "Toggle Keybind",
-	TextColor3             = TEXT_WHITE,
-	Font                   = Enum.Font.GothamBold,
-	TextSize               = 12,
-	TextXAlignment         = Enum.TextXAlignment.Center,
-	ZIndex                 = 200,
-	Parent                 = keybindPopover,
-})
-
-local keyHint = create("TextLabel", {
-	Size                   = UDim2.new(1, 0, 0, 20),
-	BackgroundTransparency = 1,
-	Text                   = "Current: " .. Config.PanelKey,
-	TextColor3             = TEXT_BLUE_SOFT,
-	Font                   = Enum.Font.GothamMedium,
-	TextSize               = 13,
-	TextXAlignment         = Enum.TextXAlignment.Center,
-	ZIndex                 = 200,
-	Parent                 = keybindPopover,
-})
-
-local listening = false
-local listenButton = create("TextButton", {
-	Size             = UDim2.new(1, 0, 0, 30),
-	BackgroundColor3 = BTN_LIGHT,
-	Text             = "Press to set new key",
-	TextColor3       = TEXT_WHITE,
-	Font             = Enum.Font.GothamBold,
-	TextSize         = 12,
-	AutoButtonColor  = false,
-	ZIndex           = 200,
-	Parent           = keybindPopover,
-}, { makeCorner(5) })
-
-listenButton.MouseEnter:Connect(function() listenButton.BackgroundColor3 = BTN_HOVER end)
-listenButton.MouseLeave:Connect(function() 
-	if not listening then listenButton.BackgroundColor3 = BTN_LIGHT end
-end)
-
-listenButton.MouseButton1Click:Connect(function()
-	listening = true
-	listenButton.Text = "Press any key..."
-	listenButton.BackgroundColor3 = Color3.fromRGB(70, 0, 0)
-	
-	local conn
-	conn = UserInputService.InputBegan:Connect(function(input, gpe)
-		if gpe then return end
-		if input.UserInputType == Enum.UserInputType.Keyboard then
-			local newKey = input.KeyCode.Name
-			if newKey and newKey ~= "" then
-				Config.PanelKey = newKey
-				saveConfig()
-				keyHint.Text = "Current: " .. newKey
-				listening = false
-				listenButton.Text = "Press to set new key"
-				listenButton.BackgroundColor3 = BTN_LIGHT
-				conn:Disconnect()
-			end
-		end
-	end)
-	
-	task.delay(10, function()
-		if listening then
-			listening = false
-			listenButton.Text = "Press to set new key"
-			listenButton.BackgroundColor3 = BTN_LIGHT
-			conn:Disconnect()
-		end
-	end)
-end)
-
-local sframe = create("Frame", {
-	Name             = "GAGSheckles",
-	Size             = UDim2.new(0, PANEL_W, 0, 0),
-	AutomaticSize    = Enum.AutomaticSize.Y,
-	BackgroundColor3 = BG_COLOR,
-	BorderSizePixel  = 0,
-	Visible          = false,
-	ZIndex           = 200,
-	Parent           = screenGui,
-}, {
-	makeCorner(8),
-	makeStroke(BORDER_COLOR, 1),
-	create("UIPadding", {
-		PaddingTop    = UDim.new(0, 10),
-		PaddingBottom = UDim.new(0, 10),
-		PaddingLeft   = UDim.new(0, 12),
-		PaddingRight  = UDim.new(0, 12),
-	}),
-	create("UIListLayout", {
-		FillDirection       = Enum.FillDirection.Vertical,
-		Padding             = UDim.new(0, 8),
-		HorizontalAlignment = Enum.HorizontalAlignment.Center,
-	}),
-})
-
-create("Frame", {
-	Size                   = UDim2.new(1, 0, 0, 18),
-	BackgroundTransparency = 1,
-	ZIndex                 = 200,
-	Parent                 = sframe,
-}, {
-	create("UIListLayout", {
-		FillDirection     = Enum.FillDirection.Horizontal,
-		VerticalAlignment = Enum.VerticalAlignment.Center,
-		Padding           = UDim.new(0, 4),
-	}),
-	create("ImageLabel", {
-		Size                   = UDim2.new(0, 14, 0, 14),
-		BackgroundTransparency = 1,
-		Image                  = ROBUX_ICON_ID,
-		ImageColor3            = TEXT_WHITE,
-		ScaleType              = Enum.ScaleType.Fit,
-		ZIndex                 = 200,
-	}),
-	create("TextLabel", {
-		Size                   = UDim2.new(0, 0, 0, 18),
-		AutomaticSize          = Enum.AutomaticSize.X,
-		BackgroundTransparency = 1,
-		Text                   = "Set Sheckles Balance",
-		TextColor3             = TEXT_WHITE,
-		Font                   = Enum.Font.GothamBold,
-		TextSize               = 12,
-		ZIndex                 = 200,
-	}),
-})
-
-local sBox = create("TextBox", {
-	Size              = UDim2.new(1, 0, 0, 32),
-	BackgroundColor3  = X_HOVER_BG,
-	PlaceholderText   = "e.g. 1000000000",
-	Text              = "",
-	TextColor3        = TEXT_WHITE,
-	PlaceholderColor3 = Color3.fromRGB(110, 60, 60),
-	Font              = Enum.Font.GothamMedium,
-	TextSize          = 13,
-	ClearTextOnFocus  = false,
-	ZIndex            = 200,
-	Parent            = sframe,
-}, { makeCorner(5), makeStroke(BORDER_COLOR, 1) })
-
-local sBtn = create("TextButton", {
-	Size             = UDim2.new(1, 0, 0, 30),
-	BackgroundColor3 = BTN_LIGHT,
-	Text             = "Generate",
-	TextColor3       = TEXT_WHITE,
-	Font             = Enum.Font.GothamBold,
-	TextSize         = 13,
-	AutoButtonColor  = false,
-	ZIndex           = 200,
-	Parent           = sframe,
-}, { makeCorner(5) })
-sBtn.MouseEnter:Connect(function() sBtn.BackgroundColor3 = BTN_HOVER end)
-sBtn.MouseLeave:Connect(function() sBtn.BackgroundColor3 = BTN_LIGHT  end)
-
-local sStatus = create("TextLabel", {
-	Size                   = UDim2.new(1, 0, 0, 14),
-	BackgroundTransparency = 1,
-	Text                   = "",
-	TextColor3             = TEXT_BLUE_SOFT,
-	Font                   = Enum.Font.GothamMedium,
-	TextSize               = 11,
-	TextXAlignment         = Enum.TextXAlignment.Center,
-	ZIndex                 = 200,
-	Parent                 = sframe,
-})
-
-local function setStatus(msg, ok)
-	sStatus.Text = msg
-	sStatus.TextColor3 = ok and Color3.fromRGB(80, 220, 120) or Color3.fromRGB(255, 80, 80)
-	task.delay(3, function() if sStatus.Text == msg then sStatus.Text = "" end end)
-end
-
-local function setSheckles(amount)
-	local success = false
-	local leaderstats = LocalPlayer:FindFirstChild("leaderstats")
-	if leaderstats then
-		local s = leaderstats:FindFirstChild("Sheckles")
-			or leaderstats:FindFirstChild("Money")
-			or leaderstats:FindFirstChild("Cash")
-		if s then
-			s.Value = tonumber(amount) or 0
-			success = true
-		end
-	end
-	if not success then
-		for _, v in ipairs(LocalPlayer:GetDescendants()) do
-			if (v:IsA("IntValue") or v:IsA("NumberValue")) and
-				(string.find(v.Name:lower(), "sheckle") or string.find(v.Name:lower(), "money")) then
-				v.Value = tonumber(amount) or 0
-				success = true
-				break
-			end
-		end
-	end
-	if success then
-		setStatus("Set to " .. tostring(amount), true)
-	else
-		setStatus("Could not find Sheckles value", false)
-	end
-end
-
-sBtn.MouseButton1Click:Connect(function()
-	local amount = sBox.Text
-	if amount and tonumber(amount) then
-		setSheckles(amount)
-	else
-		setStatus("Enter a valid number", false)
-	end
-end)
-
-local function repositionAllPopovers()
-	task.defer(function()
-		local ap = panel.AbsolutePosition
-		local as = panel.AbsoluteSize
-		if not ap or not as then return end
-
-		local popups = {}
-		if cfgPopover.Visible then popups[#popups+1] = cfgPopover end
-		if sframe.Visible then popups[#popups+1] = sframe end
-		if keybindPopover.Visible then popups[#popups+1] = keybindPopover end
-
-		local currentY = ap.Y
-		local panelRightX = ap.X + as.X
-
-		for i, popup in ipairs(popups) do
-			local size = popup.AbsoluteSize
-			if size and size.Y > 0 then
-				local popupHeight = size.Y
-				local popupWidth = size.X
-				local x = panelRightX - popupWidth
-				local y = currentY - popupHeight
-				popup.Position = UDim2.new(0, x, 0, y)
-				currentY = y
-			end
-		end
-	end)
-end
-
-cfgPopover:GetPropertyChangedSignal("Visible"):Connect(repositionAllPopovers)
-sframe:GetPropertyChangedSignal("Visible"):Connect(repositionAllPopovers)
-keybindPopover:GetPropertyChangedSignal("Visible"):Connect(repositionAllPopovers)
-panel:GetPropertyChangedSignal("Position"):Connect(repositionAllPopovers)
-panel:GetPropertyChangedSignal("AbsoluteSize"):Connect(repositionAllPopovers)
-
-local isCfgOpen = false
-cfgBtn.MouseButton1Click:Connect(function()
-	isCfgOpen = not isCfgOpen
-	cfgPopover.Visible = isCfgOpen
-	if isCfgOpen then
-		robuxInput.PlaceholderText = "Current: " .. formatCommas(Config.Robux)
-		repositionAllPopovers()
-	end
-end)
-
+-- Input Logic
 robuxInput.FocusLost:Connect(function()
 	local num = tonumber(robuxInput.Text)
 	if num then
 		Config.Robux = math.max(0, math.floor(num))
 		saveConfig()
-		robuxInput.PlaceholderText = "Current: " .. formatCommas(Config.Robux)
-		if robuxBalanceDisplay then robuxBalanceDisplay.Text = formatCommas(Config.Robux) end
-	end
-	robuxInput.Text = ""
-end)
-
-local isKeybindOpen = false
-keybindBtn.MouseButton1Click:Connect(function()
-	isKeybindOpen = not isKeybindOpen
-	keybindPopover.Visible = isKeybindOpen
-	if isKeybindOpen then
-		listening = false
-		listenButton.Text = "Press to set new key"
-		listenButton.BackgroundColor3 = BTN_LIGHT
-		keyHint.Text = "Current: " .. Config.PanelKey
-		repositionAllPopovers()
+		robuxInput.Text = tostring(Config.Robux)
 	end
 end)
 
-shecklesBtn.MouseButton1Click:Connect(function()
-	sframe.Visible = not sframe.Visible
-	if sframe.Visible then
-		repositionAllPopovers()
-	end
-end)
-
-local cfgDragging, cfgDragInput, cfgDragStart, cfgStartPos
-cfgPopover.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1
-		or input.UserInputType == Enum.UserInputType.Touch then
-		cfgDragging  = true
-		cfgDragStart = input.Position
-		cfgStartPos  = cfgPopover.Position
-		input.Changed:Connect(function()
-			if input.UserInputState == Enum.UserInputState.End then cfgDragging = false end
-		end)
-	end
-end)
-cfgPopover.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement
-		or input.UserInputType == Enum.UserInputType.Touch then
-		cfgDragInput = input
-	end
-end)
-
-local dragging, dragInput, dragStart, startPos
-panel.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1
-		or input.UserInputType == Enum.UserInputType.Touch then
-		dragging  = true
-		dragStart = input.Position
-		startPos  = panel.Position
-		input.Changed:Connect(function()
-			if input.UserInputState == Enum.UserInputState.End then
-				dragging = false
-				Config.PanelPosX       = panel.Position.X.Scale
-				Config.PanelPosOffsetX = panel.Position.X.Offset
-				Config.PanelPosY       = panel.Position.Y.Scale
-				Config.PanelPosOffsetY = panel.Position.Y.Offset
-				saveConfig()
-				repositionAllPopovers()
+shecklesInput.FocusLost:Connect(function()
+	local amt = tonumber(shecklesInput.Text)
+	if amt then
+		local ls = LocalPlayer:FindFirstChild("leaderstats")
+		if ls then
+			for _, v in pairs(ls:GetChildren()) do
+				if v.Name:lower():find("sheckle") or v.Name:lower():find("money") then
+					v.Value = amt
+				end
 			end
-		end)
-	end
-end)
-panel.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement
-		or input.UserInputType == Enum.UserInputType.Touch then
-		dragInput = input
+		end
 	end
 end)
 
-UserInputService.InputChanged:Connect(function(input)
-	if input == cfgDragInput and cfgDragging then
-		local d = input.Position - cfgDragStart
-		cfgPopover.Position = UDim2.new(
-			cfgStartPos.X.Scale, cfgStartPos.X.Offset + d.X,
-			cfgStartPos.Y.Scale, cfgStartPos.Y.Offset + d.Y)
-		repositionAllPopovers()
-	end
-	if input == dragInput and dragging then
-		local d = input.Position - dragStart
-		panel.Position = UDim2.new(
-			startPos.X.Scale, startPos.X.Offset + d.X,
-			startPos.Y.Scale, startPos.Y.Offset + d.Y)
-		repositionAllPopovers()
-	end
+local listening = false
+kbBtn.MouseButton1Click:Connect(function()
+	listening = true
+	kbBtn.Text = "[...]"
 end)
 
 UserInputService.InputBegan:Connect(function(input, gpe)
 	if gpe then return end
-	if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
+	if listening and input.UserInputType == Enum.UserInputType.Keyboard then
+		Config.PanelKey = input.KeyCode.Name
+		saveConfig()
+		kbBtn.Text = "[" .. Config.PanelKey .. "]"
+		listening = false
+		return
+	end
 	if input.KeyCode.Name == Config.PanelKey then
-		panel.Visible = not panel.Visible
+		main.Visible = not main.Visible
 	end
 end)
+
+-- Draggable + Save Position
+local dragging, dragStart, startPos
+main.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = main.Position
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+		local delta = input.Position - dragStart
+		main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = false
+		Config.PanelPosX = main.Position.X.Scale
+		Config.PanelPosOffsetX = main.Position.X.Offset
+		Config.PanelPosY = main.Position.Y.Scale
+		Config.PanelPosOffsetY = main.Position.Y.Offset
+		saveConfig()
+	end
+end)
+
+print("🌙 Moon Hub - Grow A Garden 2 Yüklendi! | Key: " .. Config.PanelKey)
