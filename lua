@@ -152,7 +152,7 @@ local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 220, 0, 175)
 main.Position = UDim2.new(0.5, -110, 0.5, -87)
 main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-main.BackgroundTransparency = 1 -- Arka plan resminin görünmesi için transparan yaptık
+main.BackgroundTransparency = 1
 main.ClipsDescendants = true
 main.Active = true
 main.Parent = gui
@@ -161,14 +161,14 @@ local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 10)
 mainCorner.Parent = main
 
--- İstediğin arka plan resmi buraya eklendi
+-- Arka plan su resmi
 local backgroundImage = Instance.new("ImageLabel")
 backgroundImage.Name = "BackgroundImage"
 backgroundImage.Size = UDim2.new(1, 0, 1, 0)
 backgroundImage.Position = UDim2.new(0, 0, 0, 0)
 backgroundImage.Image = "rbxassetid://98743977301180"
 backgroundImage.ScaleType = Enum.ScaleType.Crop
-backgroundImage.ZIndex = 0 -- Diğer elementlerin arkasında kalması için
+backgroundImage.ZIndex = 0
 backgroundImage.Parent = main
 
 local bgCorner = Instance.new("UICorner")
@@ -208,7 +208,7 @@ local toggleRow = Instance.new("Frame")
 toggleRow.Size = UDim2.new(1, -20, 0, 34)
 toggleRow.Position = UDim2.new(0, 10, 0, 42)
 toggleRow.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
-toggleRow.BackgroundTransparency = 0.3 -- Resmin hafif görünmesi için yarı saydam yapıldı
+toggleRow.BackgroundTransparency = 0.35
 toggleRow.ZIndex = 2
 toggleRow.Parent = main
 
@@ -261,7 +261,7 @@ local kbRow = Instance.new("Frame")
 kbRow.Size = UDim2.new(1, -20, 0, 34)
 kbRow.Position = UDim2.new(0, 10, 0, 82)
 kbRow.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
-kbRow.BackgroundTransparency = 0.3
+kbRow.BackgroundTransparency = 0.35
 kbRow.ZIndex = 2
 kbRow.Parent = main
 
@@ -339,9 +339,9 @@ buttons = {}
 local function updateModeButtons()
     for name, btn in pairs(buttons) do
         if nivelActual == name then
-            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(0, 130, 255)}):Play()
+            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(0, 130, 255), BackgroundTransparency = 0.2}):Play()
         else
-            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(18, 26, 48)}):Play()
+            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(18, 26, 48), BackgroundTransparency = 0.35}):Play()
         end
     end
 end
@@ -351,6 +351,7 @@ local function createModeButton(name, order)
     btn.Size = UDim2.new(0, 62, 1, 0)
     btn.LayoutOrder = order
     btn.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
+    btn.BackgroundTransparency = 0.35
     btn.Font = Enum.Font.GothamBlack
     btn.Text = name
     btn.TextSize = 11
