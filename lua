@@ -4,7 +4,6 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
-local ContentProvider = game:GetService("ContentProvider")
 
 local player = Players.LocalPlayer
 local ConfigFile = "moonhublagger.json"
@@ -98,7 +97,6 @@ local function setToggle(newState)
     end
 end
 
--- Harita optimizasyonu (Sadece haritadaki objeleri siler, arayüzü etkilemez)
 for _, v in pairs(workspace:GetDescendants()) do
     if v:IsA("Texture") or v:IsA("Decal") then
         v:Destroy()
@@ -121,6 +119,7 @@ gui.Name = "CrasherUI_Toggle"
 gui.ResetOnSpawn = false
 gui.Parent = CoreGui.HiddenUI
 
+-- [YENİLENEN RGB EFEKT FONKSİYONU]
 local function createAnimatedStroke(parent, thickness, speed)
     local s = Instance.new("UIStroke")
     s.Thickness = thickness or 1.5
@@ -130,17 +129,18 @@ local function createAnimatedStroke(parent, thickness, speed)
 
     local g = Instance.new("UIGradient")
     g.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(10, 25, 60)),
-        ColorSequenceKeypoint.new(0.4, Color3.fromRGB(0, 140, 255)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 140, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 25, 60)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),     -- Kırmızı
+        ColorSequenceKeypoint.new(0.2, Color3.fromRGB(255, 255, 0)), -- Sarı
+        ColorSequenceKeypoint.new(0.4, Color3.fromRGB(0, 255, 0)),   -- Yeşil
+        ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 255, 255)), -- Turkuaz
+        ColorSequenceKeypoint.new(0.8, Color3.fromRGB(0, 0, 255)),   -- Mavi
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0)),     -- Kırmızı (Döngü için tam tur)
     })
     g.Rotation = 0
     g.Parent = s
 
     task.spawn(function()
-        local spd = speed or 1.2
+        local spd = speed or 1.8 -- Akıcı bir geçiş için hız ayarı
         while parent and parent.Parent and gui.Parent do
             g.Rotation = (g.Rotation + spd) % 360
             task.wait()
@@ -153,40 +153,15 @@ end
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 220, 0, 175)
 main.Position = UDim2.new(0.5, -110, 0.5, -87)
-main.BackgroundTransparency = 1 
+main.BackgroundColor3 = Color3.fromRGB(8, 12, 28)
+main.BackgroundTransparency = 0.15
 main.ClipsDescendants = true
 main.Active = true
-main.Parent = gui
+main.Parent = main
 
 local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 10)
 mainCorner.Parent = main
-
--- YENİLENEN ARKA PLAN SİSTEMİ
-local backgroundImage = Instance.new("ImageLabel")
-backgroundImage.Name = "BackgroundImage"
-backgroundImage.Size = UDim2.new(1, 0, 1, 0)
-backgroundImage.Position = UDim2.new(0, 0, 0, 0)
-backgroundImage.BackgroundTransparency = 1
-backgroundImage.ImageColor3 = Color3.fromRGB(255, 255, 255)
-backgroundImage.ScaleType = Enum.ScaleType.Crop
-backgroundImage.ZIndex = 1
-backgroundImage.Parent = main
-
--- Engelleri aşmak için direkt ham CDN linki kullanılıyor
-local assetUrl = "https://assetgame.roblox.com/asset/?id=98743977161676"
-backgroundImage.Image = assetUrl
-
--- Görseli belleğe zorla yükleme (Preload)
-task.spawn(function()
-    pcall(function()
-        ContentProvider:PreloadAsync({backgroundImage})
-    end)
-end)
-
-local bgCorner = Instance.new("UICorner")
-bgCorner.CornerRadius = UDim.new(0, 10)
-bgCorner.Parent = backgroundImage
 
 createAnimatedStroke(main, 2, 0.8)
 
@@ -199,7 +174,6 @@ title.Font = Enum.Font.GothamBlack
 title.TextSize = 16
 title.TextColor3 = Color3.new(1, 1, 1)
 title.TextXAlignment = Enum.TextXAlignment.Left
-title.ZIndex = 2
 title.Parent = main
 
 local titleGrad = Instance.new("UIGradient")
@@ -221,8 +195,6 @@ local toggleRow = Instance.new("Frame")
 toggleRow.Size = UDim2.new(1, -20, 0, 34)
 toggleRow.Position = UDim2.new(0, 10, 0, 42)
 toggleRow.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
-toggleRow.BackgroundTransparency = 0.35
-toggleRow.ZIndex = 2
 toggleRow.Parent = main
 
 Instance.new("UICorner", toggleRow)
@@ -237,14 +209,12 @@ toggleLabel.Font = Enum.Font.GothamBlack
 toggleLabel.TextSize = 13
 toggleLabel.TextColor3 = Color3.new(1, 1, 1)
 toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-toggleLabel.ZIndex = 3
 toggleLabel.Parent = toggleRow
 
 switchBg = Instance.new("Frame")
 switchBg.Size = UDim2.new(0, 36, 0, 18)
 switchBg.Position = UDim2.new(1, -46, 0.5, -9)
 switchBg.BackgroundTransparency = 1
-switchBg.ZIndex = 3
 switchBg.Parent = toggleRow
 
 Instance.new("UICorner", switchBg).CornerRadius = UDim.new(0, 9)
@@ -254,7 +224,6 @@ switchKnob = Instance.new("Frame")
 switchKnob.Size = UDim2.new(0, 14, 0, 14)
 switchKnob.Position = UDim2.new(0, 2, 0.5, -7)
 switchKnob.BackgroundColor3 = Color3.new(1, 1, 1)
-switchKnob.ZIndex = 4
 switchKnob.Parent = switchBg
 
 Instance.new("UICorner", switchKnob).CornerRadius = UDim.new(0, 7)
@@ -263,7 +232,6 @@ toggleBtn = Instance.new("TextButton")
 toggleBtn.Size = UDim2.new(1, 0, 1, 0)
 toggleBtn.BackgroundTransparency = 1
 toggleBtn.Text = ""
-toggleBtn.ZIndex = 5
 toggleBtn.Parent = toggleRow
 
 toggleBtn.MouseButton1Click:Connect(function()
@@ -274,8 +242,6 @@ local kbRow = Instance.new("Frame")
 kbRow.Size = UDim2.new(1, -20, 0, 34)
 kbRow.Position = UDim2.new(0, 10, 0, 82)
 kbRow.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
-kbRow.BackgroundTransparency = 0.35
-kbRow.ZIndex = 2
 kbRow.Parent = main
 
 Instance.new("UICorner", kbRow)
@@ -290,7 +256,6 @@ kbLabel.Font = Enum.Font.GothamBlack
 kbLabel.TextSize = 13
 kbLabel.TextColor3 = Color3.new(1, 1, 1)
 kbLabel.TextXAlignment = Enum.TextXAlignment.Left
-kbLabel.ZIndex = 3
 kbLabel.Parent = kbRow
 
 local kbBtn = Instance.new("TextButton")
@@ -301,7 +266,6 @@ kbBtn.AutoButtonColor = false
 kbBtn.Font = Enum.Font.GothamBlack
 kbBtn.TextSize = 10
 kbBtn.TextColor3 = Color3.new(1, 1, 1)
-kbBtn.ZIndex = 4
 kbBtn.Parent = kbRow
 
 Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 5)
@@ -339,7 +303,6 @@ local modeRow = Instance.new("Frame")
 modeRow.Size = UDim2.new(1, -20, 0, 34)
 modeRow.Position = UDim2.new(0, 10, 0, 124)
 modeRow.BackgroundTransparency = 1
-modeRow.ZIndex = 2
 modeRow.Parent = main
 
 local UIListLayout = Instance.new("UIListLayout")
@@ -352,9 +315,9 @@ buttons = {}
 local function updateModeButtons()
     for name, btn in pairs(buttons) do
         if nivelActual == name then
-            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(0, 130, 255), BackgroundTransparency = 0.2}):Play()
+            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(0, 130, 255)}):Play()
         else
-            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(18, 26, 48), BackgroundTransparency = 0.35}):Play()
+            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(18, 26, 48)}):Play()
         end
     end
 end
@@ -364,13 +327,11 @@ local function createModeButton(name, order)
     btn.Size = UDim2.new(0, 62, 1, 0)
     btn.LayoutOrder = order
     btn.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
-    btn.BackgroundTransparency = 0.35
     btn.Font = Enum.Font.GothamBlack
     btn.Text = name
     btn.TextSize = 11
     btn.TextColor3 = Color3.new(1, 1, 1)
     btn.AutoButtonColor = false
-    btn.ZIndex = 3
     btn.Parent = modeRow
 
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
