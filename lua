@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
+local ContentProvider = game:GetService("ContentProvider")
 
 local player = Players.LocalPlayer
 local ConfigFile = "moonhublagger.json"
@@ -97,6 +98,7 @@ local function setToggle(newState)
     end
 end
 
+-- Harita optimizasyonu (Sadece haritadaki objeleri siler, arayüzü etkilemez)
 for _, v in pairs(workspace:GetDescendants()) do
     if v:IsA("Texture") or v:IsA("Decal") then
         v:Destroy()
@@ -148,11 +150,10 @@ local function createAnimatedStroke(parent, thickness, speed)
     return s, g
 end
 
--- ANA PANEL (Arka plan rengi tamamen kaldırıldı, şeffaf yapıldı)
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 220, 0, 175)
 main.Position = UDim2.new(0.5, -110, 0.5, -87)
-main.BackgroundTransparency = 1 -- Tamamen şeffaf, renk basmıyor
+main.BackgroundTransparency = 1 
 main.ClipsDescendants = true
 main.Active = true
 main.Parent = gui
@@ -161,17 +162,27 @@ local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 10)
 mainCorner.Parent = main
 
--- GÖRSEL (Arka plan olarak direkt bu çalışacak)
+-- YENİLENEN ARKA PLAN SİSTEMİ
 local backgroundImage = Instance.new("ImageLabel")
 backgroundImage.Name = "BackgroundImage"
 backgroundImage.Size = UDim2.new(1, 0, 1, 0)
 backgroundImage.Position = UDim2.new(0, 0, 0, 0)
-backgroundImage.Image = "rbxassetid://98743977161676" -- Kesinleşen Image ID
-backgroundImage.ImageColor3 = Color3.fromRGB(255, 255, 255) -- Beyaz filtreyi kaldırır, orijinal rengi verir
-backgroundImage.BackgroundTransparency = 1 -- Kendi panel rengini kapatır
+backgroundImage.BackgroundTransparency = 1
+backgroundImage.ImageColor3 = Color3.fromRGB(255, 255, 255)
 backgroundImage.ScaleType = Enum.ScaleType.Crop
-backgroundImage.ZIndex = 1 -- En arkada durması için
+backgroundImage.ZIndex = 1
 backgroundImage.Parent = main
+
+-- Engelleri aşmak için direkt ham CDN linki kullanılıyor
+local assetUrl = "https://assetgame.roblox.com/asset/?id=98743977161676"
+backgroundImage.Image = assetUrl
+
+-- Görseli belleğe zorla yükleme (Preload)
+task.spawn(function()
+    pcall(function()
+        ContentProvider:PreloadAsync({backgroundImage})
+    end)
+end)
 
 local bgCorner = Instance.new("UICorner")
 bgCorner.CornerRadius = UDim.new(0, 10)
