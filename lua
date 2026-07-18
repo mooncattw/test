@@ -83,7 +83,7 @@ local switchKnob, switchBg, toggleBtn, buttons, kbBtn
 local function setToggle(newState)
     laggerEnabled = newState
     local goal = newState and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
-    local color = newState and Color3.fromRGB(0, 130, 255) or Color3.fromRGB(30, 40, 65)
+    local color = newState and Color3.fromRGB(40, 100, 220) or Color3.fromRGB(20, 35, 75)
     
     if switchKnob and switchBg then
         TweenService:Create(switchKnob, TweenInfo.new(0.15), {Position = goal}):Play()
@@ -130,11 +130,11 @@ local function createAnimatedStroke(parent, thickness, speed)
 
     local g = Instance.new("UIGradient")
     g.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(10, 25, 60)),
-        ColorSequenceKeypoint.new(0.4, Color3.fromRGB(0, 140, 255)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 50, 150)),
+        ColorSequenceKeypoint.new(0.4, Color3.fromRGB(80, 180, 255)),
         ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 140, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 25, 60)),
+        ColorSequenceKeypoint.new(0.6, Color3.fromRGB(80, 180, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(15, 50, 150)),
     })
     g.Rotation = 0
     g.Parent = s
@@ -153,8 +153,8 @@ end
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 220, 0, 135)
 main.Position = UDim2.new(0.5, -110, 0.5, -67)
-main.BackgroundColor3 = Color3.fromRGB(8, 12, 28)
-main.BackgroundTransparency = 0.15
+main.BackgroundColor3 = Color3.fromRGB(8, 14, 32)
+main.BackgroundTransparency = 0.25
 main.ClipsDescendants = true
 main.Active = true
 main.Parent = gui
@@ -166,8 +166,8 @@ mainCorner.Parent = main
 createAnimatedStroke(main, 2, 0.8)
 
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -24, 0, 30)
-title.Position = UDim2.new(0, 12, 0, 6)
+title.Size = UDim2.new(1, -20, 0, 20)
+title.Position = UDim2.new(0, 10, 0, 5)
 title.BackgroundTransparency = 1
 title.Text = "Moon Hub"
 title.Font = Enum.Font.GothamBlack
@@ -178,9 +178,9 @@ title.Parent = main
 
 local titleGrad = Instance.new("UIGradient")
 titleGrad.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 160, 255)),
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(70, 160, 255)),
     ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 160, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(70, 160, 255)),
 })
 titleGrad.Parent = title
 
@@ -192,16 +192,17 @@ task.spawn(function()
 end)
 
 local toggleRow = Instance.new("Frame")
-toggleRow.Size = UDim2.new(1, -20, 0, 34)
-toggleRow.Position = UDim2.new(0, 10, 0, 42)
-toggleRow.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
+toggleRow.Size = UDim2.new(1, -20, 0, 40)
+toggleRow.Position = UDim2.new(0, 10, 0, 38)
+toggleRow.BackgroundColor3 = Color3.fromRGB(15, 25, 55)
+toggleRow.ZIndex = 2
 toggleRow.Parent = main
 
 Instance.new("UICorner", toggleRow)
 createAnimatedStroke(toggleRow, 1, 1.2)
 
 local toggleLabel = Instance.new("TextLabel")
-toggleLabel.Size = UDim2.new(1, -125, 1, 0)
+toggleLabel.Size = UDim2.new(0, 60, 1, 0)
 toggleLabel.Position = UDim2.new(0, 10, 0, 0)
 toggleLabel.BackgroundTransparency = 1
 toggleLabel.Text = "Lagger"
@@ -209,12 +210,14 @@ toggleLabel.Font = Enum.Font.GothamBlack
 toggleLabel.TextSize = 13
 toggleLabel.TextColor3 = Color3.new(1, 1, 1)
 toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+toggleLabel.ZIndex = 3
 toggleLabel.Parent = toggleRow
 
 switchBg = Instance.new("Frame")
 switchBg.Size = UDim2.new(0, 36, 0, 18)
 switchBg.Position = UDim2.new(1, -46, 0.5, -9)
 switchBg.BackgroundTransparency = 1
+switchBg.ZIndex = 3
 switchBg.Parent = toggleRow
 
 Instance.new("UICorner", switchBg).CornerRadius = UDim.new(0, 9)
@@ -224,15 +227,17 @@ switchKnob = Instance.new("Frame")
 switchKnob.Size = UDim2.new(0, 14, 0, 14)
 switchKnob.Position = UDim2.new(0, 2, 0.5, -7)
 switchKnob.BackgroundColor3 = Color3.new(1, 1, 1)
+switchKnob.ZIndex = 4
 switchKnob.Parent = switchBg
 
 Instance.new("UICorner", switchKnob).CornerRadius = UDim.new(0, 7)
 
 toggleBtn = Instance.new("TextButton")
 toggleBtn.Size = UDim2.new(1, 0, 1, 0)
+toggleBtn.Position = UDim2.new(0, 0, 0, 0)
 toggleBtn.BackgroundTransparency = 1
 toggleBtn.Text = ""
-toggleBtn.ZIndex = 1
+toggleBtn.ZIndex = 4
 toggleBtn.Parent = toggleRow
 
 toggleBtn.MouseButton1Click:Connect(function()
@@ -240,18 +245,22 @@ toggleBtn.MouseButton1Click:Connect(function()
 end)
 
 kbBtn = Instance.new("TextButton")
-kbBtn.Size = UDim2.new(0, 55, 0, 20)
-kbBtn.Position = UDim2.new(1, -110, 0.5, -10)
-kbBtn.BackgroundColor3 = Color3.fromRGB(30, 42, 75)
+kbBtn.Size = UDim2.new(0, 55, 0, 22)
+kbBtn.Position = UDim2.new(0, 65, 0.5, -11)
+kbBtn.BackgroundColor3 = Color3.fromRGB(25, 45, 95)
+kbBtn.BackgroundTransparency = 0.3
 kbBtn.AutoButtonColor = false
 kbBtn.Font = Enum.Font.GothamBlack
 kbBtn.TextSize = 10
 kbBtn.TextColor3 = Color3.new(1, 1, 1)
-kbBtn.ZIndex = 2
+kbBtn.ZIndex = 5
 kbBtn.Parent = toggleRow
 
+Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 5)
+createAnimatedStroke(kbBtn, 1, 1.5) -- Keybind çevresine parlayan efekt eklendi
+
 local function actualizarKeybindButton()
-    kbBtn.Text = boundKey and (boundKey.Name) or "..."
+    kbBtn.Text = boundKey and ("[ " .. boundKey.Name .. " ]") or "[ ... ]"
 end
 actualizarKeybindButton()
 
@@ -259,7 +268,7 @@ local listeningForKey = false
 
 kbBtn.MouseButton1Click:Connect(function()
     listeningForKey = true
-    kbBtn.Text = "..."
+    kbBtn.Text = "[ ... ]"
 end)
 
 UserInputService.InputBegan:Connect(function(input, gpe)
@@ -280,7 +289,7 @@ end)
 
 local modeRow = Instance.new("Frame")
 modeRow.Size = UDim2.new(1, -20, 0, 34)
-modeRow.Position = UDim2.new(0, 10, 0, 84)
+modeRow.Position = UDim2.new(0, 10, 0, 88)
 modeRow.BackgroundTransparency = 1
 modeRow.Parent = main
 
@@ -294,9 +303,9 @@ buttons = {}
 local function updateModeButtons()
     for name, btn in pairs(buttons) do
         if nivelActual == name then
-            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(0, 130, 255)}):Play()
+            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(40, 100, 220)}):Play()
         else
-            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(18, 26, 48)}):Play()
+            TweenService:Create(btn, TweenInfo.new(0.18), {BackgroundColor3 = Color3.fromRGB(15, 25, 55)}):Play()
         end
     end
 end
@@ -305,7 +314,7 @@ local function createModeButton(name, order)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0, 62, 1, 0)
     btn.LayoutOrder = order
-    btn.BackgroundColor3 = Color3.fromRGB(18, 26, 48)
+    btn.BackgroundColor3 = Color3.fromRGB(15, 25, 55)
     btn.Font = Enum.Font.GothamBlack
     btn.Text = name
     btn.TextSize = 11
@@ -362,3 +371,5 @@ UserInputService.InputChanged:Connect(function(input)
         update(input)
     end
 end)
+
+setToggle(false)
