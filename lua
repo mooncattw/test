@@ -229,9 +229,10 @@ switchKnob.Parent = switchBg
 Instance.new("UICorner", switchKnob).CornerRadius = UDim.new(0, 7)
 
 toggleBtn = Instance.new("TextButton")
-toggleBtn.Size = UDim2.new(1, -65, 1, 0)
+toggleBtn.Size = UDim2.new(1, 0, 1, 0)
 toggleBtn.BackgroundTransparency = 1
 toggleBtn.Text = ""
+toggleBtn.ZIndex = 1
 toggleBtn.Parent = toggleRow
 
 toggleBtn.MouseButton1Click:Connect(function()
@@ -246,10 +247,8 @@ kbBtn.AutoButtonColor = false
 kbBtn.Font = Enum.Font.GothamBlack
 kbBtn.TextSize = 10
 kbBtn.TextColor3 = Color3.new(1, 1, 1)
+kbBtn.ZIndex = 2
 kbBtn.Parent = toggleRow
-
-Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 5)
-createAnimatedStroke(kbBtn, 1.2, 1.2)
 
 local function actualizarKeybindButton()
     kbBtn.Text = boundKey and (boundKey.Name) or "..."
