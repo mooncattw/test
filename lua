@@ -128,9 +128,10 @@ local function createAnimatedStroke(parent, thickness, speed)
     return s, g
 end
 
+-- Boyut dikeyde küçültüldü çünkü artık tek satırımız var
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 200, 0, 130)
-main.Position = UDim2.new(0.5, -100, 0.5, -65)
+main.Size = UDim2.new(0, 220, 0, 95)
+main.Position = UDim2.new(0.5, -110, 0.5, -47)
 main.BackgroundColor3 = Color3.fromRGB(8, 14, 32)
 main.BackgroundTransparency = 0.25
 main.ClipsDescendants = true
@@ -219,9 +220,10 @@ subtitle.TextXAlignment = Enum.TextXAlignment.Left
 subtitle.ZIndex = 9
 subtitle.Parent = main
 
+-- Ana satır (Toggle ve Keybind artık yan yana bu satırın içinde)
 local toggleRow = Instance.new("Frame")
-toggleRow.Size = UDim2.new(1, -20, 0, 34)
-toggleRow.Position = UDim2.new(0, 10, 0, 48)
+toggleRow.Size = UDim2.new(1, -20, 0, 40)
+toggleRow.Position = UDim2.new(0, 10, 0, 45)
 toggleRow.BackgroundColor3 = Color3.fromRGB(15, 25, 55)
 toggleRow.ZIndex = 2
 toggleRow.Parent = main
@@ -229,8 +231,9 @@ toggleRow.Parent = main
 Instance.new("UICorner", toggleRow)
 createAnimatedStroke(toggleRow, 1, 1.2)
 
+-- Sol taraftaki TP Bat Metni
 local toggleLabel = Instance.new("TextLabel")
-toggleLabel.Size = UDim2.new(1, -60, 1, 0)
+toggleLabel.Size = UDim2.new(0, 60, 1, 0)
 toggleLabel.Position = UDim2.new(0, 10, 0, 0)
 toggleLabel.BackgroundTransparency = 1
 toggleLabel.Text = "TP Bat"
@@ -241,57 +244,10 @@ toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
 toggleLabel.ZIndex = 3
 toggleLabel.Parent = toggleRow
 
-local switchBg = Instance.new("Frame")
-switchBg.Size = UDim2.new(0, 36, 0, 18)
-switchBg.Position = UDim2.new(1, -46, 0.5, -9)
-switchBg.BackgroundTransparency = 1
-switchBg.ZIndex = 3
-switchBg.Parent = toggleRow
-
-Instance.new("UICorner", switchBg).CornerRadius = UDim.new(0, 9)
-createAnimatedStroke(switchBg, 2, 1.5)
-
-local switchKnob = Instance.new("Frame")
-switchKnob.Size = UDim2.new(0, 14, 0, 14)
-switchKnob.Position = UDim2.new(0, 2, 0.5, -7)
-switchKnob.BackgroundColor3 = Color3.new(1, 1, 1)
-switchKnob.ZIndex = 4
-switchKnob.Parent = switchBg
-
-Instance.new("UICorner", switchKnob).CornerRadius = UDim.new(0, 7)
-
-local toggleBtn = Instance.new("TextButton")
-toggleBtn.Size = UDim2.new(1, 0, 1, 0)
-toggleBtn.BackgroundTransparency = 1
-toggleBtn.Text = ""
-toggleBtn.ZIndex = 5
-toggleBtn.Parent = toggleRow
-
-local kbRow = Instance.new("Frame")
-kbRow.Size = UDim2.new(1, -20, 0, 34)
-kbRow.Position = UDim2.new(0, 10, 0, 88)
-kbRow.BackgroundColor3 = Color3.fromRGB(15, 25, 55)
-kbRow.ZIndex = 2
-kbRow.Parent = main
-
-Instance.new("UICorner", kbRow)
-createAnimatedStroke(kbRow, 1, 1.2)
-
-local kbLabel = Instance.new("TextLabel")
-kbLabel.Size = UDim2.new(1, -80, 1, 0)
-kbLabel.Position = UDim2.new(0, 10, 0, 0)
-kbLabel.BackgroundTransparency = 1
-kbLabel.Text = "Keybind"
-kbLabel.Font = Enum.Font.GothamBlack
-kbLabel.TextSize = 13
-kbLabel.TextColor3 = Color3.new(1, 1, 1)
-kbLabel.TextXAlignment = Enum.TextXAlignment.Left
-kbLabel.ZIndex = 3
-kbLabel.Parent = kbRow
-
+-- Keybind Butonu (TP Bat metninin hemen yanına taşındı ve efekt eklendi)
 local kbBtn = Instance.new("TextButton")
-kbBtn.Size = UDim2.new(0, 60, 0, 22)
-kbBtn.Position = UDim2.new(1, -68, 0.5, -11)
+kbBtn.Size = UDim2.new(0, 55, 0, 22)
+kbBtn.Position = UDim2.new(0, 65, 0.5, -11)
 kbBtn.BackgroundColor3 = Color3.fromRGB(25, 45, 95)
 kbBtn.BackgroundTransparency = 0.3
 kbBtn.AutoButtonColor = false
@@ -306,9 +262,40 @@ end
 
 kbBtn.TextSize = 10
 kbBtn.TextColor3 = Color3.new(1, 1, 1)
-kbBtn.Parent = kbRow
+kbBtn.Parent = toggleRow
 
 Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 5)
+createAnimatedStroke(kbBtn, 1, 1.5) -- Keybind butonuna parlama efekti
+
+-- Sağ taraftaki Açma/Kapama Switch Arka Planı
+local switchBg = Instance.new("Frame")
+switchBg.Size = UDim2.new(0, 36, 0, 18)
+switchBg.Position = UDim2.new(1, -46, 0.5, -9)
+switchBg.BackgroundTransparency = 1
+switchBg.ZIndex = 3
+switchBg.Parent = toggleRow
+
+Instance.new("UICorner", switchBg).CornerRadius = UDim.new(0, 9)
+createAnimatedStroke(switchBg, 2, 1.5)
+
+-- Switch Yuvarlağı
+local switchKnob = Instance.new("Frame")
+switchKnob.Size = UDim2.new(0, 14, 0, 14)
+switchKnob.Position = UDim2.new(0, 2, 0.5, -7)
+switchKnob.BackgroundColor3 = Color3.new(1, 1, 1)
+switchKnob.ZIndex = 4
+switchKnob.Parent = switchBg
+
+Instance.new("UICorner", switchKnob).CornerRadius = UDim.new(0, 7)
+
+-- Tıklama alanı (Sadece yazının ve switch'in olduğu alana basınca çalışması için sol tarafı kaplar)
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Size = UDim2.new(1, -70, 1, 0)
+toggleBtn.Position = UDim2.new(0, 0, 0, 0)
+toggleBtn.BackgroundTransparency = 1
+toggleBtn.Text = ""
+toggleBtn.ZIndex = 5
+toggleBtn.Parent = toggleRow
 
 local function setToggle(newState)
     tpBatToggled = newState
