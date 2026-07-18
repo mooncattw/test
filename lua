@@ -128,7 +128,6 @@ local function createAnimatedStroke(parent, thickness, speed)
     return s, g
 end
 
--- Boyut dikeyde küçültüldü çünkü artık tek satırımız var
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 220, 0, 95)
 main.Position = UDim2.new(0.5, -110, 0.5, -47)
@@ -220,7 +219,7 @@ subtitle.TextXAlignment = Enum.TextXAlignment.Left
 subtitle.ZIndex = 9
 subtitle.Parent = main
 
--- Ana satır (Toggle ve Keybind artık yan yana bu satırın içinde)
+-- Ana satır
 local toggleRow = Instance.new("Frame")
 toggleRow.Size = UDim2.new(1, -20, 0, 40)
 toggleRow.Position = UDim2.new(0, 10, 0, 45)
@@ -244,29 +243,6 @@ toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
 toggleLabel.ZIndex = 3
 toggleLabel.Parent = toggleRow
 
--- Keybind Butonu (TP Bat metninin hemen yanına taşındı ve efekt eklendi)
-local kbBtn = Instance.new("TextButton")
-kbBtn.Size = UDim2.new(0, 55, 0, 22)
-kbBtn.Position = UDim2.new(0, 65, 0.5, -11)
-kbBtn.BackgroundColor3 = Color3.fromRGB(25, 45, 95)
-kbBtn.BackgroundTransparency = 0.3
-kbBtn.AutoButtonColor = false
-kbBtn.Font = Enum.Font.GothamBlack
-kbBtn.ZIndex = 4
-
-if CONFIG.TpBatKey then
-    kbBtn.Text = "[ " .. CONFIG.TpBatKey.Name .. " ]"
-else
-    kbBtn.Text = "[ ... ]"
-end
-
-kbBtn.TextSize = 10
-kbBtn.TextColor3 = Color3.new(1, 1, 1)
-kbBtn.Parent = toggleRow
-
-Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 5)
-createAnimatedStroke(kbBtn, 1, 1.5) -- Keybind butonuna parlama efekti
-
 -- Sağ taraftaki Açma/Kapama Switch Arka Planı
 local switchBg = Instance.new("Frame")
 switchBg.Size = UDim2.new(0, 36, 0, 18)
@@ -288,14 +264,37 @@ switchKnob.Parent = switchBg
 
 Instance.new("UICorner", switchKnob).CornerRadius = UDim.new(0, 7)
 
--- Tıklama alanı (Sadece yazının ve switch'in olduğu alana basınca çalışması için sol tarafı kaplar)
+-- Tıklama alanı (Bütün satırı kaplar, ZIndex'i 4 yapılarak her yere basılması sağlandı)
 local toggleBtn = Instance.new("TextButton")
-toggleBtn.Size = UDim2.new(1, -70, 1, 0)
+toggleBtn.Size = UDim2.new(1, 0, 1, 0)
 toggleBtn.Position = UDim2.new(0, 0, 0, 0)
 toggleBtn.BackgroundTransparency = 1
 toggleBtn.Text = ""
-toggleBtn.ZIndex = 5
+toggleBtn.ZIndex = 4
 toggleBtn.Parent = toggleRow
+
+-- Keybind Butonu (ZIndex'i 5 yapılarak tıklama alanının üstüne çıkarıldı, böylece tuş algılamaya engel olmuyor)
+local kbBtn = Instance.new("TextButton")
+kbBtn.Size = UDim2.new(0, 55, 0, 22)
+kbBtn.Position = UDim2.new(0, 65, 0.5, -11)
+kbBtn.BackgroundColor3 = Color3.fromRGB(25, 45, 95)
+kbBtn.BackgroundTransparency = 0.3
+kbBtn.AutoButtonColor = false
+kbBtn.Font = Enum.Font.GothamBlack
+kbBtn.ZIndex = 5
+
+if CONFIG.TpBatKey then
+    kbBtn.Text = "[ " .. CONFIG.TpBatKey.Name .. " ]"
+else
+    kbBtn.Text = "[ ... ]"
+end
+
+kbBtn.TextSize = 10
+kbBtn.TextColor3 = Color3.new(1, 1, 1)
+kbBtn.Parent = toggleRow
+
+Instance.new("UICorner", kbBtn).CornerRadius = UDim.new(0, 5)
+createAnimatedStroke(kbBtn, 1, 1.5)
 
 local function setToggle(newState)
     tpBatToggled = newState
