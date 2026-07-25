@@ -1,3 +1,4 @@
+-- hello
 _G.ScriptEnabled = true
 _G.CasingType = "Normal"
 _G.AutoWriteEnabled = true
@@ -265,8 +266,7 @@ local function redeemViaRF(code)
 end
 
 ---
-
--- GÜNCELLENEN FONKSİYON: writeAndSubmit
+--- GÜNCELLENEN writeAndSubmit FONKSİYONU
 local function writeAndSubmit(code)
     if redeemViaRF(code) then return true end
     local textBox = findCodeTextBox()
@@ -275,12 +275,13 @@ local function writeAndSubmit(code)
 
     pcall(function() textBox.ClearTextOnFocus = false end)
 
-    -- Kutuyu temizle ve sadece yeni kodu yaz
-    pcall(function()
-        textBox.Text = ""
+    -- Mevcut metni koru ve yeni kodu ekle
+    if textBox.Text ~= "" then
+        textBox.Text = textBox.Text .. formatted
+    else
         textBox.Text = formatted
-        textBox.CursorPosition = #formatted + 1
-    end)
+    end
+    textBox.CursorPosition = #textBox.Text + 1
 
     if not collectedSeen[formatted] then
         collectedSeen[formatted] = true
@@ -291,15 +292,16 @@ local function writeAndSubmit(code)
     local ready = #collectedCodes >= target
 
     if ready and _G.AutoSubmitEnabled then
+        local fullText = table.concat(collectedCodes, CODE_SEPARATOR)
         for i = 1, _G.SubmitAttempts do
             local box = findCodeTextBox()
             if not box then break end
             pcall(function()
                 box:CaptureFocus()
-                box.Text = formatted
-                box.CursorPosition = #formatted + 1
+                box.Text = fullText
+                box.CursorPosition = #fullText + 1
             end)
-            pcall(function() box.Text = formatted end)
+            pcall(function() box.Text = fullText end)
             pcall(function() box:ReleaseFocus(true) end)
             fireSubmitButton(box)
         end
@@ -310,8 +312,7 @@ local function writeAndSubmit(code)
 end
 
 ---
-
--- GÜNCELLENEN FONKSİYON: triggerWrite
+--- GÜNCELLENEN triggerWrite FONKSİYONU
 local function triggerWrite()
     if writeBusy or not _G.AutoWriteEnabled or #pendingQueue == 0 then return end
     local focused = UserInputService:GetFocusedTextBox()
@@ -327,11 +328,16 @@ local function triggerWrite()
                 if not (b and isGuiVisible(b)) then break end
                 local code = table.remove(pendingQueue, 1)
                 pendingSeen[code] = nil
-                -- Kutuyu temizle ve sadece yeni kodu yaz
-                pcall(function()
-                    b.Text = ""
-                    b.Text = formatCode(code)
-                end)
+
+                -- Mevcut metni koru ve yeni kodu ekle
+                local formatted = formatCode(code)
+                if b.Text ~= "" then
+                    b.Text = b.Text .. formatted
+                else
+                    b.Text = formatted
+                end
+                b.CursorPosition = #b.Text + 1
+
                 writeAndSubmit(code)
             end
         end)
@@ -722,7 +728,7 @@ local function createUI()
 end
 
 ---
-
+--- init Fonksiyonu
 local function init()
     pcall(cleanupMonitoring)
     createUI()
@@ -731,5 +737,4 @@ local function init()
 end
 
 ---
-
 init()
