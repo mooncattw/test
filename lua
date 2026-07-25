@@ -1,13 +1,12 @@
+-- hello
 _G.ScriptEnabled = true
 _G.CasingType = "Normal"
 _G.AutoWriteEnabled = true
 _G.AutoSubmitEnabled = true
 
-local collectedCodes = {}
-local collectedSeen = {}
-local CODE_SEPARATOR = ""
-local pendingQueue = {}
-local pendingSeen = {}
+local allProcessedCodes = {}  -- Tüm işlenmiş kodları takip eder
+local pendingCodes = {}       -- Yazılmayı bekleyen kodlar
+local collectedForSubmit = {} -- Submit için toplanan kodlar
 local writeBusy = false
 local autoWriteConn = nil
 local _cachedBox = nil
@@ -22,38 +21,21 @@ local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
 
--- Mobile detection
 local isMobile = UserInputService.TouchEnabled
-
 _G.SubmitAfterCount = 1
 _G.SubmitAttempts = 10
 
 local activeConnections = {}
 
--- isGuiVisible function remains the same
-local function isGuiVisible(obj)
-    if not obj or not obj.Visible then return false end
-    local current = obj.Parent
-    while current do
-        if current:IsA("GuiObject") and not current.Visible then return false end
-        if current:IsA("ScreenGui") and not current.Enabled then return false end
-        current = current.Parent
-    end
-    return true
-end
-
--- Blacklisted words remain the same
-local blacklistedWords = {
-    "top","sec","min","fps","ping","loading","points","coins","cash","rebirth","slaps","money","speed","level","lvl","score"
-}
-
+-- isGuiVisible, blacklistedWords, commonWords, isBlacklisted, looksLikeCode, isLoneCode, extractCodesFromText
+local blacklistedWords = {"top","sec","min","fps","ping","loading","points","coins","cash","rebirth","slaps","money","speed","level","lvl","score"}
 local commonWords = {
     ["the"]=true,["and"]=true,["for"]=true,["you"]=true,["your"]=true,["now"]=true,["new"]=true,["use"]=true,["get"]=true,["out"]=true,
     ["all"]=true,["are"]=true,["can"]=true,["with"]=true,["from"]=true,["this"]=true,["that"]=true,["here"]=true,["more"]=true,["info"]=true,
     ["redeem"]=true,["claim"]=true,["enter"]=true,["reward"]=true,["rewards"]=true,["update"]=true,["join"]=true,["group"]=true,
     ["like"]=true,["follow"]=true,["sub"]=true,["click"]=true,["type"]=true,["copy"]=true,["paste"]=true,["server"]=true,["event"]=true,
     ["live"]=true,["news"]=true,["soon"]=true,["available"]=true,["expired"]=true,["welcome"]=true,["thanks"]=true,["thank"]=true,
-    ["player"]=true,["players"]=true,["today"]=true,["time"]=true,["wait"]=true,["xp"]=true,["money"]=true,["sammy"]=true,
+    ["player"]=true,["players"]=true,["today"]=true,["time"]=true,["wait"]=true,["xp"]=true,["sammy"]=true,
     ["announcement"]=true,["announcements"]=true,["release"]=true,["released"]=true,["limited"]=true,["special"]=true,["gift"]=true,
     ["pet"]=true,["pets"]=true,["egg"]=true,["luck"]=true,["boost"]=true,["double"]=true,["friend"]=true,["friends"]=true,
     ["chat"]=true,["online"]=true,["offline"]=true,["invite"]=true,["party"]=true,["voice"]=true,["report"]=true,["block"]=true,
@@ -65,6 +47,17 @@ local commonWords = {
     ["wheel"]=true,["prize"]=true,["bonus"]=true,["streak"]=true,["rank"]=true,["wave"]=true,["round"]=true,["score"]=true,
     ["match"]=true,["versus"]=true,["battle"]=true,["quest"]=true
 }
+
+local function isGuiVisible(obj)
+    if not obj or not obj.Visible then return false end
+    local current = obj.Parent
+    while current do
+        if current:IsA("GuiObject") and not current.Visible then return false end
+        if current:IsA("ScreenGui") and not current.Enabled then return false end
+        current = current.Parent
+    end
+    return true
+end
 
 local function isBlacklisted(lowerText)
     if commonWords[lowerText] then return true end
@@ -119,7 +112,6 @@ local function extractCodesFromText(text)
     return found
 end
 
--- Modified copyCodeToClipboard to skip on mobile
 local function copyCodeToClipboard(code)
     if isMobile then return false end
     local formattedCode = code
@@ -241,48 +233,21 @@ local function redeemViaRF(code)
     return ok
 end
 
--- FIXED: writeAndSubmit now preserves textbox content
+-- FIXED: writeAndSubmit - Her kodu sadece 1 kez yaz
 local function writeAndSubmit(code)
     if redeemViaRF(code) then return true end
-    local textBox = findCodeTextBox()
-    if not textBox then return false end
     local formatted = formatCode(code)
-
-    pcall(function() textBox.ClearTextOnFocus = false end)
-
-    -- Always append to existing text
-    if textBox.Text ~= "" then
-        textBox.Text = textBox.Text .. formatted
-    else
-        textBox.Text = formatted
-    end
-    textBox.CursorPosition = #textBox.Text + 1
-
-    if not collectedSeen[formatted] then
-        collectedSeen[formatted] = true
-        table.insert(collectedCodes, formatted)
-    end
-
-    local target = math.max(1, tonumber(_G.SubmitAfterCount) or 1)
-    local ready = #collectedCodes >= target
-
-    if ready and _G.AutoSubmitEnabled then
-        -- FIX: Don't overwrite textbox, just submit what's there
-        local box = findCodeTextBox()
-        if box then
-            pcall(function() box:CaptureFocus() end)
-            pcall(function() box:ReleaseFocus(true) end)
-            fireSubmitButton(box)
-        end
-        table.clear(collectedCodes)
-        table.clear(collectedSeen)
+    if not allProcessedCodes[formatted] then
+        allProcessedCodes[formatted] = true
+        table.insert(pendingCodes, formatted)
+        triggerWrite()
     end
     return true
 end
 
--- FIXED: triggerWrite now properly appends without clearing
+-- FIXED: triggerWrite - Kodları textbox'a 1 kez yaz ve SubmitAfterCount'a göre submit et
 local function triggerWrite()
-    if writeBusy or not _G.AutoWriteEnabled or #pendingQueue == 0 then return end
+    if writeBusy or not _G.AutoWriteEnabled or #pendingCodes == 0 then return end
     local focused = UserInputService:GetFocusedTextBox()
     if focused and ScreenGui and focused:IsDescendantOf(ScreenGui) then return end
     local box = findCodeTextBox()
@@ -291,21 +256,35 @@ local function triggerWrite()
     writeBusy = true
     task.spawn(function()
         local ok, err = pcall(function()
-            while _G.AutoWriteEnabled and #pendingQueue > 0 do
+            while _G.AutoWriteEnabled and #pendingCodes > 0 do
                 local b = findCodeTextBox()
                 if not (b and isGuiVisible(b)) then break end
-                local code = table.remove(pendingQueue, 1)
-                pendingSeen[code] = nil
 
+                local code = table.remove(pendingCodes, 1)
                 local formatted = formatCode(code)
-                -- Always append, never clear
+
+                -- Textbox'a sadece 1 kez ekle
                 if b.Text ~= "" then
                     b.Text = b.Text .. formatted
                 else
                     b.Text = formatted
                 end
                 b.CursorPosition = #b.Text + 1
-                writeAndSubmit(code)
+
+                -- Submit için koleksiyona ekle
+                table.insert(collectedForSubmit, formatted)
+
+                -- SubmitAfterCount'a ulaşınca submit et
+                local target = math.max(1, tonumber(_G.SubmitAfterCount) or 1)
+                if #collectedForSubmit >= target and _G.AutoSubmitEnabled then
+                    local submitBox = findCodeTextBox()
+                    if submitBox then
+                        pcall(function() submitBox:CaptureFocus() end)
+                        pcall(function() submitBox:ReleaseFocus(true) end)
+                        fireSubmitButton(submitBox)
+                    end
+                    table.clear(collectedForSubmit)
+                end
             end
         end)
         writeBusy = false
@@ -332,20 +311,6 @@ local function startAutoWriteLoop()
     table.insert(activeConnections, autoWriteConn)
 end
 
-local function extractStrings(val, out)
-    out = out or {}
-    local t = type(val)
-    if t == "string" then
-        table.insert(out, val)
-    elseif t == "table" then
-        for _, v in pairs(val) do
-            extractStrings(v, out)
-        end
-    end
-    return out
-end
-
--- Modified processText to handle mobile
 local function processText(text)
     if not text or text == "" then return end
     local codes = extractCodesFromText(text)
@@ -354,11 +319,7 @@ local function processText(text)
         if not isMobile then
             copyCodeToClipboard(code)
         end
-        if not pendingSeen[code] then
-            pendingSeen[code] = true
-            table.insert(pendingQueue, code)
-            triggerWrite()
-        end
+        writeAndSubmit(code)
     end
 end
 
@@ -438,10 +399,9 @@ local function cleanupMonitoring()
         if typeof(conn) == "RBXScriptConnection" then conn:Disconnect() end
     end
     table.clear(activeConnections)
-    table.clear(collectedCodes)
-    table.clear(collectedSeen)
-    table.clear(pendingQueue)
-    table.clear(pendingSeen)
+    table.clear(allProcessedCodes)
+    table.clear(pendingCodes)
+    table.clear(collectedForSubmit)
     writeBusy = false
     autoWriteConn = nil
 end
@@ -557,7 +517,6 @@ local function createUI()
     subtitle.TextXAlignment = Enum.TextXAlignment.Left
     subtitle.Parent = MainFrame
 
-    -- Auto Write Toggle
     local autoWriteRow = Instance.new("Frame")
     autoWriteRow.Size = UDim2.new(1, -20, 0, 40)
     autoWriteRow.Position = UDim2.new(0, 10, 0, 45)
@@ -605,7 +564,6 @@ local function createUI()
         TweenService:Create(awSwitchKnob, TweenInfo.new(0.15), {Position = newPos, BackgroundColor3 = newColor}):Play()
     end)
 
-    -- Auto Submit Toggle
     local autoSubmitRow = Instance.new("Frame")
     autoSubmitRow.Size = UDim2.new(1, -20, 0, 40)
     autoSubmitRow.Position = UDim2.new(0, 10, 0, 90)
@@ -648,6 +606,8 @@ local function createUI()
             local n = tonumber(SubmitBox.Text) or 1
             if n < 1 then n = 1 end
             _G.SubmitAfterCount = n
+            -- Sıfırla ki yeni sayaçla başlasın
+            table.clear(collectedForSubmit)
         end
     end)
 
