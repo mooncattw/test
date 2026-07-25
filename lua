@@ -1,19 +1,20 @@
--- hello
+--===== AYARLAR =====--
 _G.ScriptEnabled = true
-_G.CasingType = "Normal"
+_G.CasingType = "Normal"  -- "Upper", "Lower", veya "Normal"
 _G.AutoWriteEnabled = true
 _G.AutoSubmitEnabled = true
+_G.SubmitAfterCount = 1  -- Kaç kod toplanınca yazılsın (1 = her kodda)
+_G.SubmitAttempts = 1    -- Kaç kez submit denensin
 
-local allProcessedCodes = {}  -- Tüm işlenmiş kodları takip eder
-local pendingCodes = {}       -- Yazılmayı bekleyen kodlar
-local collectedForSubmit = {} -- Submit için toplanan kodlar
+--===== DEĞİŞKENLER =====--
+local collectedCodes = {}
+local CODE_SEPARATOR = " "  -- Kodları ayırmak için kullanılan karakter
 local writeBusy = false
-local autoWriteConn = nil
-local _cachedBox = nil
 local ScreenGui = nil
 local MainFrame = nil
 local SubmitBox = nil
 
+--===== SERVİSLER =====--
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -21,43 +22,33 @@ local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
 
-local isMobile = UserInputService.TouchEnabled
-_G.SubmitAfterCount = 1
-_G.SubmitAttempts = 10
-
-local activeConnections = {}
-
--- isGuiVisible, blacklistedWords, commonWords, isBlacklisted, looksLikeCode, isLoneCode, extractCodesFromText
-local blacklistedWords = {"top","sec","min","fps","ping","loading","points","coins","cash","rebirth","slaps","money","speed","level","lvl","score"}
-local commonWords = {
-    ["the"]=true,["and"]=true,["for"]=true,["you"]=true,["your"]=true,["now"]=true,["new"]=true,["use"]=true,["get"]=true,["out"]=true,
-    ["all"]=true,["are"]=true,["can"]=true,["with"]=true,["from"]=true,["this"]=true,["that"]=true,["here"]=true,["more"]=true,["info"]=true,
-    ["redeem"]=true,["claim"]=true,["enter"]=true,["reward"]=true,["rewards"]=true,["update"]=true,["join"]=true,["group"]=true,
-    ["like"]=true,["follow"]=true,["sub"]=true,["click"]=true,["type"]=true,["copy"]=true,["paste"]=true,["server"]=true,["event"]=true,
-    ["live"]=true,["news"]=true,["soon"]=true,["available"]=true,["expired"]=true,["welcome"]=true,["thanks"]=true,["thank"]=true,
-    ["player"]=true,["players"]=true,["today"]=true,["time"]=true,["wait"]=true,["xp"]=true,["sammy"]=true,
-    ["announcement"]=true,["announcements"]=true,["release"]=true,["released"]=true,["limited"]=true,["special"]=true,["gift"]=true,
-    ["pet"]=true,["pets"]=true,["egg"]=true,["luck"]=true,["boost"]=true,["double"]=true,["friend"]=true,["friends"]=true,
-    ["chat"]=true,["online"]=true,["offline"]=true,["invite"]=true,["party"]=true,["voice"]=true,["report"]=true,["block"]=true,
-    ["mute"]=true,["store"]=true,["shop"]=true,["inventory"]=true,["settings"]=true,["leaderboard"]=true,["lobby"]=true,
-    ["menu"]=true,["close"]=true,["open"]=true,["back"]=true,["next"]=true,["play"]=true,["exit"]=true,["loading"]=true,
-    ["negozio"]=true,["rinascita"]=true,["indice"]=true,["duelli"]=true,["scambio"]=true,["codici"]=true,["incremento"]=true,
-    ["amico"]=true,["drop"]=true,["present"]=true,["win"]=true,["wins"]=true,["winner"]=true,["winners"]=true,["winning"]=true,
-    ["winter"]=true,["victory"]=true,["lose"]=true,["loss"]=true,["losses"]=true,["defeat"]=true,["daily"]=true,["spin"]=true,
-    ["wheel"]=true,["prize"]=true,["bonus"]=true,["streak"]=true,["rank"]=true,["wave"]=true,["round"]=true,["score"]=true,
-    ["match"]=true,["versus"]=true,["battle"]=true,["quest"]=true
+--===== BLACKLIST VE KOD KONTROL FONKSİYONLARI =====--
+local blacklistedWords = {
+    "top", "sec", "min", "fps", "ping", "loading", "points", "coins", "cash", "rebirth", "slaps",
+    "money", "speed", "level", "lvl", "score", "xp", "win", "wins", "lose", "loss", "defeat"
 }
 
-local function isGuiVisible(obj)
-    if not obj or not obj.Visible then return false end
-    local current = obj.Parent
-    while current do
-        if current:IsA("GuiObject") and not current.Visible then return false end
-        if current:IsA("ScreenGui") and not current.Enabled then return false end
-        current = current.Parent
-    end
-    return true
-end
+local commonWords = {
+    ["the"] = true, ["and"] = true, ["for"] = true, ["you"] = true, ["your"] = true, ["now"] = true,
+    ["new"] = true, ["use"] = true, ["get"] = true, ["out"] = true, ["all"] = true, ["are"] = true,
+    ["can"] = true, ["with"] = true, ["from"] = true, ["this"] = true, ["that"] = true, ["here"] = true,
+    ["more"] = true, ["info"] = true, ["redeem"] = true, ["claim"] = true, ["enter"] = true, ["reward"] = true,
+    ["rewards"] = true, ["update"] = true, ["join"] = true, ["group"] = true, ["like"] = true, ["follow"] = true,
+    ["sub"] = true, ["click"] = true, ["type"] = true, ["copy"] = true, ["paste"] = true, ["server"] = true,
+    ["event"] = true, ["live"] = true, ["news"] = true, ["soon"] = true, ["available"] = true, ["expired"] = true,
+    ["welcome"] = true, ["thanks"] = true, ["thank"] = true, ["player"] = true, ["players"] = true, ["today"] = true,
+    ["time"] = true, ["wait"] = true, ["sammy"] = true, ["announcement"] = true, ["announcements"] = true,
+    ["release"] = true, ["released"] = true, ["limited"] = true, ["special"] = true, ["gift"] = true, ["pet"] = true,
+    ["pets"] = true, ["egg"] = true, ["luck"] = true, ["boost"] = true, ["double"] = true, ["friend"] = true,
+    ["friends"] = true, ["chat"] = true, ["online"] = true, ["offline"] = true, ["invite"] = true, ["party"] = true,
+    ["voice"] = true, ["report"] = true, ["block"] = true, ["mute"] = true, ["store"] = true, ["shop"] = true,
+    ["inventory"] = true, ["settings"] = true, ["leaderboard"] = true, ["lobby"] = true, ["menu"] = true,
+    ["close"] = true, ["open"] = true, ["back"] = true, ["next"] = true, ["play"] = true, ["exit"] = true,
+    ["loading"] = true, ["negozio"] = true, ["rinascita"] = true, ["indice"] = true, ["duelli"] = true,
+    ["scambio"] = true, ["codici"] = true, ["incremento"] = true, ["amico"] = true, ["drop"] = true,
+    ["present"] = true, ["winter"] = true, ["victory"] = true, ["streak"] = true, ["rank"] = true,
+    ["wave"] = true, ["round"] = true, ["match"] = true, ["versus"] = true, ["battle"] = true, ["quest"] = true
+}
 
 local function isBlacklisted(lowerText)
     if commonWords[lowerText] then return true end
@@ -112,38 +103,15 @@ local function extractCodesFromText(text)
     return found
 end
 
-local function copyCodeToClipboard(code)
-    if isMobile then return false end
-    local formattedCode = code
-    if _G.CasingType == "Upper" then
-        formattedCode = string.upper(code)
-    elseif _G.CasingType == "Lower" then
-        formattedCode = string.lower(code)
-    end
-    local success = false
-    if setclipboard then
-        pcall(function() setclipboard(formattedCode) end)
-        success = true
-    elseif toclipboard then
-        pcall(function() toclipboard(formattedCode) end)
-        success = true
-    elseif set_clipboard then
-        pcall(function() set_clipboard(formattedCode) end)
-        success = true
-    elseif Clipboard and Clipboard.set then
-        pcall(function() Clipboard.set(formattedCode) end)
-        success = true
-    end
-    return success
-end
-
+--===== KOD FORMATLAMA =====--
 local function formatCode(code)
     if _G.CasingType == "Upper" then return string.upper(code) end
     if _G.CasingType == "Lower" then return string.lower(code) end
     return code
 end
 
-local function _isCodeBox(obj)
+--===== KOD KUTUSU VE SUBMIT BUTONU =====--
+local function isCodeBox(obj)
     if not obj:IsA("TextBox") then return false end
     if ScreenGui and obj:IsDescendantOf(ScreenGui) then return false end
     local hint = ((obj.PlaceholderText or "") .. " " .. obj.Name):lower()
@@ -151,17 +119,21 @@ local function _isCodeBox(obj)
 end
 
 local function findCodeTextBox()
-    if _cachedBox and _cachedBox.Parent and isGuiVisible(_cachedBox) then return _cachedBox end
-    _cachedBox = nil
     local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
     if not playerGui then return nil end
     for _, obj in ipairs(playerGui:GetDescendants()) do
-        if _isCodeBox(obj) and isGuiVisible(obj) then
-            _cachedBox = obj
+        if isCodeBox(obj) then
             return obj
         end
     end
     return nil
+end
+
+local function isSubmitButton(obj)
+    if not (obj:IsA("TextButton") or obj:IsA("ImageButton")) then return false end
+    if ScreenGui and obj:IsDescendantOf(ScreenGui) then return false end
+    local hint = (((obj:IsA("TextButton") and obj.Text) or "") .. " " .. obj.Name):lower()
+    return hint:find("redeem") ~= nil or hint:find("submit") ~= nil
 end
 
 local function fireSignal(sig)
@@ -176,31 +148,23 @@ local function fireSignal(sig)
     if firesignal then pcall(function() firesignal(sig) end) end
 end
 
-local function isSubmitButton(obj)
-    if not (obj:IsA("TextButton") or obj:IsA("ImageButton")) then return false end
-    if ScreenGui and obj:IsDescendantOf(ScreenGui) then return false end
-    if not isGuiVisible(obj) then return false end
-    local hint = (((obj:IsA("TextButton") and obj.Text) or "") .. " " .. obj.Name):lower()
-    return hint:find("redeem") ~= nil or hint:find("submit") ~= nil
-end
-
-local function fireSubmitButton(nearObj)
-    local target = nil
-    local container = nearObj and nearObj.Parent or nil
-    local levels = 0
-    while container and not target and levels < 5 do
+local function fireSubmitButton(box)
+    local container = box.Parent
+    for _ = 1, 5 do
         for _, obj in ipairs(container:GetDescendants()) do
-            if isSubmitButton(obj) then target = obj break end
+            if isSubmitButton(obj) then
+                fireSignal(obj.MouseButton1Click)
+                fireSignal(obj.Activated)
+                return true
+            end
         end
         container = container.Parent
-        levels = levels + 1
+        if not container then break end
     end
-    if not target then return false end
-    fireSignal(target.MouseButton1Click)
-    fireSignal(target.Activated)
-    return true
+    return false
 end
 
+--===== REMOTE FUNCTION (RF) REDEEM =====--
 local _rfRemote = nil
 local function getRedemptionRF()
     if _rfRemote and _rfRemote.Parent then return _rfRemote end
@@ -233,95 +197,73 @@ local function redeemViaRF(code)
     return ok
 end
 
--- FIXED: writeAndSubmit - Her kodu sadece 1 kez yaz
-local function writeAndSubmit(code)
-    if redeemViaRF(code) then return true end
-    local formatted = formatCode(code)
-    if not allProcessedCodes[formatted] then
-        allProcessedCodes[formatted] = true
-        table.insert(pendingCodes, formatted)
-        triggerWrite()
+--===== ANA FONKSİYON: TÜM KODLARI TEK SEFERDE YAZ VE REDEEMLE =====--
+local function writeAndSubmitAll()
+    if #collectedCodes == 0 then return false end
+
+    -- RemoteFunction ile dene
+    for _, code in ipairs(collectedCodes) do
+        if redeemViaRF(code) then
+            table.clear(collectedCodes)
+            return true
+        end
     end
+
+    -- Kod kutusunu bul
+    local textBox = findCodeTextBox()
+    if not textBox then return false end
+
+    -- Tüm kodları birleştir
+    local allCodes = table.concat(collectedCodes, CODE_SEPARATOR)
+    local formattedAllCodes = formatCode(allCodes)
+
+    -- Kod kutusuna yaz
+    pcall(function()
+        textBox.Text = formattedAllCodes
+        textBox.CursorPosition = #formattedAllCodes + 1
+    end)
+
+    -- Submit butonunu tetikle
+    if _G.AutoSubmitEnabled then
+        for i = 1, _G.SubmitAttempts do
+            local box = findCodeTextBox()
+            if not box then break end
+            pcall(function()
+                box:CaptureFocus()
+                box.Text = formattedAllCodes
+                box.CursorPosition = #formattedAllCodes + 1
+            end)
+            pcall(function() box:ReleaseFocus(true) end)
+            fireSubmitButton(box)
+            task.wait(0.1)  -- Küçük bir beklenme
+        end
+    end
+
+    -- Kodları temizle
+    table.clear(collectedCodes)
     return true
 end
 
--- FIXED: triggerWrite - Kodları textbox'a 1 kez yaz ve SubmitAfterCount'a göre submit et
-local function triggerWrite()
-    if writeBusy or not _G.AutoWriteEnabled or #pendingCodes == 0 then return end
-    local focused = UserInputService:GetFocusedTextBox()
-    if focused and ScreenGui and focused:IsDescendantOf(ScreenGui) then return end
-    local box = findCodeTextBox()
-    if not (box and isGuiVisible(box)) then return end
-
-    writeBusy = true
-    task.spawn(function()
-        local ok, err = pcall(function()
-            while _G.AutoWriteEnabled and #pendingCodes > 0 do
-                local b = findCodeTextBox()
-                if not (b and isGuiVisible(b)) then break end
-
-                local code = table.remove(pendingCodes, 1)
-                local formatted = formatCode(code)
-
-                -- Textbox'a sadece 1 kez ekle
-                if b.Text ~= "" then
-                    b.Text = b.Text .. formatted
-                else
-                    b.Text = formatted
-                end
-                b.CursorPosition = #b.Text + 1
-
-                -- Submit için koleksiyona ekle
-                table.insert(collectedForSubmit, formatted)
-
-                -- SubmitAfterCount'a ulaşınca submit et
-                local target = math.max(1, tonumber(_G.SubmitAfterCount) or 1)
-                if #collectedForSubmit >= target and _G.AutoSubmitEnabled then
-                    local submitBox = findCodeTextBox()
-                    if submitBox then
-                        pcall(function() submitBox:CaptureFocus() end)
-                        pcall(function() submitBox:ReleaseFocus(true) end)
-                        fireSubmitButton(submitBox)
-                    end
-                    table.clear(collectedForSubmit)
-                end
-            end
-        end)
-        writeBusy = false
-        if not ok then warn("[CodeSniper] triggerWrite error: " .. tostring(err)) end
-    end)
-end
-
-local function startAutoWriteLoop()
-    if autoWriteConn then return end
-    local playerGui = LocalPlayer:FindFirstChild("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui", 10)
-    local boxConn = playerGui and playerGui.DescendantAdded:Connect(function(obj)
-        if _isCodeBox(obj) and isGuiVisible(obj) then
-            _cachedBox = obj
-            triggerWrite()
-        end
-    end)
-    local boxRemConn = playerGui and playerGui.DescendantRemoving:Connect(function(obj)
-        if obj == _cachedBox then _cachedBox = nil end
-    end)
-    autoWriteConn = { Disconnect = function()
-        if boxConn then boxConn:Disconnect() end
-        if boxRemConn then boxRemConn:Disconnect() end
-    end }
-    table.insert(activeConnections, autoWriteConn)
-end
-
+--===== METİN İŞLEME =====--
 local function processText(text)
     if not text or text == "" then return end
     local codes = extractCodesFromText(text)
     if #codes == 0 then return end
+
     for _, code in ipairs(codes) do
-        if not isMobile then
-            copyCodeToClipboard(code)
+        if not table.find(collectedCodes, code) then
+            table.insert(collectedCodes, code)
         end
-        writeAndSubmit(code)
+    end
+
+    -- Kodlar toplanınca yaz ve redeemle
+    if _G.AutoWriteEnabled and #collectedCodes >= _G.SubmitAfterCount then
+        writeAndSubmitAll()
     end
 end
+
+--===== NOTİFİKASYON MONİTÖRÜ =====--
+local activeConnections = {}
 
 local function resolveRemote()
     if _G.PhiNotifyRemote then return _G.PhiNotifyRemote end
@@ -335,6 +277,7 @@ local function resolveRemote()
         if not Net then task.wait(0.5) end
     end
     if not Net then return nil end
+
     local getinfo = debug and (debug.getinfo or debug.info)
     local NC = nil
     if getconnections and getinfo then
@@ -357,6 +300,7 @@ local function resolveRemote()
             end
         end
     end
+
     if not NC then
         for _, d in ipairs(Net:GetDescendants()) do
             if d:IsA("RemoteEvent") and d.Name:match("^RE/%x+$") then
@@ -365,6 +309,7 @@ local function resolveRemote()
             end
         end
     end
+
     if NC then _G.PhiNotifyRemote = NC end
     return NC
 end
@@ -394,18 +339,7 @@ local function startMonitoring()
     end)
 end
 
-local function cleanupMonitoring()
-    for _, conn in pairs(activeConnections) do
-        if typeof(conn) == "RBXScriptConnection" then conn:Disconnect() end
-    end
-    table.clear(activeConnections)
-    table.clear(allProcessedCodes)
-    table.clear(pendingCodes)
-    table.clear(collectedForSubmit)
-    writeBusy = false
-    autoWriteConn = nil
-end
-
+--===== UI OLUŞTURMA =====--
 local function createAnimatedStroke(parent, thickness, speed)
     local s = Instance.new("UIStroke")
     s.Thickness = thickness or 1.5
@@ -433,10 +367,12 @@ local function createAnimatedStroke(parent, thickness, speed)
 end
 
 local function createUI()
+    -- Eski UI'yi temizle
     local oldGui = game:GetService("CoreGui"):FindFirstChild("BrainrotRedeemerGui")
         or LocalPlayer.PlayerGui:FindFirstChild("BrainrotRedeemerGui")
     if oldGui then oldGui:Destroy() end
 
+    -- Ana ScreenGui
     ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "BrainrotRedeemerGui"
     ScreenGui.ResetOnSpawn = false
@@ -445,6 +381,7 @@ local function createUI()
         ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
     end
 
+    -- Ana Çerçeve
     MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Size = UDim2.new(0, 220, 0, 140)
@@ -456,11 +393,13 @@ local function createUI()
     MainFrame.Draggable = true
     MainFrame.Parent = ScreenGui
 
+    -- Köşe yuvarlama
     local mainCorner = Instance.new("UICorner")
     mainCorner.CornerRadius = UDim.new(0, 10)
     mainCorner.Parent = MainFrame
     createAnimatedStroke(MainFrame, 2, 0.8)
 
+    -- Sürükleme mantığı
     local dragging, dragInput, dragStart, startPos
     MainFrame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -480,6 +419,7 @@ local function createUI()
         end
     end)
 
+    -- Başlık
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(0, 120, 0, 20)
     title.Position = UDim2.new(0, 10, 0, 5)
@@ -505,6 +445,7 @@ local function createUI()
         end
     end)
 
+    -- Alt başlık
     local subtitle = Instance.new("TextLabel")
     subtitle.Size = UDim2.new(0, 120, 0, 15)
     subtitle.Position = UDim2.new(0, 10, 0, 23)
@@ -517,6 +458,7 @@ local function createUI()
     subtitle.TextXAlignment = Enum.TextXAlignment.Left
     subtitle.Parent = MainFrame
 
+    -- Auto Write Toggle
     local autoWriteRow = Instance.new("Frame")
     autoWriteRow.Size = UDim2.new(1, -20, 0, 40)
     autoWriteRow.Position = UDim2.new(0, 10, 0, 45)
@@ -561,9 +503,11 @@ local function createUI()
         _G.AutoWriteEnabled = not _G.AutoWriteEnabled
         local newPos = _G.AutoWriteEnabled and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
         local newColor = _G.AutoWriteEnabled and Color3.fromRGB(40, 100, 220) or Color3.fromRGB(20, 35, 75)
-        TweenService:Create(awSwitchKnob, TweenInfo.new(0.15), {Position = newPos, BackgroundColor3 = newColor}):Play()
+        TweenService:Create(awSwitchKnob, TweenInfo.new(0.15), {Position = newPos}):Play()
+        TweenService:Create(awSwitchBg, TweenInfo.new(0.15), {BackgroundColor3 = newColor}):Play()
     end)
 
+    -- Auto Submit Toggle
     local autoSubmitRow = Instance.new("Frame")
     autoSubmitRow.Size = UDim2.new(1, -20, 0, 40)
     autoSubmitRow.Position = UDim2.new(0, 10, 0, 90)
@@ -606,8 +550,6 @@ local function createUI()
             local n = tonumber(SubmitBox.Text) or 1
             if n < 1 then n = 1 end
             _G.SubmitAfterCount = n
-            -- Sıfırla ki yeni sayaçla başlasın
-            table.clear(collectedForSubmit)
         end
     end)
 
@@ -637,15 +579,24 @@ local function createUI()
         _G.AutoSubmitEnabled = not _G.AutoSubmitEnabled
         local newPos = _G.AutoSubmitEnabled and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
         local newColor = _G.AutoSubmitEnabled and Color3.fromRGB(40, 100, 220) or Color3.fromRGB(20, 35, 75)
-        TweenService:Create(asSwitchKnob, TweenInfo.new(0.15), {Position = newPos, BackgroundColor3 = newColor}):Play()
+        TweenService:Create(asSwitchKnob, TweenInfo.new(0.15), {Position = newPos}):Play()
+        TweenService:Create(asSwitchBg, TweenInfo.new(0.15), {BackgroundColor3 = newColor}):Play()
     end)
+end
+
+--===== BAŞLATMA =====--
+local function cleanupMonitoring()
+    for _, conn in pairs(activeConnections) do
+        if typeof(conn) == "RBXScriptConnection" then conn:Disconnect() end
+    end
+    table.clear(activeConnections)
+    table.clear(collectedCodes)
 end
 
 local function init()
     pcall(cleanupMonitoring)
     createUI()
     startMonitoring()
-    startAutoWriteLoop()
 end
 
 init()
