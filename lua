@@ -1,4 +1,3 @@
--- hello
 _G.ScriptEnabled = true
 _G.CasingType = "Normal"
 _G.AutoWriteEnabled = true
@@ -23,13 +22,15 @@ local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
 
+-- Mobile detection
+local isMobile = UserInputService.TouchEnabled
+
 _G.SubmitAfterCount = 1
 _G.SubmitAttempts = 10
 
 local activeConnections = {}
 
----
-
+-- isGuiVisible function remains the same
 local function isGuiVisible(obj)
     if not obj or not obj.Visible then return false end
     local current = obj.Parent
@@ -41,8 +42,7 @@ local function isGuiVisible(obj)
     return true
 end
 
----
-
+-- Blacklisted words remain the same
 local blacklistedWords = {
     "top","sec","min","fps","ping","loading","points","coins","cash","rebirth","slaps","money","speed","level","lvl","score"
 }
@@ -66,8 +66,6 @@ local commonWords = {
     ["match"]=true,["versus"]=true,["battle"]=true,["quest"]=true
 }
 
----
-
 local function isBlacklisted(lowerText)
     if commonWords[lowerText] then return true end
     for _, word in ipairs(blacklistedWords) do
@@ -75,8 +73,6 @@ local function isBlacklisted(lowerText)
     end
     return false
 end
-
----
 
 local function looksLikeCode(token)
     if not token then return false end
@@ -92,8 +88,6 @@ local function looksLikeCode(token)
     return hasDigit or isAllUpper
 end
 
----
-
 local function isLoneCode(text)
     if not text then return false end
     text = text:match("^%s*(.-)%s*$")
@@ -107,8 +101,6 @@ local function isLoneCode(text)
     for _ in text:gmatch("%a") do letters = letters + 1 end
     return letters >= 2
 end
-
----
 
 local function extractCodesFromText(text)
     local found = {}
@@ -127,9 +119,9 @@ local function extractCodesFromText(text)
     return found
 end
 
----
-
+-- Modified copyCodeToClipboard to skip on mobile
 local function copyCodeToClipboard(code)
+    if isMobile then return false end
     local formattedCode = code
     if _G.CasingType == "Upper" then
         formattedCode = string.upper(code)
@@ -153,15 +145,11 @@ local function copyCodeToClipboard(code)
     return success
 end
 
----
-
 local function formatCode(code)
     if _G.CasingType == "Upper" then return string.upper(code) end
     if _G.CasingType == "Lower" then return string.lower(code) end
     return code
 end
-
----
 
 local function _isCodeBox(obj)
     if not obj:IsA("TextBox") then return false end
@@ -169,8 +157,6 @@ local function _isCodeBox(obj)
     local hint = ((obj.PlaceholderText or "") .. " " .. obj.Name):lower()
     return hint:find("code") or hint:find("redeem") or hint:find("here")
 end
-
----
 
 local function findCodeTextBox()
     if _cachedBox and _cachedBox.Parent and isGuiVisible(_cachedBox) then return _cachedBox end
@@ -186,8 +172,6 @@ local function findCodeTextBox()
     return nil
 end
 
----
-
 local function fireSignal(sig)
     if not sig then return end
     pcall(function()
@@ -200,8 +184,6 @@ local function fireSignal(sig)
     if firesignal then pcall(function() firesignal(sig) end) end
 end
 
----
-
 local function isSubmitButton(obj)
     if not (obj:IsA("TextButton") or obj:IsA("ImageButton")) then return false end
     if ScreenGui and obj:IsDescendantOf(ScreenGui) then return false end
@@ -209,8 +191,6 @@ local function isSubmitButton(obj)
     local hint = (((obj:IsA("TextButton") and obj.Text) or "") .. " " .. obj.Name):lower()
     return hint:find("redeem") ~= nil or hint:find("submit") ~= nil
 end
-
----
 
 local function fireSubmitButton(nearObj)
     local target = nil
@@ -228,8 +208,6 @@ local function fireSubmitButton(nearObj)
     fireSignal(target.Activated)
     return true
 end
-
----
 
 local _rfRemote = nil
 local function getRedemptionRF()
@@ -255,8 +233,6 @@ local function getRedemptionRF()
     return _rfRemote
 end
 
----
-
 local function redeemViaRF(code)
     local rf = getRedemptionRF()
     if not rf then return false end
@@ -265,8 +241,7 @@ local function redeemViaRF(code)
     return ok
 end
 
----
---- GÜNCELLENEN writeAndSubmit FONKSİYONU
+-- FIXED: writeAndSubmit now preserves textbox content
 local function writeAndSubmit(code)
     if redeemViaRF(code) then return true end
     local textBox = findCodeTextBox()
@@ -275,7 +250,7 @@ local function writeAndSubmit(code)
 
     pcall(function() textBox.ClearTextOnFocus = false end)
 
-    -- Mevcut metni koru ve yeni kodu ekle
+    -- Always append to existing text
     if textBox.Text ~= "" then
         textBox.Text = textBox.Text .. formatted
     else
@@ -292,16 +267,10 @@ local function writeAndSubmit(code)
     local ready = #collectedCodes >= target
 
     if ready and _G.AutoSubmitEnabled then
-        local fullText = table.concat(collectedCodes, CODE_SEPARATOR)
-        for i = 1, _G.SubmitAttempts do
-            local box = findCodeTextBox()
-            if not box then break end
-            pcall(function()
-                box:CaptureFocus()
-                box.Text = fullText
-                box.CursorPosition = #fullText + 1
-            end)
-            pcall(function() box.Text = fullText end)
+        -- FIX: Don't overwrite textbox, just submit what's there
+        local box = findCodeTextBox()
+        if box then
+            pcall(function() box:CaptureFocus() end)
             pcall(function() box:ReleaseFocus(true) end)
             fireSubmitButton(box)
         end
@@ -311,8 +280,7 @@ local function writeAndSubmit(code)
     return true
 end
 
----
---- GÜNCELLENEN triggerWrite FONKSİYONU
+-- FIXED: triggerWrite now properly appends without clearing
 local function triggerWrite()
     if writeBusy or not _G.AutoWriteEnabled or #pendingQueue == 0 then return end
     local focused = UserInputService:GetFocusedTextBox()
@@ -329,15 +297,14 @@ local function triggerWrite()
                 local code = table.remove(pendingQueue, 1)
                 pendingSeen[code] = nil
 
-                -- Mevcut metni koru ve yeni kodu ekle
                 local formatted = formatCode(code)
+                -- Always append, never clear
                 if b.Text ~= "" then
                     b.Text = b.Text .. formatted
                 else
                     b.Text = formatted
                 end
                 b.CursorPosition = #b.Text + 1
-
                 writeAndSubmit(code)
             end
         end)
@@ -345,8 +312,6 @@ local function triggerWrite()
         if not ok then warn("[CodeSniper] triggerWrite error: " .. tostring(err)) end
     end)
 end
-
----
 
 local function startAutoWriteLoop()
     if autoWriteConn then return end
@@ -367,8 +332,6 @@ local function startAutoWriteLoop()
     table.insert(activeConnections, autoWriteConn)
 end
 
----
-
 local function extractStrings(val, out)
     out = out or {}
     local t = type(val)
@@ -382,14 +345,15 @@ local function extractStrings(val, out)
     return out
 end
 
----
-
+-- Modified processText to handle mobile
 local function processText(text)
     if not text or text == "" then return end
     local codes = extractCodesFromText(text)
     if #codes == 0 then return end
     for _, code in ipairs(codes) do
-        copyCodeToClipboard(code)
+        if not isMobile then
+            copyCodeToClipboard(code)
+        end
         if not pendingSeen[code] then
             pendingSeen[code] = true
             table.insert(pendingQueue, code)
@@ -397,8 +361,6 @@ local function processText(text)
         end
     end
 end
-
----
 
 local function resolveRemote()
     if _G.PhiNotifyRemote then return _G.PhiNotifyRemote end
@@ -446,8 +408,6 @@ local function resolveRemote()
     return NC
 end
 
----
-
 local function startMonitoring()
     task.spawn(function()
         local NC = resolveRemote()
@@ -473,8 +433,6 @@ local function startMonitoring()
     end)
 end
 
----
-
 local function cleanupMonitoring()
     for _, conn in pairs(activeConnections) do
         if typeof(conn) == "RBXScriptConnection" then conn:Disconnect() end
@@ -487,8 +445,6 @@ local function cleanupMonitoring()
     writeBusy = false
     autoWriteConn = nil
 end
-
----
 
 local function createAnimatedStroke(parent, thickness, speed)
     local s = Instance.new("UIStroke")
@@ -515,8 +471,6 @@ local function createAnimatedStroke(parent, thickness, speed)
     end)
     return s, g
 end
-
----
 
 local function createUI()
     local oldGui = game:GetService("CoreGui"):FindFirstChild("BrainrotRedeemerGui")
@@ -603,6 +557,7 @@ local function createUI()
     subtitle.TextXAlignment = Enum.TextXAlignment.Left
     subtitle.Parent = MainFrame
 
+    -- Auto Write Toggle
     local autoWriteRow = Instance.new("Frame")
     autoWriteRow.Size = UDim2.new(1, -20, 0, 40)
     autoWriteRow.Position = UDim2.new(0, 10, 0, 45)
@@ -632,8 +587,8 @@ local function createUI()
 
     local awSwitchKnob = Instance.new("Frame")
     awSwitchKnob.Size = UDim2.new(0, 14, 0, 14)
-    awSwitchKnob.Position = UDim2.new(1, -16, 0.5, -7)
-    awSwitchKnob.BackgroundColor3 = Color3.new(1, 1, 1)
+    awSwitchKnob.Position = _G.AutoWriteEnabled and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+    awSwitchKnob.BackgroundColor3 = _G.AutoWriteEnabled and Color3.fromRGB(40, 100, 220) or Color3.fromRGB(20, 35, 75)
     awSwitchKnob.Parent = awSwitchBg
     Instance.new("UICorner", awSwitchKnob).CornerRadius = UDim.new(0, 7)
 
@@ -647,10 +602,10 @@ local function createUI()
         _G.AutoWriteEnabled = not _G.AutoWriteEnabled
         local newPos = _G.AutoWriteEnabled and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
         local newColor = _G.AutoWriteEnabled and Color3.fromRGB(40, 100, 220) or Color3.fromRGB(20, 35, 75)
-        TweenService:Create(awSwitchKnob, TweenInfo.new(0.15), {Position = newPos}):Play()
-        TweenService:Create(awSwitchBg, TweenInfo.new(0.15), {BackgroundColor3 = newColor}):Play()
+        TweenService:Create(awSwitchKnob, TweenInfo.new(0.15), {Position = newPos, BackgroundColor3 = newColor}):Play()
     end)
 
+    -- Auto Submit Toggle
     local autoSubmitRow = Instance.new("Frame")
     autoSubmitRow.Size = UDim2.new(1, -20, 0, 40)
     autoSubmitRow.Position = UDim2.new(0, 10, 0, 90)
@@ -675,7 +630,7 @@ local function createUI()
     SubmitBox.Size = UDim2.new(0, 50, 0, 22)
     SubmitBox.Position = UDim2.new(0, 95, 0.5, -11)
     SubmitBox.BackgroundColor3 = Color3.fromRGB(40, 100, 220)
-    SubmitBox.Text = "1"
+    SubmitBox.Text = tostring(_G.SubmitAfterCount)
     SubmitBox.TextColor3 = Color3.fromRGB(255, 255, 255)
     SubmitBox.TextSize = 12
     SubmitBox.Font = Enum.Font.GothamBold
@@ -706,8 +661,8 @@ local function createUI()
 
     local asSwitchKnob = Instance.new("Frame")
     asSwitchKnob.Size = UDim2.new(0, 14, 0, 14)
-    asSwitchKnob.Position = UDim2.new(1, -16, 0.5, -7)
-    asSwitchKnob.BackgroundColor3 = Color3.new(1, 1, 1)
+    asSwitchKnob.Position = _G.AutoSubmitEnabled and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+    asSwitchKnob.BackgroundColor3 = _G.AutoSubmitEnabled and Color3.fromRGB(40, 100, 220) or Color3.fromRGB(20, 35, 75)
     asSwitchKnob.Parent = asSwitchBg
     Instance.new("UICorner", asSwitchKnob).CornerRadius = UDim.new(0, 7)
 
@@ -722,13 +677,10 @@ local function createUI()
         _G.AutoSubmitEnabled = not _G.AutoSubmitEnabled
         local newPos = _G.AutoSubmitEnabled and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
         local newColor = _G.AutoSubmitEnabled and Color3.fromRGB(40, 100, 220) or Color3.fromRGB(20, 35, 75)
-        TweenService:Create(asSwitchKnob, TweenInfo.new(0.15), {Position = newPos}):Play()
-        TweenService:Create(asSwitchBg, TweenInfo.new(0.15), {BackgroundColor3 = newColor}):Play()
+        TweenService:Create(asSwitchKnob, TweenInfo.new(0.15), {Position = newPos, BackgroundColor3 = newColor}):Play()
     end)
 end
 
----
---- init Fonksiyonu
 local function init()
     pcall(cleanupMonitoring)
     createUI()
@@ -736,5 +688,4 @@ local function init()
     startAutoWriteLoop()
 end
 
----
 init()
