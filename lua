@@ -25,6 +25,10 @@ local LocalPlayer = Players.LocalPlayer
 _G.SubmitAfterCount = 1
 _G.SubmitAttempts = 10
 
+local activeConnections = {}
+
+---
+
 local function isGuiVisible(obj)
     if not obj or not obj.Visible then return false end
     local current = obj.Parent
@@ -35,6 +39,8 @@ local function isGuiVisible(obj)
     end
     return true
 end
+
+---
 
 local blacklistedWords = {
     "top","sec","min","fps","ping","loading","points","coins","cash","rebirth","slaps","money","speed","level","lvl","score"
@@ -59,6 +65,8 @@ local commonWords = {
     ["match"]=true,["versus"]=true,["battle"]=true,["quest"]=true
 }
 
+---
+
 local function isBlacklisted(lowerText)
     if commonWords[lowerText] then return true end
     for _, word in ipairs(blacklistedWords) do
@@ -66,6 +74,8 @@ local function isBlacklisted(lowerText)
     end
     return false
 end
+
+---
 
 local function looksLikeCode(token)
     if not token then return false end
@@ -81,6 +91,8 @@ local function looksLikeCode(token)
     return hasDigit or isAllUpper
 end
 
+---
+
 local function isLoneCode(text)
     if not text then return false end
     text = text:match("^%s*(.-)%s*$")
@@ -94,6 +106,8 @@ local function isLoneCode(text)
     for _ in text:gmatch("%a") do letters = letters + 1 end
     return letters >= 2
 end
+
+---
 
 local function extractCodesFromText(text)
     local found = {}
@@ -111,6 +125,8 @@ local function extractCodesFromText(text)
     end
     return found
 end
+
+---
 
 local function copyCodeToClipboard(code)
     local formattedCode = code
@@ -136,11 +152,15 @@ local function copyCodeToClipboard(code)
     return success
 end
 
+---
+
 local function formatCode(code)
     if _G.CasingType == "Upper" then return string.upper(code) end
     if _G.CasingType == "Lower" then return string.lower(code) end
     return code
 end
+
+---
 
 local function _isCodeBox(obj)
     if not obj:IsA("TextBox") then return false end
@@ -148,6 +168,8 @@ local function _isCodeBox(obj)
     local hint = ((obj.PlaceholderText or "") .. " " .. obj.Name):lower()
     return hint:find("code") or hint:find("redeem") or hint:find("here")
 end
+
+---
 
 local function findCodeTextBox()
     if _cachedBox and _cachedBox.Parent and isGuiVisible(_cachedBox) then return _cachedBox end
@@ -163,6 +185,8 @@ local function findCodeTextBox()
     return nil
 end
 
+---
+
 local function fireSignal(sig)
     if not sig then return end
     pcall(function()
@@ -175,6 +199,8 @@ local function fireSignal(sig)
     if firesignal then pcall(function() firesignal(sig) end) end
 end
 
+---
+
 local function isSubmitButton(obj)
     if not (obj:IsA("TextButton") or obj:IsA("ImageButton")) then return false end
     if ScreenGui and obj:IsDescendantOf(ScreenGui) then return false end
@@ -182,6 +208,8 @@ local function isSubmitButton(obj)
     local hint = (((obj:IsA("TextButton") and obj.Text) or "") .. " " .. obj.Name):lower()
     return hint:find("redeem") ~= nil or hint:find("submit") ~= nil
 end
+
+---
 
 local function fireSubmitButton(nearObj)
     local target = nil
@@ -199,6 +227,8 @@ local function fireSubmitButton(nearObj)
     fireSignal(target.Activated)
     return true
 end
+
+---
 
 local _rfRemote = nil
 local function getRedemptionRF()
@@ -224,6 +254,8 @@ local function getRedemptionRF()
     return _rfRemote
 end
 
+---
+
 local function redeemViaRF(code)
     local rf = getRedemptionRF()
     if not rf then return false end
@@ -232,35 +264,42 @@ local function redeemViaRF(code)
     return ok
 end
 
+---
+
+-- GÜNCELLENEN FONKSİYON: writeAndSubmit
 local function writeAndSubmit(code)
     if redeemViaRF(code) then return true end
     local textBox = findCodeTextBox()
     if not textBox then return false end
     local formatted = formatCode(code)
+
     pcall(function() textBox.ClearTextOnFocus = false end)
+
+    -- Kutuyu temizle ve sadece yeni kodu yaz
+    pcall(function()
+        textBox.Text = ""
+        textBox.Text = formatted
+        textBox.CursorPosition = #formatted + 1
+    end)
 
     if not collectedSeen[formatted] then
         collectedSeen[formatted] = true
         table.insert(collectedCodes, formatted)
     end
 
-    textBox.Text = formatted
-    textBox.CursorPosition = #formatted + 1
-
     local target = math.max(1, tonumber(_G.SubmitAfterCount) or 1)
     local ready = #collectedCodes >= target
 
     if ready and _G.AutoSubmitEnabled then
-        local fullText = table.concat(collectedCodes, CODE_SEPARATOR)
         for i = 1, _G.SubmitAttempts do
             local box = findCodeTextBox()
             if not box then break end
             pcall(function()
                 box:CaptureFocus()
-                box.Text = fullText
-                box.CursorPosition = #fullText + 1
+                box.Text = formatted
+                box.CursorPosition = #formatted + 1
             end)
-            pcall(function() box.Text = fullText end)
+            pcall(function() box.Text = formatted end)
             pcall(function() box:ReleaseFocus(true) end)
             fireSubmitButton(box)
         end
@@ -270,12 +309,16 @@ local function writeAndSubmit(code)
     return true
 end
 
+---
+
+-- GÜNCELLENEN FONKSİYON: triggerWrite
 local function triggerWrite()
     if writeBusy or not _G.AutoWriteEnabled or #pendingQueue == 0 then return end
     local focused = UserInputService:GetFocusedTextBox()
     if focused and ScreenGui and focused:IsDescendantOf(ScreenGui) then return end
     local box = findCodeTextBox()
     if not (box and isGuiVisible(box)) then return end
+
     writeBusy = true
     task.spawn(function()
         local ok, err = pcall(function()
@@ -284,6 +327,11 @@ local function triggerWrite()
                 if not (b and isGuiVisible(b)) then break end
                 local code = table.remove(pendingQueue, 1)
                 pendingSeen[code] = nil
+                -- Kutuyu temizle ve sadece yeni kodu yaz
+                pcall(function()
+                    b.Text = ""
+                    b.Text = formatCode(code)
+                end)
                 writeAndSubmit(code)
             end
         end)
@@ -291,6 +339,8 @@ local function triggerWrite()
         if not ok then warn("[CodeSniper] triggerWrite error: " .. tostring(err)) end
     end)
 end
+
+---
 
 local function startAutoWriteLoop()
     if autoWriteConn then return end
@@ -311,6 +361,8 @@ local function startAutoWriteLoop()
     table.insert(activeConnections, autoWriteConn)
 end
 
+---
+
 local function extractStrings(val, out)
     out = out or {}
     local t = type(val)
@@ -323,6 +375,8 @@ local function extractStrings(val, out)
     end
     return out
 end
+
+---
 
 local function processText(text)
     if not text or text == "" then return end
@@ -337,6 +391,8 @@ local function processText(text)
         end
     end
 end
+
+---
 
 local function resolveRemote()
     if _G.PhiNotifyRemote then return _G.PhiNotifyRemote end
@@ -384,6 +440,8 @@ local function resolveRemote()
     return NC
 end
 
+---
+
 local function startMonitoring()
     task.spawn(function()
         local NC = resolveRemote()
@@ -409,7 +467,7 @@ local function startMonitoring()
     end)
 end
 
-local activeConnections = {}
+---
 
 local function cleanupMonitoring()
     for _, conn in pairs(activeConnections) do
@@ -423,6 +481,8 @@ local function cleanupMonitoring()
     writeBusy = false
     autoWriteConn = nil
 end
+
+---
 
 local function createAnimatedStroke(parent, thickness, speed)
     local s = Instance.new("UIStroke")
@@ -449,6 +509,8 @@ local function createAnimatedStroke(parent, thickness, speed)
     end)
     return s, g
 end
+
+---
 
 local function createUI()
     local oldGui = game:GetService("CoreGui"):FindFirstChild("BrainrotRedeemerGui")
@@ -659,11 +721,15 @@ local function createUI()
     end)
 end
 
+---
+
 local function init()
     pcall(cleanupMonitoring)
     createUI()
     startMonitoring()
     startAutoWriteLoop()
 end
+
+---
 
 init()
